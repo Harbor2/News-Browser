@@ -91,7 +91,7 @@ dependencies {
     // eventbus
     implementation("org.greenrobot:eventbus:3.2.0")
     // ui
-    implementation("com.github.Harbor2:Emlibrary:v2.6.0")
+    implementation("com.github.Harbor2:Emlibrary:v2.6.2")
     // calendar
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     implementation("com.kizitonwose.calendar:view:2.8.0")

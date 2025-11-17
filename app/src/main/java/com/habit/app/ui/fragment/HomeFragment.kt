@@ -7,9 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
 import com.example.dogtok.ui.base.BaseFragment
-import com.habit.app.MyApplication
 import com.habit.app.databinding.FragmentHomeBinding
-import com.habit.app.model.TAG
 import com.wyz.emlibrary.util.EMUtil
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -28,11 +26,8 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.containerNavi.post {
-            (binding.containerNavi.layoutParams as? ViewGroup.MarginLayoutParams)?.apply {
-                topMargin = EMUtil.getStatusBarHeight(requireContext())
-                binding.containerNavi.layoutParams = this
-            }
+        (binding.containerNavi.layoutParams as? ViewGroup.MarginLayoutParams)?.apply {
+            topMargin = EMUtil.getStatusBarHeight(requireContext())
         }
 
         initView()
