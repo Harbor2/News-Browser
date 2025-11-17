@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">News Browser</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_service">Terms Of Service</string>
+    <string name="text_agree">Agree&#160;</string>
+    <string name="text_split_privacy_service">&#160;&amp;&#160;</string>
+    <string name="text_split_point">&#160;·&#160;</string>
+
+    <string name="toast_succeed">Succeed</string>
+    <string name="toast_error">Error</string>
+    <string name="toast_failed">Failed</string>
+    <string name="toast_user_subscribe_cancel">User cancel subscribe</string>
+    <string name="toast_rated">You have already rated us</string>
+    <string name="toast_device_not_support_camera">Device not support camera</string>
+    <string name="toast_num_error">You must input 12 or 13 num</string>
+    <string name="toast_clipboard_no_content">Clipboard had no content</string>
+    <string name="toast_no_app_open_url">No app can open this URL</string>
+    <string name="toast_record_not_time">It\'s not time yet</string>
+    <string name="toast_pic_saved">Photo already saved</string>
+    <string name="toast_pic_not_support">Picture not support</string>
+
+    <string name="text_get_started_big">GET STARTED</string>
+    <string name="text_home">Home</string>
+    <string name="text_news">News</string>
+    <string name="text_tag">Tag</string>
+    <string name="text_setting">Setting</string>
+</resources>

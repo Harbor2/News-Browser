@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 背景 -->
+    <item android:height="12dp" android:gravity="center_vertical" android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <corners android:radius="6dp" />
+            <solid android:color="@color/white" />
+        </shape>
+    </item>
+
+    <!-- 进度（添加 inset 左右边距 2dp） -->
+    <item android:height="8dp" android:gravity="center_vertical" android:id="@android:id/progress">
+        <inset android:insetLeft="2dp" android:insetRight="2dp">
+            <scale android:scaleWidth="100%">
+                <shape android:shape="rectangle">
+                    <corners android:radius="4dp" />
+                    <solid android:color="@color/btn_color"/>
+                </shape>
+            </scale>
+        </inset>
+    </item>
+</layer-list>
