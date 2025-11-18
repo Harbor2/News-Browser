@@ -31,7 +31,7 @@
             android:textSize="16sp"
             android:textColor="@color/white"
             android:text="@string/text_get_started_big"
-            android:fontFamily="@font/baloo_600"
+            android:fontFamily="@font/gotham_b"
             android:gravity="center"
             android:layout_marginHorizontal="48dp"
             android:layout_marginBottom="79dp"
@@ -54,7 +54,7 @@
                 android:textSize="12sp"
                 android:textColor="@color/text_main_color"
                 android:text="@string/text_agree"
-                android:fontFamily="@font/baloo_400"/>
+                android:fontFamily="@font/gotham_r"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_privacy"
@@ -63,7 +63,7 @@
                 android:textSize="12sp"
                 android:textColor="@color/btn_color"
                 android:text="@string/privacy_policy"
-                android:fontFamily="@font/baloo_400"/>
+                android:fontFamily="@font/gotham_r"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
@@ -71,7 +71,7 @@
                 android:textSize="12sp"
                 android:textColor="@color/text_main_color"
                 android:text="@string/text_split_privacy_service"
-                android:fontFamily="@font/baloo_400"/>
+                android:fontFamily="@font/gotham_r"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_service"
@@ -80,7 +80,7 @@
                 android:textSize="12sp"
                 android:textColor="@color/btn_color"
                 android:text="@string/terms_of_service"
-                android:fontFamily="@font/baloo_400"/>
+                android:fontFamily="@font/gotham_r"/>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

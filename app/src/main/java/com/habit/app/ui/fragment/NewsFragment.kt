@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
-import com.example.dogtok.ui.base.BaseFragment
+import com.habit.app.ui.base.BaseFragment
 import com.habit.app.databinding.FragmentNewsBinding
 import com.wyz.emlibrary.util.EMUtil
 import kotlinx.coroutines.MainScope

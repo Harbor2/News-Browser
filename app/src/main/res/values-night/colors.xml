@@ -38,9 +38,11 @@
     <color name="primary_color">#303030</color>
     <color name="transparent">#00000000</color>
 
-    <color name="btn_color">#0051FF</color>
     <color name="page_main_color">#0E0B1F</color>
     <color name="view_bg_color">#1E1C2D</color>
     <color name="text_main_color">#FFFFFF</color>
     <color name="text_main_color_30">#4DFFFFFF</color>
+
+    <color name="home_top_bg_start">#1E2C53</color>
+    <color name="home_top_bg_end">#0E0B1F</color>
 </resources>

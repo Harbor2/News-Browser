@@ -24,4 +24,9 @@
     <string name="text_news">News</string>
     <string name="text_tag">Tag</string>
     <string name="text_setting">Setting</string>
+    <string name="text_search_point">Search…</string>
+    <string name="text_btn_save">Save</string>
+    <string name="text_file">File</string>
+    <string name="text_game">Game</string>
+    <string name="text_bookmark">Bookmark</string>
 </resources>

@@ -3,11 +3,13 @@ package com.habit.app.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import com.habit.app.ui.base.BaseActivity
-import com.example.dogtok.ui.base.BaseFragment
+import com.habit.app.ui.base.BaseFragment
 import com.habit.app.R
 import com.habit.app.databinding.ActivityMainBinding
 import com.habit.app.helper.KeyValueManager
+import com.habit.app.model.TAG
 import com.habit.app.model.db.DBManager
 import com.habit.app.ui.fragment.HomeFragment
 import com.habit.app.ui.fragment.NewsFragment
@@ -29,6 +31,7 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate")
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         immersiveWindow(binding.root, false)
@@ -40,17 +43,20 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initView() {
+        Log.d(TAG, "initView")
         EMManager.from(binding.bottomShadow)
             .setShadow("#142D0E20", 2f, 0f, -1f)
     }
 
     private fun initData() {
+        Log.d(TAG, "initData")
         // 设置底部选中
         binding.tabHome.isChecked = true
         switchFragment(currentFragmentTag)
     }
 
     private fun initListener() {
+        Log.d(TAG, "initListener")
         binding.containerTabHome.setOnClickListener{
             binding.tabNews.isChecked = false
             binding.tabTag.isChecked = false
@@ -109,6 +115,7 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
+        Log.d(TAG, "onDestroy")
         mScope.cancel()
         DBManager.close()
         super.onDestroy()
