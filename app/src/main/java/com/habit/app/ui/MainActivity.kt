@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.base.BaseFragment
+import com.habit.app.ui.base.BaseActivity
 import com.habit.app.R
 import com.habit.app.databinding.ActivityMainBinding
 import com.habit.app.helper.KeyValueManager
