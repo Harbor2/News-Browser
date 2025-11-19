@@ -1,6 +1,7 @@
 package com.habit.app.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.R
 import com.habit.app.databinding.FragmentHomeBinding
+import com.habit.app.model.TAG
+import com.habit.app.skin.ThemeManager
 import com.habit.app.ui.item.HomeAccessItem
 import com.habit.app.ui.item.HomeSearchItem
 import com.wyz.emlibrary.em.Direction
@@ -59,8 +62,13 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
     }
 
     private fun updateUIConfig() {
+        val pageColor = ThemeManager.getSkinColor(R.color.page_main_color)
+        val startColor = ThemeManager.getSkinColor(R.color.home_top_bg_start)
+        val endColor = ThemeManager.getSkinColor(R.color.home_top_bg_end)
+        Log.d(TAG, "fragment中color $pageColor $startColor $endColor")
+        binding.root.setBackgroundColor(pageColor)
         EMManager.from(binding.bgTop)
-            .setGradientColor(intArrayOf(R.color.home_top_bg_start, R.color.home_top_bg_end), Direction.TOP)
+            .setGradientRealColor(intArrayOf(startColor, endColor), Direction.TOP)
     }
 
     private fun initData() {
@@ -77,6 +85,12 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
         items.add(HomeSearchItem(requireContext()))
         items.add(HomeAccessItem(requireContext()))
         mAdapter.updateDataSet(items)
+    }
+
+    override fun onThemeChanged(theme: String) {
+        super.onThemeChanged(theme)
+        Log.d(TAG, "fragment中 onThemeChanged")
+        updateUIConfig()
     }
 
     override fun onDestroy() {

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.habit.app.skin.ThemeManager
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
@@ -16,6 +17,10 @@ abstract class BaseFragment<T : ViewBinding> : Fragment() {
 
     // 标志位，记录 Fragment 是否被选中
     protected var isFragmentSelect = false
+
+    private val themeChangedListener: (String) -> Unit = { theme->
+        onThemeChanged(theme)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +35,11 @@ abstract class BaseFragment<T : ViewBinding> : Fragment() {
         // 调用onCreateViewBinding方法获取binding
         _binding = onCreateViewBinding(inflater, container)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        ThemeManager.addThemeChangeListener(themeChangedListener)
     }
 
     /**
@@ -60,6 +70,9 @@ abstract class BaseFragment<T : ViewBinding> : Fragment() {
         }
     }
 
+    open fun onThemeChanged(theme: String) {
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         // 引用置空处理
@@ -68,6 +81,7 @@ abstract class BaseFragment<T : ViewBinding> : Fragment() {
 
     override fun onDestroy() {
         EventBus.getDefault().unregister(this)
+        ThemeManager.removeThemeChangeListener(themeChangedListener)
         super.onDestroy()
     }
 

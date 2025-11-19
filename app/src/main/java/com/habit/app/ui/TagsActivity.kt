@@ -12,6 +12,7 @@ import com.habit.app.helper.DayNightUtil
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.model.TAG
 import com.habit.app.model.db.DBManager
+import com.habit.app.skin.ThemeManager
 import com.wyz.emlibrary.util.immersiveWindow
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -67,13 +68,12 @@ class TagsActivity : BaseActivity() {
 
     private fun initListener() {
         binding.btnModeDay.setOnClickListener {
-            DayNightUtil.changeSkinNightMode(DayNightUtil.NIGHT_MODE_DAY)
+            ThemeManager.switchTheme(ThemeManager.THEME_DEFAULT)
         }
         binding.btnModeNight.setOnClickListener {
-            DayNightUtil.changeSkinNightMode(DayNightUtil.NIGHT_MODE_NIGHT)
+            ThemeManager.switchTheme(ThemeManager.THEME_NIGHT)
         }
         binding.btnModeFollow.setOnClickListener {
-            DayNightUtil.changeSkinNightMode(DayNightUtil.NIGHT_MODE_FOLLOW_SYSTEM)
         }
     }
 

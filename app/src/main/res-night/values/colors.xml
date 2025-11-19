@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="t_night_page_main_color">#0E0B1F</color>
+    <color name="t_night_view_bg_color">#1E1C2D</color>
+    <color name="t_night_text_main_color">#FFFFFF</color>
+    <color name="t_night_text_main_color_30">#4DFFFFFF</color>
+
+    <color name="t_night_home_top_bg_start">#1E2C53</color>
+    <color name="t_night_home_top_bg_end">#0E0B1F</color>
+</resources>

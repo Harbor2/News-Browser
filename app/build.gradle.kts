@@ -30,6 +30,14 @@ android {
         signingConfig = signingConfigs.getByName("release")
     }
 
+    sourceSets {
+        maybeCreate("main").apply {
+            res {
+                srcDir("src/main/res-night")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true

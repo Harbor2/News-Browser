@@ -11,6 +11,7 @@ import com.habit.app.databinding.ActivityMainBinding
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.model.TAG
 import com.habit.app.model.db.DBManager
+import com.habit.app.skin.ThemeManager
 import com.habit.app.ui.fragment.HomeFragment
 import com.habit.app.ui.fragment.NewsFragment
 import com.habit.app.ui.fragment.SettingFragment
@@ -44,6 +45,7 @@ class MainActivity : BaseActivity() {
 
     private fun initView() {
         Log.d(TAG, "initView")
+        updateUIConfig()
         EMManager.from(binding.bottomShadow)
             .setShadow("#142D0E20", 2f, 0f, -1f)
     }
@@ -112,6 +114,37 @@ class MainActivity : BaseActivity() {
             }
         }
         transaction.commit()
+    }
+
+    private fun updateUIConfig() {
+        binding.tabsMainBottom.setBackgroundColor(ThemeManager.getSkinColor(R.color.page_main_color))
+
+        binding.tabHome.background = ThemeManager.getSkinDrawable(R.drawable.selector_tab_background)
+        binding.tabHome.setTextColor(ThemeManager.getSkinColorStateList(R.drawable.selector_main_tab_text))
+        val drawableTopHome = ThemeManager.getSkinDrawable(R.drawable.tab_drawable_home)
+        binding.tabHome.setCompoundDrawablesWithIntrinsicBounds(null, drawableTopHome, null, null)
+
+        binding.tabNews.background = ThemeManager.getSkinDrawable(R.drawable.selector_tab_background)
+        binding.tabNews.setTextColor(ThemeManager.getSkinColorStateList(R.drawable.selector_main_tab_text))
+        val drawableTopNews = ThemeManager.getSkinDrawable(R.drawable.tab_drawable_news)
+        binding.tabNews.setCompoundDrawablesWithIntrinsicBounds(null, drawableTopNews, null, null)
+
+        binding.tabTag.background = ThemeManager.getSkinDrawable(R.drawable.selector_tab_background)
+        binding.tabTag.setTextColor(ThemeManager.getSkinColorStateList(R.drawable.selector_main_tab_text))
+        val drawableTopTag = ThemeManager.getSkinDrawable(R.drawable.tab_drawable_tag)
+        binding.tabTag.setCompoundDrawablesWithIntrinsicBounds(null, drawableTopTag, null, null)
+
+        binding.tabSetting.background = ThemeManager.getSkinDrawable(R.drawable.selector_tab_background)
+        binding.tabSetting.setTextColor(ThemeManager.getSkinColorStateList(R.drawable.selector_main_tab_text))
+        val drawableTopSetting = ThemeManager.getSkinDrawable(R.drawable.tab_drawable_setting)
+        binding.tabSetting.setCompoundDrawablesWithIntrinsicBounds(null, drawableTopSetting, null, null)
+    }
+
+
+    override fun onThemeChanged(theme: String) {
+        super.onThemeChanged(theme)
+        Log.d(TAG, "activity中 onThemeChanged")
+        updateUIConfig()
     }
 
     override fun onDestroy() {
