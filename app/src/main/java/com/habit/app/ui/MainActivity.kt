@@ -11,7 +11,7 @@ import com.habit.app.databinding.ActivityMainBinding
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.model.TAG
 import com.habit.app.model.db.DBManager
-import com.habit.app.skin.ThemeManager
+import com.habit.app.helper.ThemeManager
 import com.habit.app.ui.fragment.HomeFragment
 import com.habit.app.ui.fragment.NewsFragment
 import com.habit.app.ui.fragment.SettingFragment

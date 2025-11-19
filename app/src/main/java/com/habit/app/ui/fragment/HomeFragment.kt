@@ -11,7 +11,7 @@ import com.habit.app.ui.base.BaseFragment
 import com.habit.app.R
 import com.habit.app.databinding.FragmentHomeBinding
 import com.habit.app.model.TAG
-import com.habit.app.skin.ThemeManager
+import com.habit.app.helper.ThemeManager
 import com.habit.app.ui.item.HomeAccessItem
 import com.habit.app.ui.item.HomeSearchItem
 import com.wyz.emlibrary.em.Direction

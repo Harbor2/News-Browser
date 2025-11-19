@@ -12,7 +12,7 @@ import com.habit.app.helper.DayNightUtil
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.model.TAG
 import com.habit.app.model.db.DBManager
-import com.habit.app.skin.ThemeManager
+import com.habit.app.helper.ThemeManager
 import com.wyz.emlibrary.util.immersiveWindow
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel

@@ -1,5 +1,6 @@
-package com.habit.app.skin
+package com.habit.app.helper
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.AnimationDrawable
@@ -58,7 +59,7 @@ object ThemeManager {
         val key = res to theme
         colorCache[key]?.let { return it }
 
-        val ctx = MyApplication.mContext
+        val ctx = MyApplication.Companion.mContext
         val name = ctx.resources.getResourceEntryName(res)
         val themeResId = ctx.resources.getIdentifier("${theme}_$name", "color", ctx.packageName)
 
@@ -74,7 +75,7 @@ object ThemeManager {
         val key = res to theme
         colorStateListCache[key]?.let { return it }
 
-        val ctx = MyApplication.mContext
+        val ctx = MyApplication.Companion.mContext
         val name = ctx.resources.getResourceEntryName(res)
         val themeResId = ctx.resources.getIdentifier("${theme}_$name", "drawable", ctx.packageName)
 
@@ -87,7 +88,7 @@ object ThemeManager {
     // =================== Drawable（自动判断是否缓存） ===================
 
     fun getSkinDrawable(res: Int, theme: String = curTheme): Drawable? {
-        val ctx = MyApplication.mContext
+        val ctx = MyApplication.Companion.mContext
         val name = ctx.resources.getResourceEntryName(res)
         val themeResId = ctx.resources.getIdentifier("${theme}_$name", "drawable", ctx.packageName)
 
@@ -136,8 +137,9 @@ object ThemeManager {
 
     // =================== SP ===================
 
+    @SuppressLint("UseKtx")
     private fun saveThemeToSp(theme: String) {
-        MyApplication.mContext
+        MyApplication.Companion.mContext
             .getSharedPreferences(SP_NAME, Context.MODE_PRIVATE)
             .edit()
             .putString(KEY_THEME, theme)
@@ -145,7 +147,7 @@ object ThemeManager {
     }
 
     private fun loadThemeFromSp(): String {
-        return MyApplication.mContext
+        return MyApplication.Companion.mContext
             .getSharedPreferences(SP_NAME, Context.MODE_PRIVATE)
             .getString(KEY_THEME, THEME_DEFAULT) ?: THEME_DEFAULT
     }

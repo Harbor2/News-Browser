@@ -3,7 +3,7 @@ package com.habit.app.ui.base
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.habit.app.event.BaseEvent
-import com.habit.app.skin.ThemeManager
+import com.habit.app.helper.ThemeManager
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
