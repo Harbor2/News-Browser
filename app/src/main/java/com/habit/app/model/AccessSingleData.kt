@@ -9,5 +9,9 @@ data class AccessSingleData(
     val linkUrl: String = "",
     var isSpecial: Boolean = false
 ) {
+    /**
+     * 排序索引
+     */
+    var sortIndex: Int = -1
     var isEdit: Boolean = false
 }

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.R
 import com.habit.app.databinding.FragmentHomeBinding
@@ -23,8 +24,12 @@ import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
@@ -35,6 +40,12 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     private var accessList = ArrayList<AccessSingleData>()
     private var newsList = ArrayList<HomeNewsData>()
+
+    /**
+     * 新闻列表是否正在加载中
+     */
+    private var isListLoading = false
+    private var curPage = 1
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater,
@@ -99,17 +110,31 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     private fun initListener() {
         binding.loadingView.setOnClickListener {}
+        binding.swipeRefresh.setOnRefreshListener {
+            refreshData()
+        }
+        binding.recList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!recyclerView.canScrollVertically(1) && !isListLoading) {
+                    // 划到最底部且不是加载状态
+                    loadMoreData()
+                }
+            }
+        })
     }
 
     private fun updateList() {
         val items = ArrayList<AbstractFlexibleItem<*>>()
 
-        items.add(HomeSearchItem(requireContext()))
-        items.add(HomeAccessItem(requireContext(), accessList))
+        items.add(getHomeSearchItem())
+        items.add(getHomeAccessItem())
+
         items.add(HomeNewsHeadItem())
         newsList.forEach { newsData ->
             items.add(HomeNewsCardItem(requireContext(), newsData))
         }
+
         mAdapter.updateDataSet(items)
     }
 
@@ -130,18 +155,57 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     private fun getNewsList(): ArrayList<HomeNewsData> {
         return arrayListOf(
-            HomeNewsData(),
-            HomeNewsData(),
-            HomeNewsData(),
-            HomeNewsData(),
-            HomeNewsData(),
-            HomeNewsData(),
-            HomeNewsData(),
-            HomeNewsData(),
-            HomeNewsData(),
-            HomeNewsData(),
-            HomeNewsData()
+            HomeNewsData(newsTitle = "第1项数据"),
+            HomeNewsData(newsTitle = "第2项数据"),
+            HomeNewsData(newsTitle = "第3项数据"),
+            HomeNewsData(newsTitle = "第4项数据"),
+            HomeNewsData(newsTitle = "第5项数据"),
+            HomeNewsData(newsTitle = "第6项数据"),
+            HomeNewsData(newsTitle = "第7项数据"),
+            HomeNewsData(newsTitle = "第8项数据"),
+            HomeNewsData(newsTitle = "第9项数据"),
+            HomeNewsData(newsTitle = "第10项数据")
         )
+    }
+
+    private fun refreshData() {
+        curPage = 1
+        isListLoading = true
+        mScope.launch(Dispatchers.IO) {
+            delay(2000)
+            newsList = getNewsList()
+            withContext(Dispatchers.Main) {
+                isListLoading = false
+                binding.swipeRefresh.isRefreshing = false
+                updateList()
+            }
+        }
+    }
+
+    private fun loadMoreData() {
+        curPage++
+        isListLoading = true
+        loadingObserver.value = true
+        mScope.launch(Dispatchers.IO) {
+            delay(1500)
+            val moreList = getNewsList()
+            newsList.addAll(moreList)
+            withContext(Dispatchers.Main) {
+                loadingObserver.value = false
+                isListLoading = false
+                updateList()
+            }
+        }
+    }
+
+    private fun getHomeSearchItem(): HomeSearchItem {
+        val existItem = mAdapter.currentItems.filterIsInstance<HomeSearchItem>().firstOrNull()
+        return existItem ?: HomeSearchItem(requireContext())
+    }
+
+    private fun getHomeAccessItem(): HomeAccessItem {
+        val existItem = mAdapter.currentItems.filterIsInstance<HomeAccessItem>().firstOrNull()
+        return existItem ?: HomeAccessItem(requireContext(), accessList)
     }
 
     override fun onThemeChanged(theme: String) {
