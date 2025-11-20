@@ -3,6 +3,7 @@ package com.habit.app.ui.item
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.R
 import com.habit.app.databinding.LayoutItemAccessSingleBinding
@@ -17,8 +18,11 @@ import kotlin.jvm.javaClass
 
 class AccessSingleItem(
     private val context: Context,
-    private val data: AccessSingleData
+    val data: AccessSingleData
 ) : AbstractFlexibleItem<AccessSingleItem.ViewHolder>() {
+
+    var mCallback: SingleItemCallback? = null
+
     class ViewHolder(val binding: LayoutItemAccessSingleBinding, adapter: FlexibleAdapter<*>) : FlexibleViewHolder(binding.root, adapter)
 
     override fun createViewHolder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>): ViewHolder {
@@ -36,12 +40,21 @@ class AccessSingleItem(
         holder.binding.ivIcon.setImageResource(ThemeManager.getSkinImageResId(data.iconRes))
         holder.binding.tvName.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_80))
         holder.binding.tvName.text = data.name
+        holder.binding.ivDelete.isVisible = !data.isSpecial && data.isEdit
 
         holder.itemView.setOnLongClickListener {
+            if (!data.isEdit) {
+                mCallback?.onEnterEdit()
+            }
             val pos = holder.bindingAdapterPosition
             if (pos < 3 || pos == adapter.itemCount - 1) return@setOnLongClickListener false
             (adapter as? FlexibleAdapterWithDrag)?.mItemTouchHelper?.startDrag(holder)
             true
+        }
+
+        // 删除
+        holder.binding.ivDelete.setOnClickListener {
+            mCallback?.onItemClick(this)
         }
     }
 
@@ -55,5 +68,10 @@ class AccessSingleItem(
 
     override fun hashCode(): Int {
         return javaClass.hashCode()
+    }
+
+    interface SingleItemCallback {
+        fun onEnterEdit()
+        fun onItemClick(item: AccessSingleItem)
     }
 }

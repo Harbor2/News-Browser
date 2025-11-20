@@ -6,7 +6,8 @@ package com.habit.app.model
 data class AccessSingleData(
     val iconRes: Int,
     val name: String = "",
-    val linkUrl: String = ""
+    val linkUrl: String = "",
+    var isSpecial: Boolean = false
 ) {
     var isEdit: Boolean = false
 }

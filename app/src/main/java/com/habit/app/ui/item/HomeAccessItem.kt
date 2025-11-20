@@ -3,6 +3,7 @@ package com.habit.app.ui.item
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.R
@@ -14,11 +15,12 @@ import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
+import java.util.Collections
 import kotlin.jvm.javaClass
 
 class HomeAccessItem(
     private val context: Context,
-    private val accessList: List<AccessSingleData>
+    private val accessList: ArrayList<AccessSingleData>
 ) : AbstractFlexibleItem<HomeAccessItem.ViewHolder>() {
 
     class ViewHolder(val binding: LayoutItemHomeAccessBinding, adapter: FlexibleAdapter<*>) : FlexibleViewHolder(binding.root, adapter)
@@ -37,13 +39,42 @@ class HomeAccessItem(
             .setBorderWidth(1f)
             .setBorderRealColor(ThemeManager.getSkinColor(R.color.save_border_color))
             .setTextRealColor(ThemeManager.getSkinColor(R.color.save_text_color))
+        holder.binding.btnSave.isVisible = accessList.firstOrNull()?.isEdit ?: false
 
-        updateRecList(holder.binding.recList)
+        updateRecList(holder.binding.recList, holder.binding.btnSave)
+
+        holder.binding.btnSave.setOnClickListener {
+            accessList.map { it.isEdit = false }
+            val adapter = holder.binding.recList.adapter
+            if (adapter is FlexibleAdapterWithDrag) {
+                holder.binding.btnSave.isVisible = false
+                adapter.updateDataSet(adapter.currentItems)
+            }
+        }
     }
 
-    private fun updateRecList(recList: RecyclerView) {
+    private fun updateRecList(recList: RecyclerView, btnSave: View) {
         val items = ArrayList<IFlexible<*>>()
-        val mAdapter = FlexibleAdapterWithDrag(items)
+        val mAdapter = FlexibleAdapterWithDrag(items) { fromPos, toPos ->
+            Collections.swap(accessList, fromPos, toPos)
+        }
+
+        val singleItemCallback = object : AccessSingleItem.SingleItemCallback {
+            override fun onEnterEdit() {
+                btnSave.isVisible = true
+                accessList.map { it.isEdit = true }
+                mAdapter.updateDataSet(items)
+            }
+
+            override fun onItemClick(item: AccessSingleItem) {
+                val index = accessList.indexOf(item.data)
+                if (index != -1) {
+                    mAdapter.removeItem(index)
+                    accessList.removeAt(index)
+                }
+            }
+        }
+
         with(recList) {
             setHasFixedSize(true)
             this.adapter = mAdapter
@@ -51,7 +82,9 @@ class HomeAccessItem(
             layoutManager = GridLayoutManager(context, 5)
         }
         accessList.forEach {
-            items.add(AccessSingleItem(context, it))
+            items.add(AccessSingleItem(context, it).apply {
+                this.mCallback = singleItemCallback
+            })
         }
         mAdapter.updateDataSet(items)
     }
