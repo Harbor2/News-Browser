@@ -43,9 +43,7 @@ class HomeAccessItem(
 
     private fun updateRecList(recList: RecyclerView) {
         val items = ArrayList<IFlexible<*>>()
-        val mAdapter = FlexibleAdapterWithDrag(items) {fromPos, toPos ->
-
-        }
+        val mAdapter = FlexibleAdapterWithDrag(items)
         with(recList) {
             setHasFixedSize(true)
             this.adapter = mAdapter

@@ -1,7 +1,9 @@
 package com.habit.app.ui.item
 
+import android.util.Log
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.habit.app.model.TAG
 
 class FlexibleItemTouchHelperCallback(
     private val adapter: FlexibleAdapterWithDrag
@@ -32,4 +34,14 @@ class FlexibleItemTouchHelperCallback(
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+
+    override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+        super.onSelectedChanged(viewHolder, actionState)
+        Log.d(TAG, "开始拖动监听")
+    }
+
+    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        super.clearView(recyclerView, viewHolder)
+        Log.d(TAG, "结束拖动监听")
+    }
 }

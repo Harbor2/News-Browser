@@ -47,6 +47,7 @@
     <color name="text_main_color_80">#CC0E0B1F</color>
     <color name="save_border_color">#4D0051FF</color>
     <color name="save_text_color">#0051FF</color>
+    <color name="save_text_color_60">#990051FF</color>
 
     <color name="home_top_bg_start">#E3F1FF</color>
     <color name="home_top_bg_end">#FFFFFF</color>

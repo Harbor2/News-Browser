@@ -13,7 +13,10 @@ import com.habit.app.databinding.FragmentHomeBinding
 import com.habit.app.model.TAG
 import com.habit.app.helper.ThemeManager
 import com.habit.app.model.AccessSingleData
+import com.habit.app.model.HomeNewsData
 import com.habit.app.ui.item.HomeAccessItem
+import com.habit.app.ui.item.HomeNewsCardItem
+import com.habit.app.ui.item.HomeNewsHeadItem
 import com.habit.app.ui.item.HomeSearchItem
 import com.wyz.emlibrary.em.Direction
 import com.wyz.emlibrary.em.EMManager
@@ -31,6 +34,7 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
     private val mAdapter = FlexibleAdapter<AbstractFlexibleItem<*>>(null)
 
     private var accessList = listOf<AccessSingleData>()
+    private var newsList = listOf<HomeNewsData>()
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater,
@@ -89,6 +93,7 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     private fun initData() {
         accessList = getAccessList()
+        newsList = getNewsList()
         updateList()
     }
 
@@ -101,6 +106,10 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
         items.add(HomeSearchItem(requireContext()))
         items.add(HomeAccessItem(requireContext(), accessList))
+        items.add(HomeNewsHeadItem())
+        newsList.forEach { newsData ->
+            items.add(HomeNewsCardItem(requireContext(), newsData))
+        }
         mAdapter.updateDataSet(items)
     }
 
@@ -116,6 +125,22 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
             AccessSingleData(R.drawable.iv_access_single_facebook, getString(R.string.text_facebook)),
             AccessSingleData(R.drawable.iv_access_single_amazon, getString(R.string.text_amazon)),
             AccessSingleData(R.drawable.iv_access_single_add, getString(R.string.text_add))
+        )
+    }
+
+    private fun getNewsList(): List<HomeNewsData> {
+        return listOf(
+            HomeNewsData(),
+            HomeNewsData(),
+            HomeNewsData(),
+            HomeNewsData(),
+            HomeNewsData(),
+            HomeNewsData(),
+            HomeNewsData(),
+            HomeNewsData(),
+            HomeNewsData(),
+            HomeNewsData(),
+            HomeNewsData()
         )
     }
 
