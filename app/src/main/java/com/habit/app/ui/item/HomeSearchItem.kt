@@ -6,6 +6,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.R
 import com.habit.app.databinding.LayoutItemHomeSearchBinding
+import com.habit.app.helper.ThemeManager
 import com.wyz.emlibrary.em.EMManager
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
@@ -28,10 +29,12 @@ class HomeSearchItem(
                                 holder: ViewHolder,
                                 position: Int,
                                 payloads: MutableList<Any>?) {
+        holder.binding.ivSearchSound.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_search_sound))
+        holder.binding.ivSearchScan.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_search_scan))
         EMManager.from(holder.binding.containerArea)
             .setCorner(21f)
             .setBorderWidth(1f)
-            .setBorderColor(R.color.text_main_color_30)
+            .setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_30))
     }
 
     override fun equals(other: Any?): Boolean {

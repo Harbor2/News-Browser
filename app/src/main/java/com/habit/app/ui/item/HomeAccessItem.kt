@@ -1,14 +1,14 @@
 package com.habit.app.ui.item
 
-import android.R.attr.animation
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.R
 import com.habit.app.databinding.LayoutItemHomeAccessBinding
+import com.habit.app.helper.ThemeManager
+import com.habit.app.model.AccessSingleData
 import com.wyz.emlibrary.em.EMManager
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
@@ -17,7 +17,8 @@ import eu.davidea.viewholders.FlexibleViewHolder
 import kotlin.jvm.javaClass
 
 class HomeAccessItem(
-    private val context: Context
+    private val context: Context,
+    private val accessList: List<AccessSingleData>
 ) : AbstractFlexibleItem<HomeAccessItem.ViewHolder>() {
 
     class ViewHolder(val binding: LayoutItemHomeAccessBinding, adapter: FlexibleAdapter<*>) : FlexibleViewHolder(binding.root, adapter)
@@ -34,20 +35,26 @@ class HomeAccessItem(
         EMManager.from(holder.binding.btnSave)
             .setCorner(18f)
             .setBorderWidth(1f)
-            .setBorderColor(R.color.btn_color_30)
+            .setBorderRealColor(ThemeManager.getSkinColor(R.color.save_border_color))
+            .setTextRealColor(ThemeManager.getSkinColor(R.color.save_text_color))
 
         updateRecList(holder.binding.recList)
     }
 
     private fun updateRecList(recList: RecyclerView) {
-        val mAdapter = FlexibleAdapter<AbstractFlexibleItem<*>>(null)
+        val items = ArrayList<IFlexible<*>>()
+        val mAdapter = FlexibleAdapterWithDrag(items) {fromPos, toPos ->
+
+        }
         with(recList) {
             setHasFixedSize(true)
             this.adapter = mAdapter
             animation = null
             layoutManager = GridLayoutManager(context, 5)
         }
-        val items = ArrayList<AbstractFlexibleItem<*>>()
+        accessList.forEach {
+            items.add(AccessSingleItem(context, it))
+        }
         mAdapter.updateDataSet(items)
     }
 

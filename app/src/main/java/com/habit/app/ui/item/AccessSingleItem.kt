@@ -1,14 +1,14 @@
 package com.habit.app.ui.item
 
 import android.annotation.SuppressLint
-import android.view.MotionEvent
+import android.content.Context
 import android.view.View
-import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.habit.app.R
 import com.habit.app.databinding.LayoutItemAccessSingleBinding
-import com.wyz.emlibrary.util.EMUtil
+import com.habit.app.helper.ThemeManager
+import com.habit.app.model.AccessSingleData
+import com.wyz.emlibrary.em.EMManager
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
@@ -16,24 +16,13 @@ import eu.davidea.viewholders.FlexibleViewHolder
 import kotlin.jvm.javaClass
 
 class AccessSingleItem(
-    private val height: Float
+    private val context: Context,
+    private val data: AccessSingleData
 ) : AbstractFlexibleItem<AccessSingleItem.ViewHolder>() {
-
-    var mCallback: (() -> Unit)? = null
     class ViewHolder(val binding: LayoutItemAccessSingleBinding, adapter: FlexibleAdapter<*>) : FlexibleViewHolder(binding.root, adapter)
 
     override fun createViewHolder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>): ViewHolder {
         return ViewHolder(LayoutItemAccessSingleBinding.bind(view), adapter)
-    }
-
-    override fun onViewAttached(
-        adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>?,
-        holder: ViewHolder,
-        position: Int
-    ) {
-        super.onViewAttached(adapter, holder, position)
-        val layoutParams = holder.itemView.layoutParams as? StaggeredGridLayoutManager.LayoutParams
-        layoutParams?.isFullSpan = true
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -41,13 +30,17 @@ class AccessSingleItem(
                                 holder: ViewHolder,
                                 position: Int,
                                 payloads: MutableList<Any>?) {
-        val params = holder.binding.holderView.layoutParams as FrameLayout.LayoutParams
-        params.topMargin = EMUtil.dp2px(height).toInt()
+        EMManager.from(holder.binding.ivIconBg)
+            .setCorner(24f)
+            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+        holder.binding.ivIcon.setImageResource(ThemeManager.getSkinImageResId(data.iconRes))
+        holder.binding.tvName.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_80))
+        holder.binding.tvName.text = data.name
 
-        holder.binding.root.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                mCallback?.invoke()
-            }
+        holder.itemView.setOnLongClickListener {
+            val pos = holder.bindingAdapterPosition
+            if (pos < 3 || pos == adapter.itemCount - 1) return@setOnLongClickListener false
+            (adapter as? FlexibleAdapterWithDrag)?.mItemTouchHelper?.startDrag(holder)
             true
         }
     }

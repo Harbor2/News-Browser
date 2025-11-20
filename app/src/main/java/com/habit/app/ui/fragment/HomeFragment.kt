@@ -12,6 +12,7 @@ import com.habit.app.R
 import com.habit.app.databinding.FragmentHomeBinding
 import com.habit.app.model.TAG
 import com.habit.app.helper.ThemeManager
+import com.habit.app.model.AccessSingleData
 import com.habit.app.ui.item.HomeAccessItem
 import com.habit.app.ui.item.HomeSearchItem
 import com.wyz.emlibrary.em.Direction
@@ -26,7 +27,10 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     private val mScope = MainScope()
     private val loadingObserver = MutableLiveData(false)
+    private val traceObserver = MutableLiveData(false)
     private val mAdapter = FlexibleAdapter<AbstractFlexibleItem<*>>(null)
+
+    private var accessList = listOf<AccessSingleData>()
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater,
@@ -49,6 +53,11 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
     private fun initView() {
         updateUIConfig()
 
+        traceObserver.observe(requireActivity()) { value ->
+            binding.btnNaviTrace.setImageResource(
+                ThemeManager.getSkinImageResId(if (value) R.drawable.iv_search_trace else R.drawable.iv_search_untrace)
+            )
+        }
         loadingObserver.observe(requireActivity()) { value ->
             binding.loadingView.visibility = if (value) View.VISIBLE else View.GONE
         }
@@ -62,16 +71,24 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
     }
 
     private fun updateUIConfig() {
-        val pageColor = ThemeManager.getSkinColor(R.color.page_main_color)
-        val startColor = ThemeManager.getSkinColor(R.color.home_top_bg_start)
-        val endColor = ThemeManager.getSkinColor(R.color.home_top_bg_end)
-        Log.d(TAG, "fragment中color $pageColor $startColor $endColor")
-        binding.root.setBackgroundColor(pageColor)
+        binding.btnNaviTrace.setImageResource(
+            ThemeManager.getSkinImageResId(if (traceObserver.value!!) R.drawable.iv_search_trace else R.drawable.iv_search_untrace)
+        )
+        binding.root.setBackgroundColor(ThemeManager.getSkinColor(R.color.page_main_color))
         EMManager.from(binding.bgTop)
-            .setGradientRealColor(intArrayOf(startColor, endColor), Direction.TOP)
+            .setGradientRealColor(
+                intArrayOf(
+                    ThemeManager.getSkinColor(R.color.home_top_bg_start),
+                    ThemeManager.getSkinColor(R.color.home_top_bg_end)
+                ), Direction.TOP
+            )
+        mAdapter.currentItems.forEach { item ->
+            mAdapter.updateItem(item, "update")
+        }
     }
 
     private fun initData() {
+        accessList = getAccessList()
         updateList()
     }
 
@@ -83,8 +100,23 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
         val items = ArrayList<AbstractFlexibleItem<*>>()
 
         items.add(HomeSearchItem(requireContext()))
-        items.add(HomeAccessItem(requireContext()))
+        items.add(HomeAccessItem(requireContext(), accessList))
         mAdapter.updateDataSet(items)
+    }
+
+    private fun getAccessList(): List<AccessSingleData> {
+        return listOf(
+            AccessSingleData(R.drawable.iv_access_single_file, getString(R.string.text_file)),
+            AccessSingleData(R.drawable.iv_access_single_game, getString(R.string.text_game)),
+            AccessSingleData(R.drawable.iv_access_single_bookmark, getString(R.string.text_bookmark)),
+            AccessSingleData(R.drawable.iv_access_single_instagram, getString(R.string.text_instagram)),
+            AccessSingleData(R.drawable.iv_access_single_tiktok, getString(R.string.text_tiktok)),
+            AccessSingleData(R.drawable.iv_access_single_youtube, getString(R.string.text_youtube)),
+            AccessSingleData(R.drawable.iv_access_single_twitter, getString(R.string.text_twitter)),
+            AccessSingleData(R.drawable.iv_access_single_facebook, getString(R.string.text_facebook)),
+            AccessSingleData(R.drawable.iv_access_single_amazon, getString(R.string.text_amazon)),
+            AccessSingleData(R.drawable.iv_access_single_add, getString(R.string.text_add))
+        )
     }
 
     override fun onThemeChanged(theme: String) {

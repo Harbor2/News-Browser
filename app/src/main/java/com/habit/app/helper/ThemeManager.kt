@@ -120,6 +120,14 @@ object ThemeManager {
                 drawable is AnimationDrawable
     }
 
+    // =================== 图片res 相关 ===================
+
+    fun getSkinImageResId(res: Int, theme: String = curTheme): Int {
+        val ctx = MyApplication.Companion.mContext
+        val name = ctx.resources.getResourceEntryName(res)
+        val themeResId = ctx.resources.getIdentifier("${theme}_$name", "drawable", ctx.packageName)
+        return if (themeResId != 0) themeResId else res
+    }
 
     // =================== Listener ===================
 

@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:overScrollMode="never"
-        android:scrollbars="none"
-        android:layout_marginBottom="12dp"/>
+        android:scrollbars="none" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/btn_save"
@@ -23,5 +22,5 @@
         android:textSize="13sp"
         android:textColor="@color/btn_color"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="4dp" />
+        android:layout_marginBottom="8dp"/>
 </LinearLayout>
