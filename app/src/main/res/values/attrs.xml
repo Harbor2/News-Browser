@@ -5,4 +5,10 @@
         <attr name="egsIcon" format="reference"/>
         <attr name="egsSelect" format="boolean"/>
     </declare-styleable>
+
+    <declare-styleable name="AccessSelectItem">
+        <attr name="asiIcon" format="reference"/>
+        <attr name="asiTitle" format="string"/>
+        <attr name="asiSelect" format="boolean"/>
+    </declare-styleable>
 </resources>

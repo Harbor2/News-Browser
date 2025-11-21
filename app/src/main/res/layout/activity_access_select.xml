@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/page_main_color">
+
+    <FrameLayout
+        android:id="@+id/container_navi"
+        android:layout_width="match_parent"
+        android:layout_height="52dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_navi_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/iv_navi_back"
+            android:paddingStart="20dp"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_navi_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_navigation"
+            android:textSize="16sp"
+            android:textColor="@color/text_main_color"
+            android:fontFamily="@font/gotham_m"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="56dp"/>
+    </FrameLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/container_lin_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_social_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_main_color_70"
+                android:textSize="14sp"
+                android:text="@string/text_social_contact"
+                android:fontFamily="@font/gotham_m"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="20dp"/>
+            <LinearLayout
+                android:id="@+id/container_line1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="14dp">
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_instagram"
+                    android:tag="@string/text_instagram"
+                    app:asiTitle="@string/text_instagram"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_facebook"
+                    android:tag="@string/text_facebook"
+                    app:asiTitle="@string/text_facebook"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_reddit"
+                    android:tag="@string/text_reddit"
+                    app:asiTitle="@string/text_reddit"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_pinterest"
+                    android:tag="@string/text_pinterest"
+                    app:asiTitle="@string/text_pinterest"
+                    android:layout_marginHorizontal="2dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/container_line2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="14dp">
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_whatsapp"
+                    android:tag="@string/text_whatsapp"
+                    app:asiTitle="@string/text_whatsapp"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_twitter"
+                    android:tag="@string/text_twitter"
+                    app:asiTitle="@string/text_twitter"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_snapchat"
+                    android:tag="@string/text_snapchat"
+                    app:asiTitle="@string/text_snapchat"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="2dp"/>
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_video_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_main_color_70"
+                android:textSize="14sp"
+                android:text="@string/text_video"
+                android:fontFamily="@font/gotham_m"
+                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="20dp"/>
+            <LinearLayout
+                android:id="@+id/container_line3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="14dp">
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_netflix"
+                    android:tag="@string/text_netflix"
+                    app:asiTitle="@string/text_netflix"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_youtube"
+                    android:tag="@string/text_youtube"
+                    app:asiTitle="@string/text_youtube"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_vimeo"
+                    android:tag="@string/text_vimeo"
+                    app:asiTitle="@string/text_vimeo"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_dailymotion"
+                    android:tag="@string/text_dailymotion"
+                    app:asiTitle="@string/text_dailymotion"
+                    android:layout_marginHorizontal="2dp"/>
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_news_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_main_color_70"
+                android:textSize="14sp"
+                android:text="@string/text_news"
+                android:fontFamily="@font/gotham_m"
+                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="20dp"/>
+            <LinearLayout
+                android:id="@+id/container_line4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="14dp">
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_cnn"
+                    android:tag="@string/text_cnn"
+                    app:asiTitle="@string/text_cnn"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_foxnews"
+                    android:tag="@string/text_fox_news"
+                    app:asiTitle="@string/text_fox_news"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_nytimes"
+                    android:tag="@string/text_nytimes"
+                    app:asiTitle="@string/text_nytimes"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_nbcnews"
+                    android:tag="@string/text_nbc_news"
+                    app:asiTitle="@string/text_nbc_news"
+                    android:layout_marginHorizontal="2dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/container_line5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="14dp">
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_cbc"
+                    android:tag="@string/text_cbc"
+                    app:asiTitle="@string/text_cbc"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_espn"
+                    android:tag="@string/text_espn"
+                    app:asiTitle="@string/text_espn"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_marca"
+                    android:tag="@string/text_marca"
+                    app:asiTitle="@string/text_marca"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_tools"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_main_color_70"
+                android:textSize="14sp"
+                android:text="@string/text_tools"
+                android:fontFamily="@font/gotham_m"
+                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="20dp"/>
+            <LinearLayout
+                android:id="@+id/container_line6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="14dp">
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_chatgpt"
+                    android:tag="@string/text_chatgpt"
+                    app:asiTitle="@string/text_chatgpt"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_linkedin"
+                    android:tag="@string/text_linkedin"
+                    app:asiTitle="@string/text_linkedin"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_wikipedia"
+                    android:tag="@string/text_wikipedia"
+                    app:asiTitle="@string/text_wikipedia"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_news_entertainment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_main_color_70"
+                android:textSize="14sp"
+                android:text="@string/text_entertainment"
+                android:fontFamily="@font/gotham_m"
+                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="20dp"/>
+            <LinearLayout
+                android:id="@+id/container_line7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="14dp">
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_tiktok"
+                    android:tag="@string/text_tiktok"
+                    app:asiTitle="@string/text_tiktok"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_twitch"
+                    android:tag="@string/text_twitch"
+                    app:asiTitle="@string/text_twitch"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_tumblr"
+                    android:tag="@string/text_tumblr"
+                    app:asiTitle="@string/text_tumblr"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_hulu"
+                    android:tag="@string/text_hulu"
+                    app:asiTitle="@string/text_hulu"
+                    android:layout_marginHorizontal="2dp"/>
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_news_music"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_main_color_70"
+                android:textSize="14sp"
+                android:text="@string/text_music"
+                android:fontFamily="@font/gotham_m"
+                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="20dp"/>
+            <LinearLayout
+                android:id="@+id/container_line8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="14dp">
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_vevo"
+                    android:tag="@string/text_vevo"
+                    app:asiTitle="@string/text_vevo"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_spotify"
+                    android:tag="@string/text_spotify"
+                    app:asiTitle="@string/text_spotify"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_news_shopping"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_main_color_70"
+                android:textSize="14sp"
+                android:text="@string/text_shopping"
+                android:fontFamily="@font/gotham_m"
+                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="20dp"/>
+            <LinearLayout
+                android:id="@+id/container_line9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="14dp">
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_amazon"
+                    android:tag="@string/text_amazon"
+                    app:asiTitle="@string/text_amazon"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_ebay"
+                    android:tag="@string/text_ebay"
+                    app:asiTitle="@string/text_ebay"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_shopee"
+                    android:tag="@string/text_shopee"
+                    app:asiTitle="@string/text_shopee"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_lazada"
+                    android:tag="@string/text_lazada"
+                    app:asiTitle="@string/text_lazada"
+                    android:layout_marginHorizontal="2dp"/>
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_news_sports"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_main_color_70"
+                android:textSize="14sp"
+                android:text="@string/text_sports"
+                android:fontFamily="@font/gotham_m"
+                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="20dp"/>
+            <LinearLayout
+                android:id="@+id/container_line10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="14dp">
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_fantasy"
+                    android:tag="@string/text_fantasy"
+                    app:asiTitle="@string/text_fantasy"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_yahoosports"
+                    android:tag="@string/text_yahoo_sports"
+                    app:asiTitle="@string/text_yahoo_sports"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_wwe"
+                    android:tag="@string/text_wwe"
+                    app:asiTitle="@string/text_wwe"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_cricbuzz"
+                    android:tag="@string/text_cricbuzz"
+                    app:asiTitle="@string/text_cricbuzz"
+                    android:layout_marginHorizontal="2dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/container_line11"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="14dp">
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_flashscore"
+                    android:tag="@string/text_flashscore"
+                    app:asiTitle="@string/text_flashscore"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_goal"
+                    android:tag="@string/text_goal"
+                    app:asiTitle="@string/text_goal"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_livescore"
+                    android:tag="@string/text_livescore"
+                    app:asiTitle="@string/text_livescore"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_news_travel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_main_color_70"
+                android:textSize="14sp"
+                android:text="@string/text_travel"
+                android:fontFamily="@font/gotham_m"
+                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="20dp"/>
+            <LinearLayout
+                android:id="@+id/container_line12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="14dp">
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_airbnb"
+                    android:tag="@string/text_airbnb"
+                    app:asiTitle="@string/text_airbnb"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_booking"
+                    android:tag="@string/text_booking"
+                    app:asiTitle="@string/text_booking"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_tripadvisor"
+                    android:tag="@string/text_tripadvisor"
+                    app:asiTitle="@string/text_tripadvisor"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_news_healthy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_main_color_70"
+                android:textSize="14sp"
+                android:text="@string/text_Healthy"
+                android:fontFamily="@font/gotham_m"
+                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="20dp"/>
+            <LinearLayout
+                android:id="@+id/container_line13"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="14dp">
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_drugs"
+                    android:tag="@string/text_drugs"
+                    app:asiTitle="@string/text_drugs"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_tnation"
+                    android:tag="@string/text_tnation"
+                    app:asiTitle="@string/text_tnation"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_who"
+                    android:tag="@string/text_who"
+                    app:asiTitle="@string/text_who"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_healthline"
+                    android:tag="@string/text_healthline"
+                    app:asiTitle="@string/text_healthline"
+                    android:layout_marginHorizontal="2dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/container_line14"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginHorizontal="14dp">
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_bodybuilding"
+                    android:tag="@string/text_bodybuilding"
+                    app:asiTitle="@string/text_bodybuilding"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <com.habit.app.ui.custom.AccessSelectItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:asiSelect="false"
+                    app:asiIcon="@drawable/iv_access_single_kidshealth"
+                    android:tag="@string/text_kids_health"
+                    app:asiTitle="@string/text_kids_health"
+                    android:layout_marginHorizontal="2dp"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

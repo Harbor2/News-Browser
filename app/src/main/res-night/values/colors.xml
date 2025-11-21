@@ -4,6 +4,7 @@
     <color name="t_night_view_bg_color">#1E1C2D</color>
     <color name="t_night_text_main_color">#FFFFFF</color>
     <color name="t_night_text_main_color_30">#4DFFFFFF</color>
+    <color name="t_night_text_main_color_70">#B3FFFFFF</color>
     <color name="t_night_text_main_color_80">#CCFFFFFF</color>
 
     <color name="t_night_save_border_color">#4DFFFFFF</color>

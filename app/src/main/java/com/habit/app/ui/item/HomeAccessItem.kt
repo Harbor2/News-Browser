@@ -21,7 +21,8 @@ import kotlin.jvm.javaClass
 
 class HomeAccessItem(
     private val context: Context,
-    private val accessList: ArrayList<AccessSingleData>
+    var accessList: ArrayList<AccessSingleData>,
+    private val callback: HomeAccessItemCallback
 ) : AbstractFlexibleItem<HomeAccessItem.ViewHolder>() {
 
     class ViewHolder(val binding: LayoutItemHomeAccessBinding, adapter: FlexibleAdapter<*>) : FlexibleViewHolder(binding.root, adapter)
@@ -76,12 +77,16 @@ class HomeAccessItem(
                 mAdapter.updateDataSet(items)
             }
 
-            override fun onItemClick(item: AccessSingleItem) {
+            override fun onItemDelete(item: AccessSingleItem) {
                 val index = accessList.indexOf(item.data)
                 if (index != -1) {
                     mAdapter.removeItem(index)
                     accessList.removeAt(index)
                 }
+            }
+
+            override fun onItemClick(item: AccessSingleItem) {
+                callback.onAccessOpen(item.data)
             }
         }
 
@@ -109,5 +114,9 @@ class HomeAccessItem(
 
     override fun hashCode(): Int {
         return javaClass.hashCode()
+    }
+
+    interface HomeAccessItemCallback {
+        fun onAccessOpen(data: AccessSingleData)
     }
 }

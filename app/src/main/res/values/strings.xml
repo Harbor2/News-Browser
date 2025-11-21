@@ -18,6 +18,7 @@
     <string name="toast_record_not_time">It\'s not time yet</string>
     <string name="toast_pic_saved">Photo already saved</string>
     <string name="toast_pic_not_support">Picture not support</string>
+    <string name="toast_can_not_add_more">Can not add more</string>
 
     <string name="text_get_started_big">GET STARTED</string>
     <string name="text_home">Home</string>
@@ -96,5 +97,6 @@
     <string name="text_engine_duckduck">Duckduck</string>
     <string name="text_engine_yandex">Yandex</string>
     <string name="text_engine_baidu">Baidu</string>
+    <string name="text_navigation">Navigation</string>
 
 </resources>

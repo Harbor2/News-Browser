@@ -115,4 +115,59 @@ object UtilHelper {
                 isSpecial = true }
         )
     }
+
+    /**
+     * 获取全部Access列表
+     */
+    fun getAllAccessList(context: Context): ArrayList<AccessSingleData> {
+        return arrayListOf(
+            AccessSingleData("iv_access_single_instagram", context.getString(R.string.text_instagram), ""),
+            AccessSingleData("iv_access_single_facebook", context.getString(R.string.text_facebook), ""),
+            AccessSingleData("iv_access_single_reddit", context.getString(R.string.text_reddit), ""),
+            AccessSingleData("iv_access_single_pinterest", context.getString(R.string.text_pinterest), ""),
+            AccessSingleData("iv_access_single_whatsapp", context.getString(R.string.text_whatsapp), ""),
+            AccessSingleData("iv_access_single_twitter", context.getString(R.string.text_twitter), ""),
+            AccessSingleData("iv_access_single_snapchat", context.getString(R.string.text_snapchat), ""),
+            AccessSingleData("iv_access_single_netflix", context.getString(R.string.text_netflix), ""),
+            AccessSingleData("iv_access_single_youtube", context.getString(R.string.text_youtube), ""),
+            AccessSingleData("iv_access_single_vimeo", context.getString(R.string.text_vimeo), ""),
+            AccessSingleData("iv_access_single_dailymotion", context.getString(R.string.text_dailymotion), ""),
+            AccessSingleData("iv_access_single_cnn", context.getString(R.string.text_cnn), ""),
+            AccessSingleData("iv_access_single_foxnews", context.getString(R.string.text_fox_news), ""),
+            AccessSingleData("iv_access_single_nytimes", context.getString(R.string.text_nytimes), ""),
+            AccessSingleData("iv_access_single_nbcnews", context.getString(R.string.text_nbc_news), ""),
+            AccessSingleData("iv_access_single_cbc", context.getString(R.string.text_cbc), ""),
+            AccessSingleData("iv_access_single_espn", context.getString(R.string.text_espn), ""),
+            AccessSingleData("iv_access_single_marca", context.getString(R.string.text_marca), ""),
+            AccessSingleData("iv_access_single_chatgpt", context.getString(R.string.text_chatgpt), ""),
+            AccessSingleData("iv_access_single_linkedin", context.getString(R.string.text_linkedin), ""),
+            AccessSingleData("iv_access_single_wikipedia", context.getString(R.string.text_wikipedia), ""),
+            AccessSingleData("iv_access_single_tiktok", context.getString(R.string.text_tiktok), ""),
+            AccessSingleData("iv_access_single_twitch", context.getString(R.string.text_twitch), ""),
+            AccessSingleData("iv_access_single_tumblr", context.getString(R.string.text_tumblr), ""),
+            AccessSingleData("iv_access_single_hulu", context.getString(R.string.text_hulu), ""),
+            AccessSingleData("iv_access_single_vevo", context.getString(R.string.text_vevo), ""),
+            AccessSingleData("iv_access_single_spotify", context.getString(R.string.text_spotify), ""),
+            AccessSingleData("iv_access_single_amazon", context.getString(R.string.text_amazon), ""),
+            AccessSingleData("iv_access_single_ebay", context.getString(R.string.text_ebay), ""),
+            AccessSingleData("iv_access_single_shopee", context.getString(R.string.text_shopee), ""),
+            AccessSingleData("iv_access_single_lazada", context.getString(R.string.text_lazada), ""),
+            AccessSingleData("iv_access_single_fantasy", context.getString(R.string.text_fantasy), ""),
+            AccessSingleData("iv_access_single_yahoosports", context.getString(R.string.text_yahoo_sports), ""),
+            AccessSingleData("iv_access_single_wwe", context.getString(R.string.text_wwe), ""),
+            AccessSingleData("iv_access_single_cricbuzz", context.getString(R.string.text_cricbuzz), ""),
+            AccessSingleData("iv_access_single_flashscore", context.getString(R.string.text_flashscore), ""),
+            AccessSingleData("iv_access_single_goal", context.getString(R.string.text_goal), ""),
+            AccessSingleData("iv_access_single_livescore", context.getString(R.string.text_livescore), ""),
+            AccessSingleData("iv_access_single_airbnb", context.getString(R.string.text_airbnb), ""),
+            AccessSingleData("iv_access_single_booking", context.getString(R.string.text_booking), ""),
+            AccessSingleData("iv_access_single_tripadvisor", context.getString(R.string.text_tripadvisor), ""),
+            AccessSingleData("iv_access_single_drugs", context.getString(R.string.text_drugs), ""),
+            AccessSingleData("iv_access_single_tnation", context.getString(R.string.text_tnation), ""),
+            AccessSingleData("iv_access_single_who", context.getString(R.string.text_who), ""),
+            AccessSingleData("iv_access_single_healthline", context.getString(R.string.text_healthline), ""),
+            AccessSingleData("iv_access_single_bodybuilding", context.getString(R.string.text_bodybuilding), ""),
+            AccessSingleData("iv_access_single_kidshealth", context.getString(R.string.text_kids_health), ""),
+        )
+    }
 }

@@ -1,10 +1,13 @@
 package com.habit.app.ui.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +23,7 @@ import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.model.AccessSingleData
 import com.habit.app.model.HomeNewsData
+import com.habit.app.ui.AccessSelectActivity
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.habit.app.ui.item.HomeAccessItem
 import com.habit.app.ui.item.HomeNewsCardItem
@@ -55,6 +59,19 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
     private var curPage = 1
 
     /**
+     * 添加access item回调
+     */
+    private val accessAddLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            accessList = getAccessList()
+            mAdapter.currentItems.filterIsInstance<HomeAccessItem>().firstOrNull()?.let {
+                it.accessList = accessList
+                mAdapter.updateItem(it)
+            }
+        }
+    }
+
+    /**
      * 搜索item回调
      */
     private val searchItemCallback = object : HomeSearchItem.HomeSearchItemCallback {
@@ -68,6 +85,15 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
         override fun onScanSelect() {
 
+        }
+    }
+
+    /**
+     * access item 回调
+     */
+    private val accessItemCallback = object : HomeAccessItem.HomeAccessItemCallback {
+        override fun onAccessOpen(data: AccessSingleData) {
+            processAccessClick(data)
         }
     }
 
@@ -220,6 +246,24 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
         SearchEngineDialog.tryShowDialog(requireActivity())
     }
 
+    /**
+     * 处理 access item点击
+     */
+    private fun processAccessClick(data: AccessSingleData) {
+        if (data.isSpecial) {
+            when (data.iconResName) {
+                "iv_access_single_file" -> {}
+                "iv_access_single_game" -> {}
+                "iv_access_single_bookmark" -> {}
+                "iv_access_single_add" -> {
+                    accessAddLauncher.launch(Intent(requireContext(), AccessSelectActivity::class.java))
+                }
+            }
+        } else {
+            // 打开webview
+        }
+    }
+
     private fun getHomeSearchItem(): HomeSearchItem {
         val existItem = mAdapter.currentItems.filterIsInstance<HomeSearchItem>().firstOrNull()
         return existItem ?: HomeSearchItem(requireContext(), searchItemCallback)
@@ -227,7 +271,7 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     private fun getHomeAccessItem(): HomeAccessItem {
         val existItem = mAdapter.currentItems.filterIsInstance<HomeAccessItem>().firstOrNull()
-        return existItem ?: HomeAccessItem(requireContext(), ArrayList(accessList.sortedBy { it.sortIndex }))
+        return existItem ?: HomeAccessItem(requireContext(), ArrayList(accessList.sortedBy { it.sortIndex }), accessItemCallback)
     }
 
     override fun onThemeChanged(theme: String) {

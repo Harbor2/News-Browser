@@ -53,9 +53,12 @@ class AccessSingleItem(
             true
         }
 
+        holder.itemView.setOnClickListener {
+            mCallback?.onItemClick(this)
+        }
         // 删除
         holder.binding.ivDelete.setOnClickListener {
-            mCallback?.onItemClick(this)
+            mCallback?.onItemDelete(this)
         }
     }
 
@@ -74,5 +77,7 @@ class AccessSingleItem(
     interface SingleItemCallback {
         fun onEnterEdit()
         fun onItemClick(item: AccessSingleItem)
+
+        fun onItemDelete(item: AccessSingleItem)
     }
 }
