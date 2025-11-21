@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.R
 import com.habit.app.databinding.LayoutItemAccessSingleBinding
 import com.habit.app.helper.ThemeManager
+import com.habit.app.helper.UtilHelper
 import com.habit.app.model.AccessSingleData
 import com.wyz.emlibrary.em.EMManager
 import eu.davidea.flexibleadapter.FlexibleAdapter
@@ -37,7 +38,7 @@ class AccessSingleItem(
         EMManager.from(holder.binding.ivIconBg)
             .setCorner(24f)
             .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.view_bg_color))
-        holder.binding.ivIcon.setImageResource(ThemeManager.getSkinImageResId(data.iconRes))
+        holder.binding.ivIcon.setImageResource(ThemeManager.getSkinImageResId(UtilHelper.getResIdByName(context, data.iconResName)))
         holder.binding.tvName.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_80))
         holder.binding.tvName.text = data.name
         holder.binding.ivDelete.isVisible = !data.isSpecial && data.isEdit

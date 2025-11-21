@@ -7,7 +7,7 @@ import eu.davidea.flexibleadapter.items.IFlexible
 
 class FlexibleAdapterWithDrag(
     items: List<IFlexible<*>> = mutableListOf(),
-    private val onItemMoved: (fromPos: Int, toPos: Int) -> Unit = { _, _ -> }
+    private val callback: (FlexibleAdapterWithDrag) -> Unit = { }
 ) : FlexibleAdapter<IFlexible<*>>(items)  {
 
     var mItemTouchHelper: ItemTouchHelper? = null
@@ -36,13 +36,15 @@ class FlexibleAdapterWithDrag(
             }
 
             // 拖动回调
-            override fun onItemMove(fromPosition: Int, toPosition: Int) {
-                onItemMoved(fromPosition, toPosition)
-            }
+            override fun onItemMove(fromPosition: Int, toPosition: Int) {}
         })
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
         return super.onItemMove(fromPosition, toPosition)
+    }
+
+    fun onEndDrag() {
+        callback.invoke(this)
     }
 }

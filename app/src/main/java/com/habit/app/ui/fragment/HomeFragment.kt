@@ -8,12 +8,16 @@ import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.reflect.TypeToken
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.R
 import com.habit.app.databinding.FragmentHomeBinding
 import com.habit.app.event.EngineChangedEvent
+import com.habit.app.helper.GsonUtil
+import com.habit.app.helper.KeyValueManager
 import com.habit.app.model.TAG
 import com.habit.app.helper.ThemeManager
+import com.habit.app.helper.UtilHelper
 import com.habit.app.model.AccessSingleData
 import com.habit.app.model.HomeNewsData
 import com.habit.app.ui.dialog.SearchEngineDialog
@@ -159,18 +163,12 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
     }
 
     private fun getAccessList(): ArrayList<AccessSingleData> {
-        return arrayListOf(
-            AccessSingleData(R.drawable.iv_access_single_file, getString(R.string.text_file), "", true),
-            AccessSingleData(R.drawable.iv_access_single_game, getString(R.string.text_game), "", true),
-            AccessSingleData(R.drawable.iv_access_single_bookmark, getString(R.string.text_bookmark), "", true),
-            AccessSingleData(R.drawable.iv_access_single_instagram, getString(R.string.text_instagram)),
-            AccessSingleData(R.drawable.iv_access_single_tiktok, getString(R.string.text_tiktok)),
-            AccessSingleData(R.drawable.iv_access_single_youtube, getString(R.string.text_youtube)),
-            AccessSingleData(R.drawable.iv_access_single_twitter, getString(R.string.text_twitter)),
-            AccessSingleData(R.drawable.iv_access_single_facebook, getString(R.string.text_facebook)),
-            AccessSingleData(R.drawable.iv_access_single_amazon, getString(R.string.text_amazon)),
-            AccessSingleData(R.drawable.iv_access_single_add, getString(R.string.text_add), "", true)
-        )
+        val cacheAccessStr = KeyValueManager.getValueByKey(KeyValueManager.KEY_HOME_ACCESS_INFO) ?: ""
+        return if (cacheAccessStr.isEmpty()) {
+            UtilHelper.getDefaultHomeAccessList(requireContext())
+        } else {
+            GsonUtil.gson.fromJson(cacheAccessStr, object : TypeToken<ArrayList<AccessSingleData>>() {}.type)
+        }
     }
 
     private fun getNewsList(): ArrayList<HomeNewsData> {
@@ -229,7 +227,7 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     private fun getHomeAccessItem(): HomeAccessItem {
         val existItem = mAdapter.currentItems.filterIsInstance<HomeAccessItem>().firstOrNull()
-        return existItem ?: HomeAccessItem(requireContext(), accessList)
+        return existItem ?: HomeAccessItem(requireContext(), ArrayList(accessList.sortedBy { it.sortIndex }))
     }
 
     override fun onThemeChanged(theme: String) {

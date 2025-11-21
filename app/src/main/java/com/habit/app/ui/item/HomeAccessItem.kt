@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.R
 import com.habit.app.databinding.LayoutItemHomeAccessBinding
+import com.habit.app.helper.GsonUtil
+import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
 import com.habit.app.model.AccessSingleData
 import com.wyz.emlibrary.em.EMManager
@@ -15,7 +17,6 @@ import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
-import java.util.Collections
 import kotlin.jvm.javaClass
 
 class HomeAccessItem(
@@ -44,19 +45,28 @@ class HomeAccessItem(
         updateRecList(holder.binding.recList, holder.binding.btnSave)
 
         holder.binding.btnSave.setOnClickListener {
-            accessList.map { it.isEdit = false }
+            accessList.map {
+                it.isEdit = false
+                it.sortIndex = accessList.indexOf(it)
+            }
             val adapter = holder.binding.recList.adapter
             if (adapter is FlexibleAdapterWithDrag) {
                 holder.binding.btnSave.isVisible = false
                 adapter.updateDataSet(adapter.currentItems)
             }
+            // 保存排序结果
+            KeyValueManager.saveValueWithKey(KeyValueManager.KEY_HOME_ACCESS_INFO, GsonUtil.gson.toJson(accessList))
         }
     }
 
     private fun updateRecList(recList: RecyclerView, btnSave: View) {
         val items = ArrayList<IFlexible<*>>()
-        val mAdapter = FlexibleAdapterWithDrag(items) { fromPos, toPos ->
-            Collections.swap(accessList, fromPos, toPos)
+        val mAdapter = FlexibleAdapterWithDrag(items) { adapter->
+            adapter.currentItems.map {
+                val item = it as AccessSingleItem
+                item.data.sortIndex = adapter.currentItems.indexOf(item)
+            }
+            accessList.sortBy { it.sortIndex }
         }
 
         val singleItemCallback = object : AccessSingleItem.SingleItemCallback {
