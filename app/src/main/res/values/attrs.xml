@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    <declare-styleable name="SubScheduleItem">-->
-<!--        <attr name="subTitle" format="string"/>-->
-<!--        <attr name="subSelect" format="boolean"/>-->
-<!--        <attr name="subSingle" format="boolean"/>-->
-<!--    </declare-styleable>-->
+    <declare-styleable name="EngineSelectItem">
+        <attr name="egsTitle" format="string"/>
+        <attr name="egsIcon" format="reference"/>
+        <attr name="egsSelect" format="boolean"/>
+    </declare-styleable>
 </resources>

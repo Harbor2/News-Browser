@@ -10,6 +10,8 @@ object KeyValueManager {
     const val KEY_ENTERED_HOME = "key_entered_home"
     const val KEY_NIGHT_MODE = "key_night_mode"
 
+    const val KEY_ENGINE_SELECT = "key_engine_select"
+
     fun saveBooleanValue(key: String, value: Boolean) {
         DBManager.getDao().updateKeyValue(key, if (value) STR_NUM_ONE else STR_NUM_ZERO)
     }

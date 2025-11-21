@@ -26,6 +26,7 @@
                 android:src="@drawable/iv_engine_icon_google" />
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_engine_icon_arrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/iv_engine_select_arrow"

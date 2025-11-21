@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.R
 import com.habit.app.databinding.FragmentHomeBinding
+import com.habit.app.event.EngineChangedEvent
 import com.habit.app.model.TAG
 import com.habit.app.helper.ThemeManager
 import com.habit.app.model.AccessSingleData
 import com.habit.app.model.HomeNewsData
+import com.habit.app.ui.dialog.SearchEngineDialog
 import com.habit.app.ui.item.HomeAccessItem
 import com.habit.app.ui.item.HomeNewsCardItem
 import com.habit.app.ui.item.HomeNewsHeadItem
@@ -30,6 +32,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.greenrobot.eventbus.Subscribe
 
 class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
@@ -46,6 +49,23 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
      */
     private var isListLoading = false
     private var curPage = 1
+
+    /**
+     * 搜索item回调
+     */
+    private val searchItemCallback = object : HomeSearchItem.HomeSearchItemCallback {
+        override fun onEngineSelect() {
+            showEngineSelectDialog()
+        }
+
+        override fun onMicrophoneSelect() {
+
+        }
+
+        override fun onScanSelect() {
+
+        }
+    }
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater,
@@ -198,9 +218,13 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
         }
     }
 
+    private fun showEngineSelectDialog() {
+        SearchEngineDialog.tryShowDialog(requireActivity())
+    }
+
     private fun getHomeSearchItem(): HomeSearchItem {
         val existItem = mAdapter.currentItems.filterIsInstance<HomeSearchItem>().firstOrNull()
-        return existItem ?: HomeSearchItem(requireContext())
+        return existItem ?: HomeSearchItem(requireContext(), searchItemCallback)
     }
 
     private fun getHomeAccessItem(): HomeAccessItem {
@@ -212,6 +236,13 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
         super.onThemeChanged(theme)
         Log.d(TAG, "fragment中 onThemeChanged")
         updateUIConfig()
+    }
+
+    @Subscribe
+    fun onEngineChangedEvent(event: EngineChangedEvent) {
+        mAdapter.currentItems.filterIsInstance<HomeSearchItem>().firstOrNull()?.let {
+            mAdapter.updateItem(it)
+        }
     }
 
     override fun onDestroy() {
