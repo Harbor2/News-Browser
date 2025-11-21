@@ -24,6 +24,7 @@ import com.habit.app.helper.UtilHelper
 import com.habit.app.model.AccessSingleData
 import com.habit.app.model.HomeNewsData
 import com.habit.app.ui.AccessSelectActivity
+import com.habit.app.ui.SearchActivity
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.habit.app.ui.item.HomeAccessItem
 import com.habit.app.ui.item.HomeNewsCardItem
@@ -75,6 +76,10 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
      * 搜索item回调
      */
     private val searchItemCallback = object : HomeSearchItem.HomeSearchItemCallback {
+        override fun onSearch() {
+            SearchActivity.startActivity(requireContext())
+        }
+
         override fun onEngineSelect() {
             showEngineSelectDialog()
         }

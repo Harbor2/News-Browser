@@ -41,12 +41,16 @@ class HomeSearchItem(
         holder.binding.ivSearchSound.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_search_sound))
         holder.binding.ivSearchScan.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_search_scan))
         holder.binding.ivEngineIconArrow.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_engine_select_arrow))
+        holder.binding.tvHint.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_30))
         updateEngineIcon(holder.binding.ivEngineIcon)
         EMManager.from(holder.binding.containerArea)
             .setCorner(21f)
             .setBorderWidth(1f)
             .setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_30))
 
+        holder.binding.containerArea.setOnClickListener {
+            callback.onSearch()
+        }
         holder.binding.ivEngineIcon.setOnClickListener {
             callback.onEngineSelect()
         }
@@ -84,6 +88,7 @@ class HomeSearchItem(
     }
 
     interface HomeSearchItemCallback {
+        fun onSearch()
         fun onEngineSelect()
         fun onMicrophoneSelect()
         fun onScanSelect()

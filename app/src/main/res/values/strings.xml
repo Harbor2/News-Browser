@@ -98,5 +98,11 @@
     <string name="text_engine_yandex">Yandex</string>
     <string name="text_engine_baidu">Baidu</string>
     <string name="text_navigation">Navigation</string>
-
+    <string name="text_cancel">Cancel</string>
+    <string name="text_search">Search</string>
+    <string name="text_www">www.</string>
+    <string name="text_com">.com</string>
+    <string name="text_cn">.cn</string>
+    <string name="text_point">.</string>
+    <string name="text_slash">/</string>
 </resources>

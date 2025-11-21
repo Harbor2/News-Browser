@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/page_main_color">
+
+    <FrameLayout
+        android:id="@+id/container_navi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="18dp">
+
+            <FrameLayout
+                android:id="@+id/container_area"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="79dp">
+
+                <FrameLayout
+                    android:id="@+id/container_engine_select"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_gravity="center_vertical">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_engine_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/iv_engine_icon_google" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_engine_icon_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/iv_engine_select_arrow"
+                        android:layout_gravity="end|bottom"/>
+                </FrameLayout>
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edit_input"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_main_color"
+                    android:textColorHint="@color/text_main_color_30"
+                    android:textSize="14sp"
+                    android:hint="@string/text_search_point"
+                    android:background="@null"
+                    android:fontFamily="@font/gotham_r"
+                    android:layout_gravity="center_vertical"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:layout_marginStart="48dp" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_search_sound"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/iv_search_sound"
+                    android:layout_marginEnd="16dp"
+                    android:layout_gravity="center_vertical|end"/>
+            </FrameLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_search_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_cancel"
+                android:textSize="14sp"
+                android:textColor="@color/text_main_color_50"
+                android:fontFamily="@font/gotham_r"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginEnd="16dp"/>
+        </FrameLayout>
+    </FrameLayout>
+
+    <!-- 热词 历史记录 -->
+    <LinearLayout
+        android:id="@+id/container_topic_history"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/container_navi"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+
+    </LinearLayout>
+
+    <!-- 联想词 -->
+    <LinearLayout
+        android:id="@+id/container_think"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/container_navi"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!-- 底部工具条 -->
+    <LinearLayout
+        android:id="@+id/bottom_tool"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/tv_wwww"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_main_color"
+            android:textSize="14sp"
+            android:tag="@string/text_www"
+            android:text="@string/text_www"
+            android:fontFamily="@font/gotham_r"
+            android:paddingVertical="1dp"
+            android:paddingHorizontal="6dp"
+            android:layout_marginStart="16dp"/>
+
+        <TextView
+            android:id="@+id/tv_com"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_main_color"
+            android:textSize="14sp"
+            android:text="@string/text_com"
+            android:tag="@string/text_com"
+            android:fontFamily="@font/gotham_r"
+            android:paddingVertical="1dp"
+            android:paddingHorizontal="6dp"
+            android:layout_marginStart="12dp"/>
+
+        <TextView
+            android:id="@+id/tv_cn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_main_color"
+            android:textSize="14sp"
+            android:text="@string/text_cn"
+            android:tag="@string/text_cn"
+            android:fontFamily="@font/gotham_r"
+            android:paddingVertical="1dp"
+            android:paddingHorizontal="6dp"
+            android:layout_marginStart="12dp"/>
+
+        <TextView
+            android:id="@+id/tv_point"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_main_color"
+            android:textSize="14sp"
+            android:text="@string/text_point"
+            android:tag="@string/text_point"
+            android:fontFamily="@font/gotham_r"
+            android:paddingVertical="1dp"
+            android:paddingHorizontal="6dp"
+            android:layout_marginStart="12dp"/>
+
+        <TextView
+            android:id="@+id/tv_slash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_main_color"
+            android:textSize="14sp"
+            android:text="@string/text_slash"
+            android:tag="@string/text_slash"
+            android:fontFamily="@font/gotham_r"
+            android:paddingVertical="1dp"
+            android:paddingHorizontal="6dp"
+            android:layout_marginStart="12dp"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
