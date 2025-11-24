@@ -77,7 +77,7 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
      */
     private val searchItemCallback = object : HomeSearchItem.HomeSearchItemCallback {
         override fun onSearch() {
-            SearchActivity.startActivity(requireContext())
+            SearchActivity.startActivity(requireContext(), true)
         }
 
         override fun onEngineSelect() {

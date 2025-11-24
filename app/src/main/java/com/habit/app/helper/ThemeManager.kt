@@ -35,6 +35,8 @@ object ThemeManager {
 
     fun getCurTheme() = curTheme
 
+    fun isNightTheme() = curTheme == THEME_NIGHT
+
     fun switchTheme(newTheme: String) {
         if (newTheme == curTheme) return
         curTheme = newTheme

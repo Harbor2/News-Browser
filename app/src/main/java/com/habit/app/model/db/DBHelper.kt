@@ -14,6 +14,10 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     override fun onCreate(db: SQLiteDatabase) {
         // 创建数据库表
         db.execSQL(DBConstant.CREATE_KEY_VALUE_TABLE)
+        db.execSQL(DBConstant.CREATE_TAB_TABLE)
+        db.execSQL(DBConstant.CREATE_HISTORY_TABLE)
+        db.execSQL(DBConstant.CREATE_BOOKMARK_TABLE)
+        db.execSQL(DBConstant.CREATE_FOLDER_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {

@@ -3,6 +3,10 @@ package com.habit.app.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.lifecycle.MutableLiveData
 import com.habit.app.R
@@ -16,9 +20,12 @@ import com.habit.app.model.ENGINE_DUCKDUCK
 import com.habit.app.model.ENGINE_GOOGLE
 import com.habit.app.model.ENGINE_YAHOO
 import com.habit.app.model.ENGINE_YANDEX
+import com.habit.app.model.TAG
 import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.wyz.emlibrary.em.EMManager
+import com.wyz.emlibrary.util.EMUtil
+import com.wyz.emlibrary.util.SoftKeyboardHelper
 import com.wyz.emlibrary.util.immersiveWindow
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -30,6 +37,16 @@ import org.greenrobot.eventbus.Subscribe
 class SearchActivity : BaseActivity() {
     private lateinit var binding: ActivitySearchBinding
     private val mScope = MainScope()
+    private lateinit var softKeyboardHelper: SoftKeyboardHelper
+    private val keyboardListener = object : SoftKeyboardHelper.OnSoftKeyBoardChangeListener {
+        override fun keyBoardHide(height: Int) {
+            adjustBottomTool(0)
+        }
+
+        override fun keyBoardShow(height: Int) {
+            adjustBottomTool(height)
+        }
+    }
 
     private val cancelObserver = MutableLiveData(true)
 
@@ -38,6 +55,7 @@ class SearchActivity : BaseActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
         immersiveWindow(binding.root, false, binding.containerNavi)
+        softKeyboardHelper = SoftKeyboardHelper()
 
         initView()
         initData()
@@ -46,6 +64,9 @@ class SearchActivity : BaseActivity() {
 
     private fun initView() {
         updateUIConfig()
+        if (hasFocus) {
+            EMUtil.showSoftKeyboard(binding.editInput, this)
+        }
 
         cancelObserver.observe(this) { value ->
             binding.tvSearchCancel.text = getString(if (value) R.string.text_cancel else R.string.text_search)
@@ -60,6 +81,8 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initListener() {
+        softKeyboardHelper.addKeyboardListener(this, keyboardListener)
+
         binding.tvSearchCancel.setOnClickListener {
             if (cancelObserver.value!!) {
                 finish()
@@ -69,6 +92,21 @@ class SearchActivity : BaseActivity() {
         }
         binding.ivEngineIcon.setOnClickListener {
             showEngineSelectDialog()
+        }
+        binding.bottomTool.forEach { child ->
+            child.setOnClickListener {
+                val tagStr = child.tag as? String
+                if (child is TextView && !tagStr.isNullOrEmpty()) {
+                    Log.d(TAG, "点击tool文案：$tagStr")
+                }
+            }
+        }
+    }
+
+    private fun adjustBottomTool(height: Int) {
+        (binding.bottomTool.layoutParams as? ViewGroup.MarginLayoutParams)?.apply {
+            bottomMargin = height
+            binding.bottomTool.layoutParams = this
         }
     }
 
@@ -122,11 +160,14 @@ class SearchActivity : BaseActivity() {
 
     override fun onDestroy() {
         mScope.cancel()
+        softKeyboardHelper.removeKeyboardListener(this)
         super.onDestroy()
     }
 
     companion object {
-        fun startActivity(context: Context) {
+        private var hasFocus: Boolean = false
+        fun startActivity(context: Context, focus: Boolean = false) {
+            this.hasFocus = focus
             context.startActivity(Intent(context, SearchActivity::class.java))
         }
     }
