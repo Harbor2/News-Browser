@@ -3,6 +3,8 @@ package com.habit.app.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.TextView
@@ -88,7 +90,7 @@ class SearchActivity : BaseActivity() {
                 finish()
                 return@setOnClickListener
             }
-
+            WebViewSearchActivity.startActivity(this)
         }
         binding.ivEngineIcon.setOnClickListener {
             showEngineSelectDialog()
@@ -101,6 +103,13 @@ class SearchActivity : BaseActivity() {
                 }
             }
         }
+        binding.editInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                cancelObserver.value = s.isNullOrEmpty()
+            }
+        })
     }
 
     private fun adjustBottomTool(height: Int) {
