@@ -1,18 +1,20 @@
-package com.habit.app.ui
+package com.habit.app.ui.fragment
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import com.habit.app.R
-import com.habit.app.databinding.ActivitySearchBinding
+import com.habit.app.databinding.FragmentHistoryBinding
 import com.habit.app.event.EngineChangedEvent
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
@@ -23,22 +25,23 @@ import com.habit.app.model.ENGINE_GOOGLE
 import com.habit.app.model.ENGINE_YAHOO
 import com.habit.app.model.ENGINE_YANDEX
 import com.habit.app.model.TAG
-import com.habit.app.ui.base.BaseActivity
+import com.habit.app.ui.SearchViewModel
+import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
 import com.wyz.emlibrary.util.SoftKeyboardHelper
-import com.wyz.emlibrary.util.immersiveWindow
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.Subscribe
 
-/**
- * 搜索Activity
- */
-class SearchActivity : BaseActivity() {
-    private lateinit var binding: ActivitySearchBinding
+class HistoryFragment() : BaseFragment<FragmentHistoryBinding>() {
+
     private val mScope = MainScope()
+    private val viewModel: SearchViewModel by activityViewModels()
+    var mCallback: HistoryFragmentCallback? = null
+    private var inputAutoHasFocus: Boolean = false
     private lateinit var softKeyboardHelper: SoftKeyboardHelper
     private val keyboardListener = object : SoftKeyboardHelper.OnSoftKeyBoardChangeListener {
         override fun keyBoardHide(height: Int) {
@@ -49,28 +52,35 @@ class SearchActivity : BaseActivity() {
             adjustBottomTool(height)
         }
     }
-
     private val cancelObserver = MutableLiveData(true)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        immersiveWindow(binding.root, false, binding.containerNavi)
+    override fun onCreateViewBinding(
+        inflater: LayoutInflater,
+        parent: ViewGroup?
+    ): FragmentHistoryBinding {
+        return FragmentHistoryBinding.inflate(inflater, parent, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (binding.containerNavi.layoutParams as? ViewGroup.MarginLayoutParams)?.apply {
+            topMargin = EMUtil.getStatusBarHeight(requireContext())
+        }
         softKeyboardHelper = SoftKeyboardHelper()
 
         initView()
         initData()
+        setupObserver()
         initListener()
     }
 
     private fun initView() {
         updateUIConfig()
-        if (hasFocus) {
-            EMUtil.showSoftKeyboard(binding.editInput, this)
+        if (inputAutoHasFocus) {
+            EMUtil.showSoftKeyboard(binding.editInput, requireContext())
         }
 
-        cancelObserver.observe(this) { value ->
+        cancelObserver.observe(requireActivity()) { value ->
             binding.tvSearchCancel.text = getString(if (value) R.string.text_cancel else R.string.text_search)
             binding.tvSearchCancel.setTextColor(ThemeManager.getSkinColor(if (value) R.color.text_main_color_30 else R.color.btn_color))
             binding.containerTopicHistory.isVisible = value
@@ -79,18 +89,18 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initData() {
-
+        viewModel.loadHistory()
     }
 
     private fun initListener() {
-        softKeyboardHelper.addKeyboardListener(this, keyboardListener)
+        softKeyboardHelper.addKeyboardListener(requireActivity(), keyboardListener)
 
         binding.tvSearchCancel.setOnClickListener {
             if (cancelObserver.value!!) {
-                finish()
+                requireActivity().finish()
                 return@setOnClickListener
             }
-            WebViewSearchActivity.startActivity(this)
+            mCallback?.onSearch()
         }
         binding.ivEngineIcon.setOnClickListener {
             showEngineSelectDialog()
@@ -106,17 +116,48 @@ class SearchActivity : BaseActivity() {
         binding.editInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                cancelObserver.value = s.isNullOrEmpty()
+            override fun afterTextChanged(s: Editable) {
+                viewModel.setEditInput(s.toString())
+                cancelObserver.value = s.isEmpty()
             }
         })
     }
 
+    private fun setupObserver() {
+        lifecycleScope.launch {
+            viewModel.searchHistory.collect { historyList ->
+                Log.d(TAG, "searchHistory: $historyList")
+            }
+        }
+    }
+
+    fun setFocus(focus: Boolean) {
+        this.inputAutoHasFocus = focus
+    }
+
     private fun adjustBottomTool(height: Int) {
+        if (!isFragmentSelect) return
         (binding.bottomTool.layoutParams as? ViewGroup.MarginLayoutParams)?.apply {
             bottomMargin = height
             binding.bottomTool.layoutParams = this
         }
+    }
+
+    private fun showEngineSelectDialog() {
+        SearchEngineDialog.Companion.tryShowDialog(requireActivity())
+    }
+
+    fun updateEngineIcon() {
+        val iconRes = when (KeyValueManager.getValueByKey(KeyValueManager.KEY_ENGINE_SELECT) ?: ENGINE_GOOGLE) {
+            ENGINE_GOOGLE -> R.drawable.iv_engine_icon_google
+            ENGINE_BING -> R.drawable.iv_engine_icon_bing
+            ENGINE_YAHOO -> R.drawable.iv_engine_icon_yahoo
+            ENGINE_DUCKDUCK -> R.drawable.iv_engine_icon_duckduck
+            ENGINE_YANDEX -> R.drawable.iv_engine_icon_yandex
+            ENGINE_BAIDU -> R.drawable.iv_engine_icon_baidu
+            else -> R.drawable.iv_engine_icon_google
+        }
+        binding.ivEngineIcon.setImageResource(iconRes)
     }
 
     private fun updateUIConfig() {
@@ -140,26 +181,9 @@ class SearchActivity : BaseActivity() {
         EMManager.from(binding.tvSlash).setCorner(4f).setBorderWidth(1f).setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_10))
     }
 
-    private fun showEngineSelectDialog() {
-        SearchEngineDialog.tryShowDialog(this)
-    }
-
-    fun updateEngineIcon() {
-        val iconRes = when (KeyValueManager.getValueByKey(KeyValueManager.KEY_ENGINE_SELECT) ?: ENGINE_GOOGLE) {
-            ENGINE_GOOGLE -> R.drawable.iv_engine_icon_google
-            ENGINE_BING -> R.drawable.iv_engine_icon_bing
-            ENGINE_YAHOO -> R.drawable.iv_engine_icon_yahoo
-            ENGINE_DUCKDUCK -> R.drawable.iv_engine_icon_duckduck
-            ENGINE_YANDEX -> R.drawable.iv_engine_icon_yandex
-            ENGINE_BAIDU -> R.drawable.iv_engine_icon_baidu
-            else -> R.drawable.iv_engine_icon_google
-        }
-        binding.ivEngineIcon.setImageResource(iconRes)
-    }
-
     override fun onThemeChanged(theme: String) {
         super.onThemeChanged(theme)
-        updateUIConfig()
+
     }
 
     @Subscribe
@@ -169,15 +193,11 @@ class SearchActivity : BaseActivity() {
 
     override fun onDestroy() {
         mScope.cancel()
-        softKeyboardHelper.removeKeyboardListener(this)
+        softKeyboardHelper.removeKeyboardListener(requireActivity())
         super.onDestroy()
     }
 
-    companion object {
-        private var hasFocus: Boolean = false
-        fun startActivity(context: Context, focus: Boolean = false) {
-            this.hasFocus = focus
-            context.startActivity(Intent(context, SearchActivity::class.java))
-        }
+    interface HistoryFragmentCallback {
+        fun onSearch()
     }
 }
