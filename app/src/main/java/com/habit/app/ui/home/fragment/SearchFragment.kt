@@ -14,8 +14,6 @@ import com.habit.app.helper.ThemeManager
 import com.habit.app.viewmodel.home.SearchViewModel
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlin.getValue
 
@@ -45,10 +43,6 @@ class SearchFragment() : BaseFragment<FragmentSearchBinding>() {
 
     private fun initView() {
         updateUIConfig()
-
-        loadingObserver.observe(requireActivity()) { value ->
-            binding.loadingView.visibility = if (value) View.VISIBLE else View.GONE
-        }
     }
 
     private fun initData() {
@@ -60,12 +54,11 @@ class SearchFragment() : BaseFragment<FragmentSearchBinding>() {
     }
 
     private fun setupObserver() {
+        loadingObserver.observe(requireActivity()) { value ->
+            binding.loadingView.visibility = if (value) View.VISIBLE else View.GONE
+        }
         viewModel.input.observe(viewLifecycleOwner) { inputStr ->
             binding.editInput.setText(inputStr)
-        }
-
-        lifecycleScope.launch {
-
         }
     }
 
@@ -79,6 +72,14 @@ class SearchFragment() : BaseFragment<FragmentSearchBinding>() {
             .setCorner(18f)
             .setBorderWidth(1f)
             .setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_30))
+        EMManager.from(binding.containerBottom)
+            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+        binding.btnBottomBack.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_page_back))
+        binding.btnBottomNext.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_page_next))
+        binding.btnBottomHome.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_page_home))
+        binding.btnBottomContainerNum.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_page_container_num))
+        binding.tvBottomTabNum.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
+        binding.btnBottomMenu.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_page_menu))
     }
 
     override fun onThemeChanged(theme: String) {
