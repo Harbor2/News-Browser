@@ -9,7 +9,7 @@ import com.habit.app.R
 import com.habit.app.databinding.LayoutItemAccessSingleBinding
 import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
-import com.habit.app.model.AccessSingleData
+import com.habit.app.data.model.AccessSingleData
 import com.wyz.emlibrary.em.EMManager
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem

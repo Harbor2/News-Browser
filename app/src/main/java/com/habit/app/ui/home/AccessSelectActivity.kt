@@ -1,4 +1,4 @@
-package com.habit.app.ui
+package com.habit.app.ui.home
 
 import android.content.Context
 import android.content.Intent
@@ -15,7 +15,7 @@ import com.habit.app.helper.GsonUtil
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
-import com.habit.app.model.AccessSingleData
+import com.habit.app.data.model.AccessSingleData
 import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.custom.AccessSelectItem
 import com.wyz.emlibrary.em.EMManager

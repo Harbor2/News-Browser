@@ -1,4 +1,4 @@
-package com.habit.app.ui
+package com.habit.app.ui.home
 
 import android.content.Context
 import android.content.Intent

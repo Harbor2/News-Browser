@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.R
 import com.habit.app.databinding.LayoutItemHomeNewsCardBinding
 import com.habit.app.helper.ThemeManager
-import com.habit.app.model.HomeNewsData
+import com.habit.app.data.model.HomeNewsData
 import com.wyz.emlibrary.em.EMManager
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem

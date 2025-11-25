@@ -1,4 +1,4 @@
-package com.habit.app.ui.fragment
+package com.habit.app.ui.home.fragment
 
 import android.app.Activity
 import android.content.Intent
@@ -18,13 +18,13 @@ import com.habit.app.databinding.FragmentHomeBinding
 import com.habit.app.event.EngineChangedEvent
 import com.habit.app.helper.GsonUtil
 import com.habit.app.helper.KeyValueManager
-import com.habit.app.model.TAG
+import com.habit.app.data.TAG
 import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
-import com.habit.app.model.AccessSingleData
-import com.habit.app.model.HomeNewsData
-import com.habit.app.ui.AccessSelectActivity
-import com.habit.app.ui.SearchActivity2
+import com.habit.app.data.model.AccessSingleData
+import com.habit.app.data.model.HomeNewsData
+import com.habit.app.ui.home.AccessSelectActivity
+import com.habit.app.ui.home.SearchActivity2
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.habit.app.ui.item.HomeAccessItem
 import com.habit.app.ui.item.HomeNewsCardItem

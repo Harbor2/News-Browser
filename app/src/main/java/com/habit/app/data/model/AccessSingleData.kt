@@ -1,4 +1,4 @@
-package com.habit.app.model
+package com.habit.app.data.model
 
 /**
  * home首页快速导航item

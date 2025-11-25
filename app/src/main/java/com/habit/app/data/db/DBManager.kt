@@ -1,8 +1,8 @@
-package com.habit.app.model.db
+package com.habit.app.data.db
 
 import android.content.Context
 import android.util.Log
-import com.habit.app.model.TAG
+import com.habit.app.data.TAG
 
 object DBManager {
     private lateinit var dbHelper: DBHelper

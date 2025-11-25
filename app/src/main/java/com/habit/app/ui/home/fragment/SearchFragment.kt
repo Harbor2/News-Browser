@@ -1,4 +1,4 @@
-package com.habit.app.ui.fragment
+package com.habit.app.ui.home.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import com.habit.app.R
 import com.habit.app.databinding.FragmentSearchBinding
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.helper.ThemeManager
-import com.habit.app.ui.SearchViewModel
+import com.habit.app.viewmodel.home.SearchViewModel
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
 import kotlinx.coroutines.MainScope
@@ -21,7 +21,6 @@ import kotlin.getValue
 
 class SearchFragment() : BaseFragment<FragmentSearchBinding>() {
 
-    private val mScope = MainScope()
     private val loadingObserver = MutableLiveData(false)
     private val viewModel: SearchViewModel by activityViewModels()
 
@@ -88,7 +87,6 @@ class SearchFragment() : BaseFragment<FragmentSearchBinding>() {
     }
 
     override fun onDestroy() {
-        mScope.cancel()
         super.onDestroy()
     }
 }

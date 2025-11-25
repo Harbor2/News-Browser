@@ -1,4 +1,4 @@
-package com.habit.app.model
+package com.habit.app.data
 
 const val TAG = "NEWS_BROWSER"
 const val TAG_TEST = "NEWS_BROWSER_TEST"

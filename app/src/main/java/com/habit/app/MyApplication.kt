@@ -2,7 +2,7 @@ package com.habit.app
 
 import android.app.Application
 import com.wyz.emlibrary.em.EMLibrary
-import com.habit.app.model.db.DBManager
+import com.habit.app.data.db.DBManager
 
 class MyApplication : Application() {
     companion object {

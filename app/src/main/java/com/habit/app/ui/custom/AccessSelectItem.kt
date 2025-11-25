@@ -8,7 +8,7 @@ import androidx.core.content.withStyledAttributes
 import com.habit.app.R
 import com.habit.app.databinding.LayoutAccessSelectItemBinding
 import com.habit.app.helper.ThemeManager
-import com.habit.app.model.AccessSingleData
+import com.habit.app.data.model.AccessSingleData
 import com.wyz.emlibrary.em.EMManager
 
 class AccessSelectItem @JvmOverloads constructor(

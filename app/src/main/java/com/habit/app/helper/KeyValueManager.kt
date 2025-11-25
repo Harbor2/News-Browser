@@ -1,6 +1,6 @@
 package com.habit.app.helper
 
-import com.habit.app.model.db.DBManager
+import com.habit.app.data.db.DBManager
 
 object KeyValueManager {
 

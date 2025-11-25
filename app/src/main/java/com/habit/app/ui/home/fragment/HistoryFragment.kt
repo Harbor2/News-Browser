@@ -1,4 +1,4 @@
-package com.habit.app.ui.fragment
+package com.habit.app.ui.home.fragment
 
 import android.os.Bundle
 import android.text.Editable
@@ -18,14 +18,14 @@ import com.habit.app.databinding.FragmentHistoryBinding
 import com.habit.app.event.EngineChangedEvent
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
-import com.habit.app.model.ENGINE_BAIDU
-import com.habit.app.model.ENGINE_BING
-import com.habit.app.model.ENGINE_DUCKDUCK
-import com.habit.app.model.ENGINE_GOOGLE
-import com.habit.app.model.ENGINE_YAHOO
-import com.habit.app.model.ENGINE_YANDEX
-import com.habit.app.model.TAG
-import com.habit.app.ui.SearchViewModel
+import com.habit.app.data.ENGINE_BAIDU
+import com.habit.app.data.ENGINE_BING
+import com.habit.app.data.ENGINE_DUCKDUCK
+import com.habit.app.data.ENGINE_GOOGLE
+import com.habit.app.data.ENGINE_YAHOO
+import com.habit.app.data.ENGINE_YANDEX
+import com.habit.app.data.TAG
+import com.habit.app.viewmodel.home.SearchViewModel
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.wyz.emlibrary.em.EMManager
@@ -38,7 +38,6 @@ import org.greenrobot.eventbus.Subscribe
 
 class HistoryFragment() : BaseFragment<FragmentHistoryBinding>() {
 
-    private val mScope = MainScope()
     private val viewModel: SearchViewModel by activityViewModels()
     var mCallback: HistoryFragmentCallback? = null
     private var inputAutoHasFocus: Boolean = false
@@ -192,7 +191,6 @@ class HistoryFragment() : BaseFragment<FragmentHistoryBinding>() {
     }
 
     override fun onDestroy() {
-        mScope.cancel()
         softKeyboardHelper.removeKeyboardListener(requireActivity())
         super.onDestroy()
     }

@@ -36,22 +36,22 @@
         </provider>
 
 
-        <activity android:name=".ui.WebViewSearchActivity"
+        <activity android:name=".ui.home.WebViewSearchActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
             tools:ignore="LockedOrientationActivity"/>
-        <activity android:name=".ui.SearchActivity2"
+        <activity android:name=".ui.home.SearchActivity2"
             android:exported="false"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
             tools:ignore="LockedOrientationActivity"/>
-        <activity android:name=".ui.AccessSelectActivity"
+        <activity android:name=".ui.home.AccessSelectActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
             tools:ignore="LockedOrientationActivity"/>
-        <activity android:name=".ui.TagsActivity"
+        <activity android:name=".ui.tag.TagsActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"

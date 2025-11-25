@@ -1,4 +1,4 @@
-package com.habit.app.model.db
+package com.habit.app.data.db
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase

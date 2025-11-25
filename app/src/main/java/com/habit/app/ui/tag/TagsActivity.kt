@@ -1,4 +1,4 @@
-package com.habit.app.ui
+package com.habit.app.ui.tag
 
 import android.content.Context
 import android.content.Intent
@@ -6,13 +6,12 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import com.habit.app.ui.base.BaseActivity
 import com.habit.app.databinding.ActivityTagsBinding
 import com.habit.app.helper.DayNightUtil
 import com.habit.app.helper.KeyValueManager
-import com.habit.app.model.TAG
-import com.habit.app.model.db.DBManager
 import com.habit.app.helper.ThemeManager
+import com.habit.app.data.TAG
+import com.habit.app.ui.base.BaseActivity
 import com.wyz.emlibrary.util.immersiveWindow
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel

@@ -1,4 +1,4 @@
-package com.habit.app.model
+package com.habit.app.data.model
 
 data class FolderData(
     val folderId: Int = -1,

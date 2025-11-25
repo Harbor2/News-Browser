@@ -7,7 +7,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.habit.app.R
-import com.habit.app.model.AccessSingleData
+import com.habit.app.data.model.AccessSingleData
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId

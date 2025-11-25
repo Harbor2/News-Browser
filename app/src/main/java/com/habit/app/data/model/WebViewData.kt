@@ -1,4 +1,4 @@
-package com.habit.app.model
+package com.habit.app.data.model
 
 import android.content.Context
 import android.graphics.Bitmap

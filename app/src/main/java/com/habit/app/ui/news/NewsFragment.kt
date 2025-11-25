@@ -1,17 +1,17 @@
-package com.habit.app.ui.fragment
+package com.habit.app.ui.news
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
+import com.habit.app.databinding.FragmentNewsBinding
 import com.habit.app.ui.base.BaseFragment
-import com.habit.app.databinding.FragmentSettingBinding
 import com.wyz.emlibrary.util.EMUtil
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
-class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
+class NewsFragment() : BaseFragment<FragmentNewsBinding>() {
 
     private val mScope = MainScope()
     private val loadingObserver = MutableLiveData(false)
@@ -19,8 +19,8 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
     override fun onCreateViewBinding(
         inflater: LayoutInflater,
         parent: ViewGroup?
-    ): FragmentSettingBinding {
-        return FragmentSettingBinding.inflate(inflater, parent, false)
+    ): FragmentNewsBinding {
+        return FragmentNewsBinding.inflate(inflater, parent, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

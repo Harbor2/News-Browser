@@ -1,16 +1,18 @@
-package com.habit.app.model
+package com.habit.app.data.model
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.habit.app.R
 import com.habit.app.helper.ThemeManager
+import java.util.UUID
 
-data class HistoryData(
+data class BookmarkData(
+    val sign: String = UUID.randomUUID().toString(),
     val name: String = "",
     val url: String = "",
+    val folderId: Int = -1,
     val webIconPath: String = "",
-    val timeStamp: Long = System.currentTimeMillis()
 ) {
     private var webIconBitmap: Bitmap? = null
 
@@ -28,21 +30,16 @@ data class HistoryData(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as HistoryData
+        other as BookmarkData
 
-        if (timeStamp != other.timeStamp) return false
-        if (url != other.url) return false
-
-        return true
+        return url == other.url
     }
 
     override fun hashCode(): Int {
-        var result = timeStamp.hashCode()
-        result = 31 * result + url.hashCode()
-        return result
+        return url.hashCode()
     }
 
     override fun toString(): String {
-        return "HistoryData(name='$name', url='$url', webIconPath='$webIconPath', timeStamp=$timeStamp)"
+        return "BookmarkData(url='$url', name='$name')"
     }
 }

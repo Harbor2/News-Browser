@@ -17,7 +17,7 @@ import com.habit.app.databinding.LayoutDialogSearchEngineBinding
 import com.habit.app.event.EngineChangedEvent
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
-import com.habit.app.model.ENGINE_GOOGLE
+import com.habit.app.data.ENGINE_GOOGLE
 import com.habit.app.ui.custom.EngineSelectItem
 import org.greenrobot.eventbus.EventBus
 import kotlin.let

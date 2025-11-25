@@ -1,16 +1,16 @@
-package com.habit.app.model.db
+package com.habit.app.data.db
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
-import com.habit.app.model.BookmarkData
-import com.habit.app.model.FolderData
-import com.habit.app.model.HistoryData
-import com.habit.app.model.TAG
-import com.habit.app.model.WebViewData
-import com.habit.app.model.db.DBConstant.FOLDER_ID
-import com.habit.app.model.db.DBConstant.FOLDER_PARENT_ID
-import com.habit.app.model.db.DBConstant.TABLE_FOLDER
+import com.habit.app.data.model.BookmarkData
+import com.habit.app.data.model.FolderData
+import com.habit.app.data.model.HistoryData
+import com.habit.app.data.TAG
+import com.habit.app.data.model.WebViewData
+import com.habit.app.data.db.DBConstant.FOLDER_ID
+import com.habit.app.data.db.DBConstant.FOLDER_PARENT_ID
+import com.habit.app.data.db.DBConstant.TABLE_FOLDER
 
 /**
  * 文件删除时，先本地对比是否存在相同名称文件若存在则改名。完成上述操作后插入数据库
@@ -70,10 +70,10 @@ class DBDao(private val dbHelper: DBHelper) {
         val db: SQLiteDatabase = dbHelper.writableDatabase
         try {
             val value = ContentValues()
-            value.put(DBConstant.FOLDER_ID, folderData.folderId)
-            value.put(DBConstant.FOLDER_PARENT_ID, folderData.parentId)
+            value.put(FOLDER_ID, folderData.folderId)
+            value.put(FOLDER_PARENT_ID, folderData.parentId)
             value.put(DBConstant.FOLDER_NAME, folderData.folderName)
-            db.insert(DBConstant.TABLE_FOLDER, null, value)
+            db.insert(TABLE_FOLDER, null, value)
             Log.d(TAG, "插入Folder:文件路径信息${folderData.folderName}")
         } catch (e: Exception) {
             Log.e(TAG, "插入Folder异常：${e.message}")
@@ -87,10 +87,10 @@ class DBDao(private val dbHelper: DBHelper) {
                 put(DBConstant.FOLDER_NAME, newName)
             }
 
-            val whereClause = "${DBConstant.FOLDER_ID} = ?" // WHERE 条件
+            val whereClause = "${FOLDER_ID} = ?" // WHERE 条件
             val whereArgs = arrayOf(folderId.toString())
 
-            db.update(DBConstant.TABLE_FOLDER, values, whereClause, whereArgs)
+            db.update(TABLE_FOLDER, values, whereClause, whereArgs)
         } catch (e: Exception) {
             Log.e(TAG, "folder更新异常：${e.message}")
         }
@@ -99,11 +99,11 @@ class DBDao(private val dbHelper: DBHelper) {
     fun getSubFolder(parentFolderId: Int): ArrayList<FolderData> {
         try {
             val db: SQLiteDatabase = dbHelper.writableDatabase
-            val sql = "select * from ${DBConstant.TABLE_FOLDER} where ${DBConstant.FOLDER_PARENT_ID} = '${parentFolderId}'"
+            val sql = "select * from ${TABLE_FOLDER} where ${FOLDER_PARENT_ID} = '${parentFolderId}'"
             val cursor = db.rawQuery(sql, null)
             val folderList: ArrayList<FolderData> = arrayListOf()
             while (cursor.moveToNext()) {
-                val folderId = cursor.getColumnIndex(DBConstant.FOLDER_ID)
+                val folderId = cursor.getColumnIndex(FOLDER_ID)
                 val nameIndex = cursor.getColumnIndex(DBConstant.FOLDER_NAME)
                 if (nameIndex < 0 || folderId < 0) {
                     continue
@@ -136,7 +136,7 @@ class DBDao(private val dbHelper: DBHelper) {
                 allIdsToDelete.addAll(getAllSubFolderIds(db, folderId))
             }
             val idsString = allIdsToDelete.joinToString(",")
-            db.execSQL("DELETE FROM $TABLE_FOLDER WHERE $FOLDER_ID IN ($idsString)")
+            db.execSQL("DELETE FROM ${DBConstant.TABLE_FOLDER} WHERE ${DBConstant.FOLDER_ID} IN ($idsString)")
             // TODO: 删除 bookmark
 
             db.setTransactionSuccessful()
@@ -153,15 +153,15 @@ class DBDao(private val dbHelper: DBHelper) {
     private fun getAllSubFolderIds(db: SQLiteDatabase, parentId: Int): ArrayList<Int> {
         val result = arrayListOf<Int>()
         val cursor = db.query(
-            TABLE_FOLDER,
-            arrayOf(FOLDER_ID),
-            "$FOLDER_PARENT_ID = ?",
+            DBConstant.TABLE_FOLDER,
+            arrayOf(DBConstant.FOLDER_ID),
+            "${DBConstant.FOLDER_PARENT_ID} = ?",
             arrayOf(parentId.toString()),
             null, null, null
         )
         cursor.use {
             while (it.moveToNext()) {
-                val childId = it.getInt(it.getColumnIndexOrThrow(FOLDER_ID))
+                val childId = it.getInt(it.getColumnIndexOrThrow(DBConstant.FOLDER_ID))
                 result.add(childId)
                 result.addAll(getAllSubFolderIds(db, childId)) // 递归
             }

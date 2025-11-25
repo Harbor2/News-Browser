@@ -1,16 +1,16 @@
-package com.habit.app.ui
+package com.habit.app.ui.home
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import com.habit.app.ui.base.BaseFragment
-import com.habit.app.ui.base.BaseActivity
 import com.habit.app.R
 import com.habit.app.databinding.ActivitySearch2Binding
-import com.habit.app.model.TAG
-import com.habit.app.ui.fragment.HistoryFragment
-import com.habit.app.ui.fragment.SearchFragment
+import com.habit.app.data.TAG
+import com.habit.app.ui.base.BaseActivity
+import com.habit.app.ui.base.BaseFragment
+import com.habit.app.ui.home.fragment.HistoryFragment
+import com.habit.app.ui.home.fragment.SearchFragment
 import com.wyz.emlibrary.util.immersiveWindow
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
