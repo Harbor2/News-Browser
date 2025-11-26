@@ -41,7 +41,7 @@
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
             tools:ignore="LockedOrientationActivity"/>
-        <activity android:name=".ui.home.SearchActivity2"
+        <activity android:name=".ui.home.SearchActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"

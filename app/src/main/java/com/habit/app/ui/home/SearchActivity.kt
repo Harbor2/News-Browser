@@ -1,23 +1,17 @@
-package com.habit.app.ui.home.fragment
+package com.habit.app.ui.home
 
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.habit.app.R
-import com.habit.app.databinding.FragmentHistoryBinding
-import com.habit.app.event.EngineChangedEvent
-import com.habit.app.helper.KeyValueManager
-import com.habit.app.helper.ThemeManager
 import com.habit.app.data.ENGINE_BAIDU
 import com.habit.app.data.ENGINE_BING
 import com.habit.app.data.ENGINE_DUCKDUCK
@@ -25,23 +19,24 @@ import com.habit.app.data.ENGINE_GOOGLE
 import com.habit.app.data.ENGINE_YAHOO
 import com.habit.app.data.ENGINE_YANDEX
 import com.habit.app.data.TAG
-import com.habit.app.viewmodel.home.SearchViewModel
-import com.habit.app.ui.base.BaseFragment
+import com.habit.app.databinding.ActivitySearchBinding
+import com.habit.app.helper.KeyValueManager
+import com.habit.app.helper.ThemeManager
+import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.dialog.SearchEngineDialog
+import com.habit.app.viewmodel.home.SearchActivityModel
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
 import com.wyz.emlibrary.util.SoftKeyboardHelper
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
+import com.wyz.emlibrary.util.immersiveWindow
 import kotlinx.coroutines.launch
-import org.greenrobot.eventbus.Subscribe
+import kotlin.getValue
 
-class HistoryFragment() : BaseFragment<FragmentHistoryBinding>() {
-
-    private val viewModel: SearchViewModel by activityViewModels()
-    var mCallback: HistoryFragmentCallback? = null
-    private var inputAutoHasFocus: Boolean = false
+class SearchActivity : BaseActivity() {
+    private lateinit var binding: ActivitySearchBinding
+    private val viewModel: SearchActivityModel by viewModels()
     private lateinit var softKeyboardHelper: SoftKeyboardHelper
+
     private val keyboardListener = object : SoftKeyboardHelper.OnSoftKeyBoardChangeListener {
         override fun keyBoardHide(height: Int) {
             adjustBottomTool(0)
@@ -51,20 +46,12 @@ class HistoryFragment() : BaseFragment<FragmentHistoryBinding>() {
             adjustBottomTool(height)
         }
     }
-    private val cancelObserver = MutableLiveData(true)
 
-    override fun onCreateViewBinding(
-        inflater: LayoutInflater,
-        parent: ViewGroup?
-    ): FragmentHistoryBinding {
-        return FragmentHistoryBinding.inflate(inflater, parent, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        (binding.containerNavi.layoutParams as? ViewGroup.MarginLayoutParams)?.apply {
-            topMargin = EMUtil.getStatusBarHeight(requireContext())
-        }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        immersiveWindow(binding.root, false, binding.containerNavi)
         softKeyboardHelper = SoftKeyboardHelper()
 
         initView()
@@ -73,17 +60,11 @@ class HistoryFragment() : BaseFragment<FragmentHistoryBinding>() {
         initListener()
     }
 
+
     private fun initView() {
         updateUIConfig()
-        if (inputAutoHasFocus) {
-            EMUtil.showSoftKeyboard(binding.editInput, requireContext())
-        }
-
-        cancelObserver.observe(requireActivity()) { value ->
-            binding.tvSearchCancel.text = getString(if (value) R.string.text_cancel else R.string.text_search)
-            binding.tvSearchCancel.setTextColor(ThemeManager.getSkinColor(if (value) R.color.text_main_color_30 else R.color.btn_color))
-            binding.containerTopicHistory.isVisible = value
-            binding.containerThink.isVisible = !value
+        if (intent.getBooleanExtra("hasFocus", false)) {
+            EMUtil.showSoftKeyboard(binding.editInput, this)
         }
     }
 
@@ -92,14 +73,14 @@ class HistoryFragment() : BaseFragment<FragmentHistoryBinding>() {
     }
 
     private fun initListener() {
-        softKeyboardHelper.addKeyboardListener(requireActivity(), keyboardListener)
+        softKeyboardHelper.addKeyboardListener(this, keyboardListener)
 
         binding.tvSearchCancel.setOnClickListener {
-            if (cancelObserver.value!!) {
-                requireActivity().finish()
+            if (viewModel.cancelObserver.value!!) {
+                finish()
                 return@setOnClickListener
             }
-            mCallback?.onSearch()
+            processSearch()
         }
         binding.ivEngineIcon.setOnClickListener {
             showEngineSelectDialog()
@@ -116,10 +97,26 @@ class HistoryFragment() : BaseFragment<FragmentHistoryBinding>() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable) {
-                viewModel.setEditInput(s.toString())
-                cancelObserver.value = s.isEmpty()
+                viewModel.setCancelObserver(s.isEmpty())
             }
         })
+        binding.editInput.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                processSearch()
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+
+    private fun processSearch() {
+        val inputStr = binding.editInput.text.toString().trim()
+        if (inputStr.isEmpty()) return
+        intent.putExtra("searchStr", inputStr)
+        setResult(RESULT_OK, intent)
+        finish()
     }
 
     private fun setupObserver() {
@@ -128,22 +125,22 @@ class HistoryFragment() : BaseFragment<FragmentHistoryBinding>() {
                 Log.d(TAG, "searchHistory: $historyList")
             }
         }
-    }
-
-    fun setFocus(focus: Boolean) {
-        this.inputAutoHasFocus = focus
+        viewModel.cancelObserver.observe(this) { value ->
+            binding.tvSearchCancel.text = getString(if (value) R.string.text_cancel else R.string.text_search)
+            binding.tvSearchCancel.setTextColor(ThemeManager.getSkinColor(if (value) R.color.text_main_color_30 else R.color.btn_color))
+            binding.containerTopicHistory.isVisible = value
+            binding.containerThink.isVisible = !value
+        }
     }
 
     private fun adjustBottomTool(height: Int) {
-        if (!isFragmentSelect) return
         (binding.bottomTool.layoutParams as? ViewGroup.MarginLayoutParams)?.apply {
             bottomMargin = height
             binding.bottomTool.layoutParams = this
         }
     }
-
     private fun showEngineSelectDialog() {
-        SearchEngineDialog.Companion.tryShowDialog(requireActivity())
+        SearchEngineDialog.Companion.tryShowDialog(this)
     }
 
     fun updateEngineIcon() {
@@ -166,7 +163,7 @@ class HistoryFragment() : BaseFragment<FragmentHistoryBinding>() {
         binding.ivEngineIconArrow.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_engine_select_arrow))
         binding.editInput.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.editInput.setHintTextColor(ThemeManager.getSkinColor(R.color.text_main_color_30))
-        binding.tvSearchCancel.setTextColor(ThemeManager.getSkinColor(if (cancelObserver.value!!) R.color.text_main_color_30 else R.color.btn_color))
+        binding.tvSearchCancel.setTextColor(ThemeManager.getSkinColor(if (viewModel.cancelObserver.value!!) R.color.text_main_color_30 else R.color.btn_color))
         updateEngineIcon()
         EMManager.from(binding.containerArea)
             .setCorner(21f)
@@ -182,20 +179,6 @@ class HistoryFragment() : BaseFragment<FragmentHistoryBinding>() {
 
     override fun onThemeChanged(theme: String) {
         super.onThemeChanged(theme)
-
-    }
-
-    @Subscribe
-    fun onEngineChangedEvent(event: EngineChangedEvent) {
-        updateEngineIcon()
-    }
-
-    override fun onDestroy() {
-        softKeyboardHelper.removeKeyboardListener(requireActivity())
-        super.onDestroy()
-    }
-
-    interface HistoryFragmentCallback {
-        fun onSearch()
+        updateUIConfig()
     }
 }

@@ -24,7 +24,7 @@ import com.habit.app.helper.UtilHelper
 import com.habit.app.data.model.AccessSingleData
 import com.habit.app.data.model.HomeNewsData
 import com.habit.app.ui.home.AccessSelectActivity
-import com.habit.app.ui.home.SearchActivity2
+import com.habit.app.ui.home.SearchActivity
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.habit.app.ui.item.HomeAccessItem
 import com.habit.app.ui.item.HomeNewsCardItem
@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.Subscribe
 
-class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
+class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<FragmentHomeBinding>() {
 
     private val mScope = MainScope()
     private val loadingObserver = MutableLiveData(false)
@@ -58,6 +58,15 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
      */
     private var isListLoading = false
     private var curPage = 1
+
+    private val searchLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val searchStr = result.data?.getStringExtra("searchStr")
+            if (!searchStr.isNullOrEmpty()) {
+                callback.onSearch(searchStr)
+            }
+        }
+    }
 
     /**
      * 添加access item回调
@@ -77,7 +86,7 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
      */
     private val searchItemCallback = object : HomeSearchItem.HomeSearchItemCallback {
         override fun onSearch() {
-            SearchActivity2.startActivity(requireContext(), true)
+            jumpSearchActivity()
         }
 
         override fun onEngineSelect() {
@@ -176,6 +185,12 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
                     loadMoreData()
                 }
             }
+        })
+    }
+
+    private fun jumpSearchActivity() {
+        searchLauncher.launch(Intent(requireContext(), SearchActivity::class.java).apply {
+            putExtra("hasFocus", true)
         })
     }
 
@@ -295,5 +310,9 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
     override fun onDestroy() {
         mScope.cancel()
         super.onDestroy()
+    }
+
+    interface HomeFragmentCallback {
+        fun onSearch(searchStr: String)
     }
 }
