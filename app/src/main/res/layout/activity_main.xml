@@ -111,6 +111,16 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="5dp"
                 android:textColor="@drawable/selector_main_tab_text" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_bottom_main_tab_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/gotham_m"
+                android:text="1"
+                android:layout_marginTop="13dp"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/text_main_color_30"/>
         </FrameLayout>
 
         <FrameLayout
@@ -199,7 +209,8 @@
                         android:inputType="text"
                         android:singleLine="true"
                         android:layout_marginStart="44dp"
-                        android:layout_marginEnd="20dp"/>
+                        android:layout_marginEnd="20dp"
+                        android:imeOptions="actionSearch"/>
                 </FrameLayout>
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -221,6 +232,7 @@
             app:trackColor="@color/transparent"
             app:trackCornerRadius="1dp"
             android:elevation="2dp"
+            android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/container_search_navi"/>
@@ -299,7 +311,7 @@
                 app:layout_constraintEnd_toEndOf="parent"/>
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_bottom_tab_num"
+                android:id="@+id/tv_bottom_search_tab_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1"

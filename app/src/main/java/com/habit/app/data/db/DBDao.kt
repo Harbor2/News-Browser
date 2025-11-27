@@ -337,10 +337,18 @@ class DBDao(private val dbHelper: DBHelper) {
         try {
             val values = ContentValues().apply {
                 put(DBConstant.TAB_PHONE_TYPE, if (webData.isPhoneMode) 1 else 0)
-                put(DBConstant.TAB_NAME, webData.name)
-                put(DBConstant.TAB_URL, webData.url)
-                put(DBConstant.TAB_COVER_BITMAP, webData.coverBitmapPath)
-                put(DBConstant.TAB_ICON_BITMAP, webData.webIconPath)
+                if (webData.name.isNotEmpty()) {
+                    put(DBConstant.TAB_NAME, webData.name)
+                }
+                if (webData.url.isNotEmpty()) {
+                    put(DBConstant.TAB_URL, webData.url)
+                }
+                if (webData.coverBitmapPath.isNotEmpty()) {
+                    put(DBConstant.TAB_COVER_BITMAP, webData.coverBitmapPath)
+                }
+                if (webData.webIconPath.isNotEmpty()) {
+                    put(DBConstant.TAB_ICON_BITMAP, webData.webIconPath)
+                }
                 put(DBConstant.TAB_UPDATE_TIME, System.currentTimeMillis())
             }
 

@@ -3,6 +3,8 @@ package com.habit.app.helper
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -170,4 +172,18 @@ object UtilHelper {
             AccessSingleData("iv_access_single_kidshealth", context.getString(R.string.text_kids_health), ""),
         )
     }
+
+    /**
+     * 判断是否有网络连接
+     */
+    fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork
+        val capabilities = connectivityManager.getNetworkCapabilities(network)
+        return capabilities != null &&
+                (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
+    }
+
 }

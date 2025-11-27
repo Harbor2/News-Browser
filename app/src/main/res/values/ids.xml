@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="tag_access_data" type="id"/>
+    <item name="web_small_icon" type="id"/>
+    <item name="web_title" type="id"/>
 </resources>

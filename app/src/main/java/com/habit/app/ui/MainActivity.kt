@@ -3,7 +3,10 @@ package com.habit.app.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.view.inputmethod.EditorInfo
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import com.habit.app.ui.base.BaseFragment
@@ -25,6 +28,7 @@ import com.wyz.emlibrary.util.immersiveWindow
 class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainActivityModel by viewModels()
+    private lateinit var mController: MainController
 
     private val homeFragmentTag = "HomeFragment"
     private val newsFragmentTag = "NewsFragment"
@@ -39,6 +43,7 @@ class MainActivity : BaseActivity() {
         override fun onSearch(searchStr: String) {
             Log.d(TAG, "search input: $searchStr")
             viewModel.setSearchObserver(true)
+            mController.processWebSearch(searchStr)
         }
     }
 
@@ -48,6 +53,7 @@ class MainActivity : BaseActivity() {
         setContentView(binding.root)
         immersiveWindow(binding.root, false, binding.containerSearchNavi)
         KeyValueManager.saveBooleanValue(KeyValueManager.KEY_ENTERED_HOME, true)
+        mController = MainController(this, viewModel, binding)
 
         initView()
         initData()
@@ -65,6 +71,11 @@ class MainActivity : BaseActivity() {
         // 设置底部选中
         binding.tabHome.isChecked = true
         switchFragment(currentFragmentTag)
+
+        // 获取webSign
+        mController.getDBLastSnapAndNewTab()
+        // 更新tab数量
+        mController.updateTabsCount()
     }
 
     private fun setupObserver() {
@@ -74,6 +85,15 @@ class MainActivity : BaseActivity() {
 
         viewModel.searchObserver.observe(this) { value ->
             binding.pageSearch.isVisible = value
+            KeyValueManager.getBooleanValue(KeyValueManager.KEY_REOPEN_LAST_TAB, value)
+        }
+
+        viewModel.privacyObserver.observe(this) { value ->
+            mController.onPrivacyChange(value)
+        }
+
+        viewModel.phoneModeObserver.observe(this) { value ->
+            mController.onPhoneModeChange(value)
         }
     }
 
@@ -103,6 +123,25 @@ class MainActivity : BaseActivity() {
             binding.tabTag.isChecked = false
             binding.tabSetting.isChecked = true
             switchFragment(settingFragmentTag)
+        }
+
+        binding.btnBottomHome.setOnClickListener {
+            viewModel.setSearchObserver(false)
+        }
+        binding.editInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable) {
+                mController.mCurInputStr = s.toString().trim()
+            }
+        })
+        binding.editInput.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                mController.processWebSearch(v.text.toString().trim())
+                true
+            } else {
+                false
+            }
         }
     }
 
@@ -156,6 +195,7 @@ class MainActivity : BaseActivity() {
         binding.tabSetting.setTextColor(ThemeManager.getSkinColorStateList(R.drawable.selector_main_tab_text))
         val drawableTopSetting = ThemeManager.getSkinDrawable(R.drawable.tab_drawable_setting)
         binding.tabSetting.setCompoundDrawablesWithIntrinsicBounds(null, drawableTopSetting, null, null)
+        binding.tvBottomMainTabNum.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_30))
 
         // 搜索页相关
         binding.pageSearch.setBackgroundColor(ThemeManager.getSkinColor(R.color.page_main_color))
@@ -173,7 +213,7 @@ class MainActivity : BaseActivity() {
         binding.btnBottomNext.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_page_next))
         binding.btnBottomHome.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_page_home))
         binding.btnBottomContainerNum.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_page_container_num))
-        binding.tvBottomTabNum.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
+        binding.tvBottomSearchTabNum.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.btnBottomMenu.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_page_menu))
     }
 

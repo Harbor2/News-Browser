@@ -20,6 +20,11 @@ object KeyValueManager {
      */
     const val KEY_HOME_ACCESS_INFO = "key_home_access_info"
 
+    /**
+     * 是否自动打开上一个tab
+     */
+    const val KEY_REOPEN_LAST_TAB = "key_reopen_last_tab"
+
     fun saveBooleanValue(key: String, value: Boolean) {
         DBManager.getDao().updateKeyValue(key, if (value) STR_NUM_ONE else STR_NUM_ZERO)
     }
