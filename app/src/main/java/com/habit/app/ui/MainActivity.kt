@@ -17,6 +17,7 @@ import com.habit.app.helper.KeyValueManager
 import com.habit.app.data.TAG
 import com.habit.app.data.db.DBManager
 import com.habit.app.helper.ThemeManager
+import com.habit.app.ui.dialog.BrowserMenuDialog
 import com.habit.app.ui.home.fragment.HomeFragment
 import com.habit.app.ui.news.NewsFragment
 import com.habit.app.ui.setting.SettingFragment
@@ -35,6 +36,11 @@ class MainActivity : BaseActivity() {
     private val settingFragmentTag = "SettingFragment"
     private var currentFragmentTag: String = homeFragmentTag
     private var lastFragmentTag: String? = null
+
+    /**
+     * menu菜单dialog
+     */
+    private var mBrowserMenuDialog: BrowserMenuDialog? = null
 
     /**
      * homepage回调
@@ -132,9 +138,26 @@ class MainActivity : BaseActivity() {
             mController.stopLoadingAndGoBack()
         }
 
+        binding.btnBottomBack.setOnClickListener {
+
+        }
+        binding.btnBottomNext.setOnClickListener {
+
+        }
         binding.btnBottomHome.setOnClickListener {
             viewModel.setSearchObserver(false)
         }
+        binding.btnBottomContainerNum.setOnClickListener {
+
+        }
+        binding.btnBottomMenu.setOnClickListener {
+            mBrowserMenuDialog = BrowserMenuDialog.tryShowDialog(this)?.apply {
+                setOnDismissListener {
+                    mBrowserMenuDialog = null
+                }
+            }
+        }
+
         binding.editInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -222,6 +245,9 @@ class MainActivity : BaseActivity() {
         binding.btnBottomContainerNum.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_page_container_num))
         binding.tvBottomSearchTabNum.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.btnBottomMenu.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_page_menu))
+
+        // Dialog
+        mBrowserMenuDialog?.updateThemeUI()
     }
 
     override fun onThemeChanged(theme: String) {

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/container_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="12dp"
+            android:layout_gravity="center_horizontal">
+
+            <View
+                android:id="@+id/top_line"
+                android:layout_width="88dp"
+                android:layout_height="4dp"
+                app:rcCornerRadius="2dp"
+                android:layout_gravity="center_horizontal"/>
+        </FrameLayout>
+
+        <GridLayout
+            android:id="@+id/grid_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:rowCount="3"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="32dp">
+
+            <com.habit.app.ui.custom.BrowserMenuItem
+                android:id="@+id/item_private"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                app:bmiIcon="@drawable/iv_d_m_private"
+                app:bmiTitle="@string/text_private"
+                android:layout_row="0"
+                android:layout_column="0" />
+
+            <com.habit.app.ui.custom.BrowserMenuItem
+                android:id="@+id/item_bookmarks"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                app:bmiIcon="@drawable/iv_d_m_bookmarks"
+                app:bmiTitle="@string/text_bookmarks"
+                android:layout_row="0"
+                android:layout_column="1" />
+
+            <com.habit.app.ui.custom.BrowserMenuItem
+                android:id="@+id/item_download"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                app:bmiIcon="@drawable/iv_d_m_downloads"
+                app:bmiTitle="@string/text_downloads"
+                android:layout_row="0"
+                android:layout_column="2" />
+
+            <com.habit.app.ui.custom.BrowserMenuItem
+                android:id="@+id/item_history"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                app:bmiIcon="@drawable/iv_d_m_history"
+                app:bmiTitle="@string/text_history"
+                android:layout_row="0"
+                android:layout_column="3" />
+
+            <com.habit.app.ui.custom.BrowserMenuItem
+                android:id="@+id/item_bookmark_add"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                app:bmiIcon="@drawable/iv_d_m_add_bookmarks"
+                app:bmiTitle="@string/text_add_bookmarks"
+                android:layout_row="1"
+                android:layout_column="0"
+                android:layout_marginTop="32dp"/>
+
+            <com.habit.app.ui.custom.BrowserMenuItem
+                android:id="@+id/item_navigation_add"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                app:bmiIcon="@drawable/iv_d_m_add_navigation"
+                app:bmiTitle="@string/text_add_navigation"
+                android:layout_row="1"
+                android:layout_column="1"
+                android:layout_marginTop="32dp"/>
+
+            <com.habit.app.ui.custom.BrowserMenuItem
+                android:id="@+id/item_dark_mode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                app:bmiIcon="@drawable/iv_d_m_system_mode"
+                app:bmiTitle="@string/text_system_mode"
+                android:layout_row="1"
+                android:layout_column="2"
+                android:layout_marginTop="32dp"/>
+
+            <com.habit.app.ui.custom.BrowserMenuItem
+                android:id="@+id/item_desktop_site"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                app:bmiIcon="@drawable/iv_d_m_desktop_site"
+                app:bmiTitle="@string/text_desktop_site"
+                android:layout_row="1"
+                android:layout_column="3"
+                android:layout_marginTop="32dp"/>
+
+            <com.habit.app.ui.custom.BrowserMenuItem
+                android:id="@+id/item_feedback"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                app:bmiIcon="@drawable/iv_d_m_feedback"
+                app:bmiTitle="@string/text_feedback"
+                android:layout_row="2"
+                android:layout_column="0"
+                android:layout_marginTop="32dp"/>
+
+            <com.habit.app.ui.custom.BrowserMenuItem
+                android:id="@+id/item_page_search"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                app:bmiIcon="@drawable/iv_d_m_page_search"
+                app:bmiTitle="@string/text_page_search"
+                android:layout_row="2"
+                android:layout_column="1"
+                android:layout_marginTop="32dp"/>
+
+            <com.habit.app.ui.custom.BrowserMenuItem
+                android:id="@+id/item_share"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                app:bmiIcon="@drawable/iv_d_m_share"
+                app:bmiTitle="@string/text_share"
+                android:layout_row="2"
+                android:layout_column="2"
+                android:layout_marginTop="32dp"/>
+
+            <com.habit.app.ui.custom.BrowserMenuItem
+                android:id="@+id/item_setting"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                app:bmiIcon="@drawable/iv_d_m_setting"
+                app:bmiTitle="@string/text_setting"
+                android:layout_row="2"
+                android:layout_column="3"
+                android:layout_marginTop="32dp"/>
+        </GridLayout>
+        
+        <TextView
+            android:id="@+id/btn_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:text="@string/text_ok"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:fontFamily="@font/gotham_m"
+            android:layout_marginTop="38dp"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginBottom="24dp"/>
+    </LinearLayout>
+</FrameLayout>

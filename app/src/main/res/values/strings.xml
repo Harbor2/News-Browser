@@ -105,4 +105,20 @@
     <string name="text_cn">.cn</string>
     <string name="text_point">.</string>
     <string name="text_slash">/</string>
+    <string name="text_private">Private</string>
+    <string name="text_exit_private">Exit Private</string>
+    <string name="text_bookmarks">Bookmarks</string>
+    <string name="text_downloads">Downloads</string>
+    <string name="text_history">History</string>
+    <string name="text_add_bookmarks">Add Bookmarks</string>
+    <string name="text_remove_bookmarks">Remove Bookmarks</string>
+    <string name="text_add_navigation">Add Navigation</string>
+    <string name="text_dark_mode">Dark Mode</string>
+    <string name="text_light_mode">Light Mode</string>
+    <string name="text_system_mode">System Mode</string>
+    <string name="text_desktop_site">Desktop Site</string>
+    <string name="text_phone_site">Phone Site</string>
+    <string name="text_feedback">Feedback</string>
+    <string name="text_page_search">Page Search</string>
+    <string name="text_share">Share</string>
 </resources>

@@ -25,6 +25,12 @@ object KeyValueManager {
      */
     const val KEY_REOPEN_LAST_TAB = "key_reopen_last_tab"
 
+    /**
+     * 记录当前日夜间模式
+     * 0 跟随系统 1 日间模式 2 夜间模式
+     */
+    const val KEY_DARK_MODE = "key_dark_mode"
+
     fun saveBooleanValue(key: String, value: Boolean) {
         DBManager.getDao().updateKeyValue(key, if (value) STR_NUM_ONE else STR_NUM_ZERO)
     }

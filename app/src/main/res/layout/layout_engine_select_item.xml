@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="92dp"
-    android:layout_height="80dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -9,8 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/iv_engine_icon_google"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"/>
+        android:layout_gravity="center_horizontal" />
 
     <TextView
         android:id="@+id/tv_title"
@@ -18,7 +17,9 @@
         android:layout_height="wrap_content"
         android:textColor="@color/text_main_color"
         android:textSize="12sp"
+        android:gravity="center_horizontal"
         android:fontFamily="@font/gotham_r"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="12dp"/>
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="52dp"
+        android:layout_marginHorizontal="9dp"/>
 </FrameLayout>

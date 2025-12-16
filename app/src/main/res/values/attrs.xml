@@ -11,4 +11,9 @@
         <attr name="asiTitle" format="string"/>
         <attr name="asiSelect" format="boolean"/>
     </declare-styleable>
+
+    <declare-styleable name="BrowserMenuItem">
+        <attr name="bmiIcon" format="reference"/>
+        <attr name="bmiTitle" format="string"/>
+    </declare-styleable>
 </resources>
