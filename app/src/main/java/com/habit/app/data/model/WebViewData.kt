@@ -20,6 +20,10 @@ data class WebViewData(
     private var coverBitmap: Bitmap? = null
     private var webIconBitmap: Bitmap? = null
 
+    fun setCoverBitmap(bitmap: Bitmap) {
+        coverBitmap = bitmap
+    }
+
     fun getCoverBitmap(context: Context): Bitmap {
         if (coverBitmap != null) return coverBitmap!!
         BitmapFactory.decodeFile(coverBitmapPath)?.apply {
@@ -29,7 +33,12 @@ data class WebViewData(
         return BitmapFactory.decodeResource(context.resources, ThemeManager.getSkinImageResId(R.drawable.iv_pic_test))
     }
 
-    fun getIconBitmap(context: Context): Bitmap {
+    fun setWebIconBitmap(bitmap: Bitmap?) {
+        if (bitmap == null) return
+        webIconBitmap = bitmap
+    }
+
+    fun getWebIconBitmap(context: Context): Bitmap {
         if (webIconBitmap != null) return webIconBitmap!!
         BitmapFactory.decodeFile(webIconPath)?.apply {
             webIconBitmap = this

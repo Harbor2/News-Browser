@@ -3,13 +3,19 @@ package com.habit.app.helper
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.habit.app.R
+import com.habit.app.data.TAG
 import com.habit.app.data.model.AccessSingleData
+import java.io.File
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -184,6 +190,39 @@ object UtilHelper {
                 (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
                         capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
                         capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
+    }
+
+    /**
+     * 获取view的bitmap
+     */
+    fun getResizedBitmapFromView(view: View): Bitmap {
+        val originalBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(originalBitmap)
+        view.draw(canvas)
+
+        val scaledWidth = view.width / 2
+        val scaledHeight = view.height / 2
+
+        return Bitmap.createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, true)
+    }
+
+    /**
+     * bitmap存储到cache目录
+     * @return 返回文件路径
+     */
+    fun writeBitmapToCache(context: Context, bitmap: Bitmap): String? {
+        return try {
+            val parentFile = File(context.cacheDir, "webPic")
+            if (!parentFile.exists()) parentFile.mkdirs()
+            val bitmapFile = File(parentFile, "${System.currentTimeMillis()}.png")
+            bitmapFile.outputStream().use { out ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 75, out)
+            }
+            return bitmapFile.absolutePath
+        } catch (e: java.lang.Exception) {
+            Log.e(TAG, "图片缓存到cache目录失败: ${e.message}")
+            null
+        }
     }
 
 }

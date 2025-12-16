@@ -10,6 +10,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import androidx.core.view.isInvisible
+import androidx.lifecycle.lifecycleScope
 import com.habit.app.R
 import com.habit.app.data.ENGINE_BAIDU
 import com.habit.app.data.ENGINE_BAIDU_URL
@@ -37,8 +38,10 @@ import com.habit.app.helper.WebViewManager
 import com.habit.app.ui.custom.CustomWebView
 import com.habit.app.viewmodel.MainActivityModel
 import com.wyz.emlibrary.util.EMUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.net.URLEncoder
-import kotlin.math.sign
 
 class MainController(
     val activity: MainActivity,
@@ -52,6 +55,7 @@ class MainController(
     var mCurInputStr = ""
     var mCurWebView: WebView? = null
     var mCurWebSign: String = ""
+    private var isRefreshBtn: Boolean = false
 
     private var webScrollCallback: ((Boolean) -> Unit) = { isUpScroll -> }
     /**
@@ -139,6 +143,37 @@ class MainController(
         mCurWebSign = newTabSign
         mCurWebView = null
         viewModel.setPhoneModeObserver(true)
+    }
+
+    /**
+     * 保存当前web快照，创建新tab
+     */
+    fun saveCurSnapAndCreateNewWebTab() {
+        // 保存当前快照
+        createWebViewSnapshot { webViewData ->
+            if (webViewData != null) {
+                DBManager.getDao().updateWebSnapItem(webViewData)
+            }
+            // 插入数据库新快照
+            val newTabSign = System.currentTimeMillis().toString()
+            val newTabViewData = WebViewData(
+                WEBVIEW_DEFAULT_NAME,
+                newTabSign,
+                "",
+                true,
+                false,
+                "",
+                ""
+            )
+            DBManager.getDao().insertWebSnapToTable(newTabViewData)
+
+            mCurWebSign = newTabSign
+            mCurWebView = null
+            viewModel.setPhoneModeObserver(true)
+            // 首页
+            viewModel.setSearchObserver(false)
+            updateTabsCount()
+        }
     }
 
     /**
@@ -235,6 +270,12 @@ class MainController(
         binding.tvBottomSearchTabNum.text = tabCount.toString()
     }
 
+    fun stopLoadingAndGoBack() {
+        mCurWebView?.let {
+            if (binding.ivNaviPageRefresh.alpha != 1f) return
+            it.reload()
+        }
+    }
 
     /*
      * ************************  main调用 ************************
@@ -255,6 +296,35 @@ class MainController(
     /*
      * ************************  私有方法 ************************
      */
+
+    /**
+     * 创建webView快照
+     */
+    private fun createWebViewSnapshot(callback: (WebViewData?) -> Unit) {
+        // 首页
+        activity.lifecycleScope.launch(Dispatchers.IO) {
+            val coverBitmap = UtilHelper.getResizedBitmapFromView(binding.containerWeb)
+            val coverBitmapPath = UtilHelper.writeBitmapToCache(activity, coverBitmap) ?: ""
+            val iconBitmap = mCurWebView?.getTag(R.id.web_small_icon) as? Bitmap
+            val iconBitmapPath = if (iconBitmap == null) "" else UtilHelper.writeBitmapToCache(activity, iconBitmap) ?: ""
+
+            Log.d(TAG, "主页创建快照 webView：${mCurWebView?.hashCode()}")
+            withContext(Dispatchers.Main) {
+                val bitmapSnap = WebViewData(
+                    mCurWebView?.getTag(R.id.web_title) as? String ?: ((mCurWebView?.url?.toString()?.trim() ?: "")),
+                    mCurWebSign,
+                    mCurWebView?.url?.toString()?.trim() ?: "",
+                    viewModel.phoneModeObserver.value!!,
+                    viewModel.privacyObserver.value!!,
+                    coverBitmapPath,
+                    iconBitmapPath
+                )
+                bitmapSnap.setCoverBitmap(coverBitmap)
+                bitmapSnap.setWebIconBitmap(iconBitmap)
+                callback.invoke(bitmapSnap)
+            }
+        }
+    }
 
     fun hideSoftKeyBoard() {
         EMUtil.hideSoftKeyboard(binding.editInput, activity)
@@ -279,6 +349,7 @@ class MainController(
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
+            binding.ivNaviPageRefresh.alpha = 0.3f
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
@@ -286,6 +357,7 @@ class MainController(
             if (url.isNullOrEmpty()) return
             Log.d(TAG, "onPageFinished url ${url}， sign：$mCurWebSign， name：${view?.getTag(R.id.web_title)}")
             binding.editInput.setText(url)
+            binding.ivNaviPageRefresh.alpha = 1f
             DBManager.getDao().updateWebSnapItem(
                 WebViewData(
                     name = view?.getTag(R.id.web_title) as? String ?: "",

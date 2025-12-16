@@ -100,6 +100,7 @@ class MainActivity : BaseActivity() {
     private fun initListener() {
         binding.loadingView.setOnClickListener {}
         binding.pageSearch.setOnClickListener {}
+        binding.containerBottom.setOnClickListener {}
         binding.containerTabHome.setOnClickListener{
             binding.tabNews.isChecked = false
             binding.tabTag.isChecked = false
@@ -123,6 +124,12 @@ class MainActivity : BaseActivity() {
             binding.tabTag.isChecked = false
             binding.tabSetting.isChecked = true
             switchFragment(settingFragmentTag)
+        }
+        binding.ivNaviTabAdd.setOnClickListener {
+            mController.saveCurSnapAndCreateNewWebTab()
+        }
+        binding.ivNaviPageRefresh.setOnClickListener {
+            mController.stopLoadingAndGoBack()
         }
 
         binding.btnBottomHome.setOnClickListener {
