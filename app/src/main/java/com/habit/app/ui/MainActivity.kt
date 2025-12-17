@@ -98,7 +98,7 @@ class MainActivity : BaseActivity() {
 
         viewModel.searchObserver.observe(this) { value ->
             binding.pageSearch.isVisible = value
-            KeyValueManager.getBooleanValue(KeyValueManager.KEY_REOPEN_LAST_TAB, value)
+            KeyValueManager.saveBooleanValue(KeyValueManager.KEY_REOPEN_LAST_TAB, value)
         }
 
         viewModel.privacyObserver.observe(this) { value ->

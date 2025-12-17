@@ -106,6 +106,7 @@
     <string name="text_point">.</string>
     <string name="text_slash">/</string>
     <string name="text_private">Private</string>
+    <string name="text_privacy">Privacy</string>
     <string name="text_exit_private">Exit Private</string>
     <string name="text_bookmarks">Bookmarks</string>
     <string name="text_downloads">Downloads</string>
@@ -121,4 +122,5 @@
     <string name="text_feedback">Feedback</string>
     <string name="text_page_search">Page Search</string>
     <string name="text_share">Share</string>
+    <string name="text_public">Public</string>
 </resources>

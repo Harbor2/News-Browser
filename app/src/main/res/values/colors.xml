@@ -39,6 +39,7 @@
     <color name="transparent">#00000000</color>
 
     <color name="btn_color">#0051FF</color>
+    <color name="btn_color_20">#330051FF</color>
     <color name="btn_color_30">#4D0051FF</color>
     <color name="page_main_color">#FFFFFF</color>
     <color name="view_bg_color">#F2F4F8</color>

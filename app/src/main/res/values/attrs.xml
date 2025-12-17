@@ -16,4 +16,10 @@
         <attr name="bmiIcon" format="reference"/>
         <attr name="bmiTitle" format="string"/>
     </declare-styleable>
+    
+    <declare-styleable name="TagTabItem">
+        <attr name="ttiTitle" format="string"/>
+        <attr name="ttiCount" format="integer"/>
+        <attr name="ttiSelect" format="boolean"/>
+    </declare-styleable>
 </resources>
