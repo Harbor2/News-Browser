@@ -31,11 +31,19 @@ class TagsActivity : BaseActivity() {
     }
 
     private fun initData() {
-
+        binding.tabPublic.updateCount(1)
+        binding.tabPrivacy.updateCount(1)
     }
 
     private fun initListener() {
-
+        binding.tabPublic.setOnClickListener {
+            binding.tabPublic.updateSelect(true)
+            binding.tabPrivacy.updateSelect(false)
+        }
+        binding.tabPrivacy.setOnClickListener {
+            binding.tabPrivacy.updateSelect(true)
+            binding.tabPublic.updateSelect(false)
+        }
     }
 
     private fun updateUiConfig() {
