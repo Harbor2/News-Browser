@@ -138,6 +138,7 @@ class MainController(
             "",
             ""
         )
+        Log.d(TAG, "插入WebSnapData")
         DBManager.getDao().insertWebSnapToTable(newTabViewData)
 
         mCurWebSign = newTabSign
@@ -152,6 +153,7 @@ class MainController(
         // 保存当前快照
         createWebViewSnapshot { webViewData ->
             if (webViewData != null) {
+                Log.d(TAG, "更新 WebSnapData")
                 DBManager.getDao().updateWebSnapItem(webViewData)
             }
             // 插入数据库新快照
@@ -165,6 +167,7 @@ class MainController(
                 "",
                 ""
             )
+            Log.d(TAG, "插入 WebSnapData")
             DBManager.getDao().insertWebSnapToTable(newTabViewData)
 
             mCurWebSign = newTabSign
@@ -241,6 +244,7 @@ class MainController(
         Log.d(TAG, "webView装填")
         // 尝试获取webView
         mCurWebView = WebViewManager.getWebView(activity, mCurWebSign, dbWebData?.url, dbWebData?.isPhoneMode ?: true).apply {
+            Log.d(TAG, "配置webView")
             // 手机 电脑模式
             mCurWebView?.settings?.userAgentString = if (viewModel.phoneModeObserver.value!!) USER_AGENT_PHONE else USER_AGENT_DESKTOP
             mCurWebView?.settings?.builtInZoomControls = !viewModel.phoneModeObserver.value!!
@@ -274,6 +278,7 @@ class MainController(
         mCurWebView?.let {
             if (binding.ivNaviPageRefresh.alpha != 1f) return
             it.reload()
+            Log.d(TAG, "webView重新加载")
         }
     }
 
@@ -283,9 +288,13 @@ class MainController(
 
     fun onPhoneModeChange(value: Boolean) {
         Log.d(TAG, "现在的模式：${if (value) "手机" else "桌面"}")
-        mCurWebView?.settings?.userAgentString = if (value) USER_AGENT_PHONE else USER_AGENT_DESKTOP
-        // 不允许缩放
-        mCurWebView?.settings?.builtInZoomControls = !value
+        // 重建当前webview
+        mCurWebView?.let {
+            val changedWebData = WebViewData(sign = mCurWebSign, isPhoneMode = value, url = it.url ?: "")
+            WebViewManager.releaseWebView(mCurWebSign)
+            mCurWebView = null
+            updateWebView(changedWebData)
+        }
     }
 
     fun onPrivacyChange(value: Boolean) {
@@ -355,7 +364,7 @@ class MainController(
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
             if (url.isNullOrEmpty()) return
-            Log.d(TAG, "onPageFinished url ${url}， sign：$mCurWebSign， name：${view?.getTag(R.id.web_title)}")
+            Log.d(TAG, "onPageFinished 更新WebSnapData： url ${url}， sign：$mCurWebSign， name：${view?.getTag(R.id.web_title)}")
             binding.editInput.setText(url)
             binding.ivNaviPageRefresh.alpha = 1f
             DBManager.getDao().updateWebSnapItem(

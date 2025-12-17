@@ -30,6 +30,11 @@ import kotlin.let
  */
 class BrowserMenuDialog(activity: Activity) : BottomSheetDialog(activity) {
     var binding: LayoutDialogBrowserMenuBinding
+    var mCallback: BrowserMenuCallback? = null
+
+    private var isPrivate = false
+    private var isPhoneMode = true
+    private var isAddBookmark = false
 
     init {
         window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -42,13 +47,18 @@ class BrowserMenuDialog(activity: Activity) : BottomSheetDialog(activity) {
             .setCorner(12f)
             .setBackGroundColor(R.color.btn_color)
 
-        initData()
         updateThemeUI()
         initListener()
     }
 
-    private fun initData() {
+    fun initData(private: Boolean, phoneMode: Boolean) {
+        isPrivate = private
+        isPhoneMode = phoneMode
+
         updateDayNightBtnShow()
+        updatePrivateMode()
+        updateDesktopMode()
+        updateBookmarkMode()
     }
 
     fun updateThemeUI() {
@@ -92,7 +102,10 @@ class BrowserMenuDialog(activity: Activity) : BottomSheetDialog(activity) {
             processDarkMode()
         }
         binding.itemDesktopSite.setOnClickListener {
-
+            isPhoneMode = !isPhoneMode
+            updateDesktopMode()
+            mCallback?.onDesktopChanged(isPhoneMode)
+            dismiss()
         }
 
         binding.itemFeedback.setOnClickListener {
@@ -124,6 +137,18 @@ class BrowserMenuDialog(activity: Activity) : BottomSheetDialog(activity) {
                 binding.itemDarkMode.updateData(R.drawable.iv_d_m_dark_mode, context.getString(R.string.text_dark_mode))
             }
         }
+    }
+
+    private fun updatePrivateMode() {
+        binding.itemPrivate.updateData(ThemeManager.getSkinImageResId(if (isPrivate) R.drawable.iv_d_m_exit_private else R.drawable.iv_d_m_private), context.getString(if (isPrivate) R.string.text_exit_private else R.string.text_private))
+    }
+
+    private fun updateBookmarkMode() {
+        binding.itemBookmarkAdd.updateData(ThemeManager.getSkinImageResId(if (isAddBookmark) R.drawable.iv_d_m_remove_bookmarks else R.drawable.iv_d_m_add_bookmarks), context.getString(if (isAddBookmark) R.string.text_remove_bookmarks else R.string.text_add_bookmarks))
+    }
+
+    private fun updateDesktopMode() {
+        binding.itemDesktopSite.updateData(ThemeManager.getSkinImageResId(if (isPhoneMode) R.drawable.iv_d_m_desktop_site else R.drawable.iv_d_m_phone_site), context.getString(if (isPhoneMode) R.string.text_desktop_site else R.string.text_phone_site))
     }
 
     /**
@@ -193,5 +218,21 @@ class BrowserMenuDialog(activity: Activity) : BottomSheetDialog(activity) {
             dialog.show()
             return dialog
         }
+    }
+
+    interface BrowserMenuCallback {
+        fun onPrivateChanged(enter: Boolean) {}
+        fun onBookMarksClick() {}
+        fun onDownloadClick() {}
+        fun onHistoryClick() {}
+
+        fun onBookmarkChanged(add: Boolean) {}
+        fun onNavigationAddClick() {}
+        fun onDesktopChanged(isPhoneMode: Boolean) {}
+
+        fun onFeedbackClick() {}
+        fun onPageSearchClick() {}
+        fun onShareClick() {}
+        fun onSettingClick() {}
     }
 }

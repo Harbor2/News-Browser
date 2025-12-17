@@ -53,6 +53,13 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    private val menuCallback = object : BrowserMenuDialog.BrowserMenuCallback {
+        override fun onDesktopChanged(isPhoneMode: Boolean) {
+            if (isPhoneMode == viewModel.phoneModeObserver.value) return
+            viewModel.setPhoneModeObserver(isPhoneMode)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -152,6 +159,8 @@ class MainActivity : BaseActivity() {
         }
         binding.btnBottomMenu.setOnClickListener {
             mBrowserMenuDialog = BrowserMenuDialog.tryShowDialog(this)?.apply {
+                this.initData(viewModel.privacyObserver.value!!, viewModel.phoneModeObserver.value!!)
+                this.mCallback = menuCallback
                 setOnDismissListener {
                     mBrowserMenuDialog = null
                 }
