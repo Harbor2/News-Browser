@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import com.habit.app.data.db.DBManager
 import com.habit.app.databinding.FragmentPrivacyBinding
 import com.habit.app.ui.base.BaseFragment
@@ -11,11 +12,13 @@ import com.habit.app.ui.item.OverFlyingLayoutManager
 import com.habit.app.ui.item.TagSnapItem
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
+import kotlin.getValue
 
 class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
 
     private val mAdapter = FlexibleAdapter<AbstractFlexibleItem<*>>(null)
     private lateinit var overlayLayoutManager: OverFlyingLayoutManager
+    private val tagsModel: TagsViewModel by activityViewModels()
 
     private val snapItemCallback = object : TagSnapItem.TagSnapItemCallback {
         override fun onItemClick(item: TagSnapItem) {
@@ -24,6 +27,7 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
 
         override fun onItemClose(item: TagSnapItem) {
             mAdapter.removeItem(mAdapter.currentItems.indexOf(item))
+            tagsModel.setPrivacyTagCount(mAdapter.currentItems.size)
         }
     }
 
@@ -66,6 +70,7 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
             items.add(TagSnapItem(requireContext(), it, snapItemCallback))
         }
         mAdapter.updateDataSet(items)
+        tagsModel.setPrivacyTagCount(items.size)
         binding.recList.post {
             overlayLayoutManager.scrollToPositionWithOffsetInternal((items.size - 2).coerceAtLeast(0), -400)
         }

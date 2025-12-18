@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import com.habit.app.R
 import com.habit.app.databinding.ActivityTagsBinding
 import com.habit.app.helper.KeyValueManager
@@ -13,6 +15,8 @@ import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.base.BaseFragment
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.immersiveWindow
+import kotlinx.coroutines.launch
+import kotlin.getValue
 
 
 class TagsActivity : BaseActivity() {
@@ -22,7 +26,7 @@ class TagsActivity : BaseActivity() {
     private val privacyFragmentTag = "PrivacyFragment"
     private var currentFragmentTag: String = publicFragmentTag
     private var lastFragmentTag: String? = null
-
+    private val tagsModel: TagsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +36,7 @@ class TagsActivity : BaseActivity() {
         KeyValueManager.saveBooleanValue(KeyValueManager.KEY_ENTERED_HOME, true)
 
         initView()
+        setUpObservers()
         initData()
         initListener()
     }
@@ -46,8 +51,6 @@ class TagsActivity : BaseActivity() {
     }
 
     private fun initData() {
-        binding.tabPublic.updateCount(1)
-        binding.tabPrivacy.updateCount(1)
     }
 
     private fun initListener() {
@@ -74,6 +77,19 @@ class TagsActivity : BaseActivity() {
         }
         binding.ivClean.setOnClickListener {
 
+        }
+    }
+
+    private fun setUpObservers() {
+        lifecycleScope.launch {
+            tagsModel.publicTagCountObserver.collect { count ->
+                binding.tabPublic.updateCount(count)
+            }
+        }
+        lifecycleScope.launch {
+            tagsModel.privacyTagCountObserver.collect { count ->
+                binding.tabPrivacy.updateCount(count)
+            }
         }
     }
 
