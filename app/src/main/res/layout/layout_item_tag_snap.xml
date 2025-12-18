@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.wyz.emlibrary.custom.AdvancedCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:adv_shadow0_Outer_Blur="4dp"
+        app:adv_shadow0_Outer_Color="#1A000000"
+        app:adv_cornerRadius="16dp"
+        app:adv_shadow_Outer_Area="5dp"
+        app:adv_background_Gradient_Color0="#FFFFFF">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            
+            <com.wyz.emlibrary.custom.RoundedImageView
+                android:id="@+id/iv_web_icon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:scaleType="centerCrop"
+                app:riCornerRadius="6dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/tv_web_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_main_color"
+                android:textSize="14sp"
+                android:fontFamily="@font/gotham_r"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="50dp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                app:layout_constraintTop_toTopOf="@id/iv_web_icon"
+                app:layout_constraintBottom_toBottomOf="@id/iv_web_icon"
+                app:layout_constraintStart_toEndOf="@id/iv_web_icon"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/btn_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/iv_web_snap_close"
+                android:layout_marginEnd="2dp"
+                android:padding="14dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <com.wyz.emlibrary.custom.RoundedImageView
+                android:id="@+id/iv_web_cover"
+                android:layout_width="match_parent"
+                android:layout_height="476dp"
+                app:riCornerRadius="16dp"
+                android:layout_marginTop="56dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginHorizontal="16dp"
+                app:layout_constraintStart_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.wyz.emlibrary.custom.AdvancedCardView>
+</FrameLayout>
