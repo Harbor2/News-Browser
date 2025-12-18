@@ -13,6 +13,8 @@
     <color name="t_night_save_text_color">#FFFFFF</color>
     <color name="t_night_save_text_color_60">#99FFFFFF</color>
 
+    <color name="t_night_tag_top_bg_color">#33FFFFFF</color>
+
     <color name="t_night_home_top_bg_start">#1E2C53</color>
     <color name="t_night_home_top_bg_end">#0E0B1F</color>
 </resources>

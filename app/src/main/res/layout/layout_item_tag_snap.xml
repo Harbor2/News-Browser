@@ -12,11 +12,13 @@
         app:adv_shadow0_Outer_Color="#1A000000"
         app:adv_cornerRadius="16dp"
         app:adv_shadow_Outer_Area="5dp"
-        app:adv_background_Gradient_Color0="#FFFFFF">
+        app:adv_background_Gradient_Color0="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_card"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/white">
             
             <com.wyz.emlibrary.custom.RoundedImageView
                 android:id="@+id/iv_web_icon"

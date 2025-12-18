@@ -52,6 +52,7 @@
     <color name="save_border_color">#4D0051FF</color>
     <color name="save_text_color">#0051FF</color>
     <color name="save_text_color_60">#990051FF</color>
+    <color name="tag_top_bg_color">#F2F4F8</color>
 
     <color name="home_top_bg_start">#E3F1FF</color>
     <color name="home_top_bg_end">#FFFFFF</color>
