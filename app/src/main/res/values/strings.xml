@@ -123,4 +123,5 @@
     <string name="text_page_search">Page Search</string>
     <string name="text_share">Share</string>
     <string name="text_public">Public</string>
+    <string name="text_no_tags">No Tags</string>
 </resources>

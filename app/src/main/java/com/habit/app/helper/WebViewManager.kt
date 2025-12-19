@@ -88,4 +88,21 @@ object WebViewManager {
             else -> webViewCache.remove(key)?.destroy()
         }
     }
+
+    /**
+     * 释放 WebView（可用于 Activity 关闭时调用）
+     */
+    fun releaseWebView(keyList: List<String>? = null) {
+        when {
+            keyList.isNullOrEmpty() -> {
+                webViewCache.forEach {
+                    it.value.destroy()
+                }
+                webViewCache.clear()
+            }
+            else -> keyList.forEach {
+                webViewCache.remove(it)?.destroy()
+            }
+        }
+    }
 }

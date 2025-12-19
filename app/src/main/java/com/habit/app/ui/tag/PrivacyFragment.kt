@@ -5,18 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import com.habit.app.data.db.DBManager
 import com.habit.app.databinding.FragmentPrivacyBinding
+import com.habit.app.helper.WebViewManager
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.item.OverFlyingLayoutManager
 import com.habit.app.ui.item.TagSnapItem
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.getValue
 
 class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
 
     private val mAdapter = FlexibleAdapter<AbstractFlexibleItem<*>>(null)
+    private val loadingObserver = MutableLiveData(false)
+    private val emptyObserver = MutableLiveData(false)
+
     private lateinit var overlayLayoutManager: OverFlyingLayoutManager
     private val tagsModel: TagsViewModel by activityViewModels()
 
@@ -26,8 +35,7 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
         }
 
         override fun onItemClose(item: TagSnapItem) {
-            mAdapter.removeItem(mAdapter.currentItems.indexOf(item))
-            tagsModel.setPrivacyTagCount(mAdapter.currentItems.size)
+            deleteSnapItem(item)
         }
     }
 
@@ -53,6 +61,12 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
             adapter = mAdapter
             layoutManager = overlayLayoutManager
         }
+        loadingObserver.observe(requireActivity()) { value ->
+            binding.loadingView.visibility = if (value) View.VISIBLE else View.GONE
+        }
+        emptyObserver.observe(requireActivity()) { value ->
+            binding.tvEmpty.visibility = if (value) View.VISIBLE else View.GONE
+        }
     }
 
     private fun initData() {
@@ -60,6 +74,35 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
     }
 
     private fun initListener() {
+    }
+
+    private fun deleteSnapItem(item: TagSnapItem) {
+        mAdapter.removeItem(mAdapter.currentItems.indexOf(item))
+        DBManager.getDao().deleteWebSnapFromTable(item.snapData)
+        WebViewManager.releaseWebView(item.snapData.sign)
+        tagsModel.setPrivacyTagCount(mAdapter.currentItems.size)
+
+        if (mAdapter.currentItems.filterIsInstance<TagSnapItem>().isEmpty()) {
+            emptyObserver.value = true
+        }
+    }
+
+    /**
+     * 删除所有的snap
+     */
+    fun deleteSnapDataAndCheckEmpty() {
+        loadingObserver.value = true
+        lifecycleScope.launch(Dispatchers.IO) {
+            val destroySignData = mAdapter.currentItems.filterIsInstance<TagSnapItem>().map { it.snapData }
+            DBManager.getDao().deleteWebSnapsFromTable(destroySignData)
+            withContext(Dispatchers.Main) {
+                WebViewManager.releaseWebView(destroySignData.map { it.sign })
+                mAdapter.clear()
+                loadingObserver.value = false
+                emptyObserver.value = true
+                tagsModel.setPrivacyTagCount(0)
+            }
+        }
     }
 
     private fun updateSnapList() {

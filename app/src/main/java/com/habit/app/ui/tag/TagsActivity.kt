@@ -32,7 +32,6 @@ import kotlin.getValue
 
 class TagsActivity : BaseActivity() {
     private lateinit var binding: ActivityTagsBinding
-    private val loadingObserver = MutableLiveData(false)
     private val publicFragmentTag = "PublicFragment"
     private val privacyFragmentTag = "PrivacyFragment"
     private var currentFragmentTag: String = publicFragmentTag
@@ -53,35 +52,27 @@ class TagsActivity : BaseActivity() {
     }
 
     private fun initView() {
+        currentFragmentTag = if (intent.getBooleanExtra(KEY_INPUT_PRIVACY_MODE, false)) privacyFragmentTag else publicFragmentTag
         updateUiConfig()
-        loadingObserver.observe(this) { value ->
-            binding.loadingView.visibility = if (value) View.VISIBLE else View.GONE
-        }
     }
 
     private fun initData() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val isPrivacyMode = intent.getBooleanExtra(KEY_INPUT_PRIVACY_MODE, false)
-            currentFragmentTag = if (isPrivacyMode) privacyFragmentTag else publicFragmentTag
-            binding.tabPublic.updateSelect(!isPrivacyMode)
-            binding.tabPrivacy.updateSelect(isPrivacyMode)
+            binding.tabPublic.updateSelect(currentFragmentTag == publicFragmentTag)
+            binding.tabPrivacy.updateSelect(currentFragmentTag == privacyFragmentTag)
 
-            delay(100)
-            withContext(Dispatchers.Main) {
-                switchFragment(currentFragmentTag)
-            }
-
-            // 数据库读取历史tab
-            val historyList = DBManager.getDao().getWebSnapsFromTable()
-            historyList.map { it.mSelect = false }
             mWebViewData?.let {
-                Log.d(TAG, "WebTabsActivity接收传递数据：${it.toString()}")
-                it.mSelect = true
+                val historyList = DBManager.getDao().getWebSnapsFromTable()
                 if (historyList.contains(it)) {
                     historyList[historyList.indexOf(it)] = it
                     // 更新数据库
                     DBManager.getDao().updateWebSnapItem(it)
                 }
+            }
+
+            delay(50)
+            withContext(Dispatchers.Main) {
+                switchFragment(currentFragmentTag)
             }
         }
     }
@@ -106,7 +97,9 @@ class TagsActivity : BaseActivity() {
             finish()
         }
         binding.ivAdd.setOnClickListener {
-            newTabAndInsertDB()
+            val newTabSign = newTabAndInsertDB()
+            setResult(RESULT_OK, Intent().putExtra(KEY_TRANS_WEB_SIGN, newTabSign))
+            finish()
         }
         binding.ivClean.setOnClickListener {
             deleteSnapData()
@@ -126,7 +119,6 @@ class TagsActivity : BaseActivity() {
         }
         lifecycleScope.launch {
             tagsModel.snapSelectObserver.collect { snapData ->
-                Log.d(TAG, "snapSelectObserver点击事件触发")
                 if (snapData == null) return@collect
                 setResult(RESULT_OK, Intent().apply {
                     putExtra(KEY_TRANS_WEB_SIGN, snapData.sign)
@@ -139,7 +131,7 @@ class TagsActivity : BaseActivity() {
     /**
      * 新建snap并插入数据库
      */
-    private fun newTabAndInsertDB() {
+    private fun newTabAndInsertDB(): String {
         val newTabSign = UUID.randomUUID().toString()
         val newTabViewData = WebViewData(
             WEBVIEW_DEFAULT_NAME,
@@ -153,19 +145,27 @@ class TagsActivity : BaseActivity() {
         DBManager.getDao().insertWebSnapToTable(newTabViewData)
         EventBus.getDefault().post(HomeTabsCountUpdateEvent())
         Log.d(TAG, "数据库添加web sign：$newTabSign")
-        setResult(RESULT_OK, Intent().putExtra(KEY_TRANS_WEB_SIGN, newTabSign))
-        finish()
+        return newTabSign
     }
 
     /**
      * 删除所有snap数据
      */
     private fun deleteSnapData() {
-//        destroyPageToast = if (deleteData) TOAST_CLEAR_PAGE_DATA else TOAST_CLEAR_PAGE
-//        bottomUndoObserve.value = false
-//        mAdapter.clear()
-//        WebViewManager.releaseWebView()
-//        DBManager.getDao().clearWebSnaps()
+        supportFragmentManager.findFragmentByTag(currentFragmentTag)?.let { fragment ->
+            when (currentFragmentTag) {
+                publicFragmentTag -> {
+                    if (fragment is PublicFragment) {
+                        fragment.deleteSnapDataAndCheckEmpty()
+                    }
+                }
+                privacyFragmentTag -> {
+                    if (fragment is PrivacyFragment) {
+                        fragment.deleteSnapDataAndCheckEmpty()
+                    }
+                }
+            }
+        }
     }
 
     private fun switchFragment(tag: String) {
@@ -223,6 +223,16 @@ class TagsActivity : BaseActivity() {
     override fun onThemeChanged(theme: String) {
         super.onThemeChanged(theme)
         updateUiConfig()
+    }
+
+    override fun finish() {
+        super.finish()
+        val addSnaps = DBManager.getDao().getWebSnapsFromTable().filter { it.isPrivacyMode == (currentFragmentTag == privacyFragmentTag) }
+        if (addSnaps.isEmpty()) {
+            Log.d(TAG, "tag页面关闭前为空，新创建一个tab")
+            val newTabSign = newTabAndInsertDB()
+            setResult(RESULT_OK, Intent().putExtra(KEY_TRANS_WEB_SIGN, newTabSign))
+        }
     }
 
     override fun onDestroy() {

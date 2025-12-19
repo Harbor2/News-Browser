@@ -11,4 +11,44 @@
         android:scrollbars="none"
         android:clipToPadding="false"
         android:layout_marginHorizontal="11dp"/>
+
+    <!-- loading -->
+    <FrameLayout
+        android:id="@+id/loading_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="126dp"
+            android:layout_height="126dp"
+            app:cardBackgroundColor="@color/view_bg_color"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <ProgressBar
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center" />
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_main_color_40"
+        android:textSize="14sp"
+        android:visibility="gone"
+        android:text="@string/text_no_tags"
+        android:fontFamily="@font/gotham_r"
+        android:layout_gravity="center"/>
 </FrameLayout>

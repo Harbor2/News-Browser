@@ -216,13 +216,13 @@ class DBDao(private val dbHelper: DBHelper) {
                 cursor.getString(iconPathIndex)
             )
             qrInfoList.add(qrInfo)
-            Log.d(TAG, "**************************************************")
-            qrInfoList.forEach { item ->
-                Log.d(TAG, "读取Bookmark文件${item}")
-            }
-            Log.d(TAG, "**************************************************")
         }
         cursor.close()
+        Log.d(TAG, "********************** BEGIN ****************************")
+        qrInfoList.forEach { item ->
+            Log.d(TAG, "读取Bookmark文件${item}")
+        }
+        Log.d(TAG, "************************ END **************************")
         return qrInfoList
     }
 
@@ -396,13 +396,13 @@ class DBDao(private val dbHelper: DBHelper) {
                 cursor.getString(iconPathIndex)
             )
             qrInfoList.add(qrInfo)
-            Log.d(TAG, "**************************************************")
-            qrInfoList.forEach { item ->
-                Log.d(TAG, "读取web文件${item}")
-            }
-            Log.d(TAG, "**************************************************")
         }
         cursor.close()
+        Log.d(TAG, "************************ BEGIN **************************")
+        qrInfoList.forEach { item ->
+            Log.d(TAG, "读取web文件${item}")
+        }
+        Log.d(TAG, "************************ ENG **************************")
         return qrInfoList
     }
 
@@ -446,6 +446,24 @@ class DBDao(private val dbHelper: DBHelper) {
         val sql = "delete from ${DBConstant.TABLE_TAB} where ${DBConstant.TAB_SIGN} = '${webData.sign}'"
         db.execSQL(sql)
         Log.d(TAG, "数据库移除web快照${webData.name}")
+    }
+
+    /**
+     * 删除多个文件
+     */
+    fun deleteWebSnapsFromTableByFilter(privacy: Boolean) {
+        val db: SQLiteDatabase = dbHelper.writableDatabase
+        try {
+            val db: SQLiteDatabase = dbHelper.writableDatabase
+            val sql = "delete from ${DBConstant.TABLE_TAB} where ${DBConstant.TAB_PRIVACY_TYPE} = if($privacy, 1, 0)"
+            db.execSQL(sql)
+            Log.d(TAG, "数据库移除web快照, filter: $privacy")
+        } catch (e: Exception) {
+            Log.d(TAG, "数据库移除web快照异常：${e.message}")
+        } finally {
+            // 结束事务
+            db.endTransaction()
+        }
     }
 
     /**
@@ -530,13 +548,13 @@ class DBDao(private val dbHelper: DBHelper) {
                 cursor.getLong(timeStampIndex)
             )
             qrInfoList.add(qrInfo)
-            Log.d(TAG, "**************************************************")
-            qrInfoList.forEach { item ->
-                Log.d(TAG, "读取History文件${item}")
-            }
-            Log.d(TAG, "**************************************************")
         }
         cursor.close()
+        Log.d(TAG, "********************* BEGIN *****************************")
+        qrInfoList.forEach { item ->
+            Log.d(TAG, "读取History文件${item}")
+        }
+        Log.d(TAG, "********************** END ****************************")
         return qrInfoList
     }
 
