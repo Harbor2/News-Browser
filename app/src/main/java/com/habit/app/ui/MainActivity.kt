@@ -7,12 +7,14 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.inputmethod.EditorInfo
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import com.habit.app.R
 import com.habit.app.data.TAG
 import com.habit.app.data.db.DBManager
 import com.habit.app.databinding.ActivityMainBinding
+import com.habit.app.event.HomeTabsCountUpdateEvent
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
 import com.habit.app.ui.base.BaseActivity
@@ -25,6 +27,8 @@ import com.habit.app.ui.tag.TagsActivity
 import com.habit.app.viewmodel.MainActivityModel
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.immersiveWindow
+import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.Subscribe
 
 class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -41,6 +45,36 @@ class MainActivity : BaseActivity() {
      * menu菜单dialog
      */
     private var mBrowserMenuDialog: BrowserMenuDialog? = null
+
+    private val tagsLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val transWebSign = result.data?.getStringExtra(TagsActivity.KEY_TRANS_WEB_SIGN) ?: ""
+            if (transWebSign.isEmpty()) return@registerForActivityResult
+            Log.d(TAG, "主页接收webView sign：$transWebSign")
+            // 数据库读取
+            val dbWebViewData = DBManager.getDao().getWebSnapsBySign(transWebSign)
+            if (dbWebViewData == null) {
+                return@registerForActivityResult
+            }
+
+            if (dbWebViewData.url.isEmpty()) {
+                Log.d(TAG, "主页渲染home页面")
+                mController.mCurWebSign = transWebSign
+                mController.mCurWebView = null
+                mController.mCurWebPrivacy = dbWebViewData.isPrivacyMode
+                viewModel.setPhoneModeObserver(true)
+                viewModel.setSearchObserver(false)
+            } else {
+                if (mController.mCurWebSign != transWebSign) {
+                    mController.mCurWebSign = transWebSign
+                    mController.mCurWebPrivacy = dbWebViewData.isPrivacyMode
+                    Log.d(TAG, "主页渲染webView sign：${dbWebViewData.sign}")
+                    viewModel.setSearchObserver(true)
+                    mController.updateWebView(dbWebViewData)
+                }
+            }
+        }
+    }
 
     /**
      * homepage回调
@@ -129,7 +163,7 @@ class MainActivity : BaseActivity() {
             switchFragment(newsFragmentTag)
         }
         binding.containerTabTag.setOnClickListener{
-            TagsActivity.startActivity(this)
+            tagsLauncher.launch(Intent(this, TagsActivity::class.java))
         }
         binding.containerTabSetting.setOnClickListener{
             binding.tabHome.isChecked = false
@@ -155,7 +189,12 @@ class MainActivity : BaseActivity() {
             viewModel.setSearchObserver(false)
         }
         binding.btnBottomContainerNum.setOnClickListener {
-
+            mController.createWebViewSnapshot { webViewData ->
+                if (webViewData != null) {
+                    TagsActivity.mWebViewData = webViewData
+                }
+                tagsLauncher.launch(Intent(this, TagsActivity::class.java))
+            }
         }
         binding.btnBottomMenu.setOnClickListener {
             mBrowserMenuDialog = BrowserMenuDialog.tryShowDialog(this)?.apply {
@@ -262,6 +301,11 @@ class MainActivity : BaseActivity() {
     override fun onThemeChanged(theme: String) {
         super.onThemeChanged(theme)
         updateUIConfig()
+    }
+
+    @Subscribe
+    fun updateTabsCountEvent(event: HomeTabsCountUpdateEvent) {
+        mController.updateTabsCount()
     }
 
     override fun onDestroy() {

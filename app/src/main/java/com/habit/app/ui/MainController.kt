@@ -55,7 +55,7 @@ class MainController(
     var mCurInputStr = ""
     var mCurWebView: WebView? = null
     var mCurWebSign: String = ""
-    private var isRefreshBtn: Boolean = false
+    var mCurWebPrivacy: Boolean = false
 
     private var webScrollCallback: ((Boolean) -> Unit) = { isUpScroll -> }
     /**
@@ -309,7 +309,7 @@ class MainController(
     /**
      * 创建webView快照
      */
-    private fun createWebViewSnapshot(callback: (WebViewData?) -> Unit) {
+    fun createWebViewSnapshot(callback: (WebViewData?) -> Unit) {
         // 首页
         activity.lifecycleScope.launch(Dispatchers.IO) {
             val coverBitmap = UtilHelper.getResizedBitmapFromView(binding.containerWeb)

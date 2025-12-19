@@ -44,6 +44,9 @@ class TagSnapItem(
             .error(ThemeManager.getSkinColor(R.color.view_bg_color))
             .into(holder.binding.ivWebCover)
 
+        holder.binding.root.setOnClickListener {
+            callback?.onItemClick(this)
+        }
         holder.binding.btnClose.setOnClickListener {
             callback?.onItemClose(this)
         }

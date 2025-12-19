@@ -23,7 +23,7 @@ class PublicFragment() : BaseFragment<FragmentPublicBinding>() {
 
     private val snapItemCallback = object : TagSnapItem.TagSnapItemCallback {
         override fun onItemClick(item: TagSnapItem) {
-
+            tagsModel.setSnapSelect(item.snapData)
         }
 
         override fun onItemClose(item: TagSnapItem) {
@@ -65,10 +65,10 @@ class PublicFragment() : BaseFragment<FragmentPublicBinding>() {
     }
 
     private fun updateSnapList() {
-        val webSnaps = DBManager.getDao().getWebSnapsFromTable()
+        val webSnaps = DBManager.getDao().getWebSnapsFromTable().filter { !it.isPrivacyMode }
         val items = ArrayList<AbstractFlexibleItem<*>>()
 
-        webSnaps.forEach {
+        webSnaps.reversed().forEach {
             items.add(TagSnapItem(requireContext(), it, snapItemCallback))
         }
         mAdapter.updateDataSet(items)

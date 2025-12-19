@@ -1,6 +1,7 @@
 package com.habit.app.ui.tag
 
 import androidx.lifecycle.ViewModel
+import com.habit.app.data.model.WebViewData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -18,5 +19,12 @@ class TagsViewModel() : ViewModel() {
 
     fun setPrivacyTagCount(count: Int) {
         _privacyTagCountObserver.value = count
+    }
+
+    private val _snapSelectObserver = MutableStateFlow<WebViewData?>(null)
+    val snapSelectObserver: StateFlow<WebViewData?> = _snapSelectObserver
+
+    fun setSnapSelect(snapData: WebViewData) {
+        _snapSelectObserver.value = snapData
     }
 }
