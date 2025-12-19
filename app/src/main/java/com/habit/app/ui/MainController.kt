@@ -55,7 +55,6 @@ class MainController(
     var mCurInputStr = ""
     var mCurWebView: WebView? = null
     var mCurWebSign: String = ""
-    var mCurWebPrivacy: Boolean = false
 
     private var webScrollCallback: ((Boolean) -> Unit) = { isUpScroll -> }
     /**
@@ -112,7 +111,8 @@ class MainController(
         // 有历史tab
         mCurWebSign = lastWebData.sign
         mCurWebView = null
-        viewModel.setPhoneModeObserver(lastWebData.isPhoneMode)
+        viewModel.setPhoneModeObserver(lastWebData.isPhoneMode ?: true)
+        viewModel.setPrivacyObserver(lastWebData.isPrivacyMode ?: false)
 
         // 判断是否重新打开
         val isReopenLastTab = KeyValueManager.getBooleanValue(KeyValueManager.KEY_REOPEN_LAST_TAB, true)
@@ -144,6 +144,7 @@ class MainController(
         mCurWebSign = newTabSign
         mCurWebView = null
         viewModel.setPhoneModeObserver(true)
+        viewModel.setPrivacyObserver(false)
     }
 
     /**
@@ -297,8 +298,11 @@ class MainController(
         }
     }
 
-    fun onPrivacyChange(value: Boolean) {
-
+    fun onPrivacyModeChange(value: Boolean) {
+        Log.d(TAG, "现在的隐私模式：$value")
+        mCurWebSign.isNotEmpty().let {
+            DBManager.getDao().updateWebSnapItem(WebViewData(sign = mCurWebSign, isPrivacyMode = value))
+        }
     }
 
 

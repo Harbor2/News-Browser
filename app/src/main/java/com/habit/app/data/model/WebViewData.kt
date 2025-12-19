@@ -11,8 +11,8 @@ data class WebViewData(
     val name: String = "",
     val sign: String = UUID.randomUUID().toString(),
     val url: String = "",
-    var isPhoneMode: Boolean = true,
-    var isPrivacyMode: Boolean = false,
+    var isPhoneMode: Boolean? = null,
+    var isPrivacyMode: Boolean? = null,
     val coverBitmapPath: String = "",
     val webIconPath: String = ""
 ) {

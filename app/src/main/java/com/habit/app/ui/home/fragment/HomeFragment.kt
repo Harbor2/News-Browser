@@ -8,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.reflect.TypeToken
@@ -30,6 +32,7 @@ import com.habit.app.ui.item.HomeAccessItem
 import com.habit.app.ui.item.HomeNewsCardItem
 import com.habit.app.ui.item.HomeNewsHeadItem
 import com.habit.app.ui.item.HomeSearchItem
+import com.habit.app.viewmodel.MainActivityModel
 import com.wyz.emlibrary.em.Direction
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
@@ -47,7 +50,7 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
 
     private val mScope = MainScope()
     private val loadingObserver = MutableLiveData(false)
-    private val traceObserver = MutableLiveData(false)
+    private val viewModel: MainActivityModel by activityViewModels()
     private val mAdapter = FlexibleAdapter<AbstractFlexibleItem<*>>(null)
 
     private var accessList = ArrayList<AccessSingleData>()
@@ -125,18 +128,13 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
         }
 
         initView()
+        setupObserver()
         initData()
         initListener()
     }
 
     private fun initView() {
         updateUIConfig()
-
-        traceObserver.observe(requireActivity()) { value ->
-            binding.btnNaviTrace.setImageResource(
-                ThemeManager.getSkinImageResId(if (value) R.drawable.iv_search_trace else R.drawable.iv_search_untrace)
-            )
-        }
         loadingObserver.observe(requireActivity()) { value ->
             binding.loadingView.visibility = if (value) View.VISIBLE else View.GONE
         }
@@ -151,7 +149,7 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
 
     private fun updateUIConfig() {
         binding.btnNaviTrace.setImageResource(
-            ThemeManager.getSkinImageResId(if (traceObserver.value!!) R.drawable.iv_search_trace else R.drawable.iv_search_untrace)
+            ThemeManager.getSkinImageResId(if (viewModel.privacyObserver.value!!) R.drawable.iv_search_trace else R.drawable.iv_search_untrace)
         )
         binding.root.setBackgroundColor(ThemeManager.getSkinColor(R.color.page_main_color))
         EMManager.from(binding.bgTop)
@@ -186,6 +184,19 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
                 }
             }
         })
+        binding.btnNaviTrace.setOnClickListener {
+            viewModel.setPrivacyObserver(!viewModel.privacyObserver.value!!)
+        }
+    }
+
+    private fun setupObserver() {
+        lifecycleScope.launch {
+            viewModel.privacyObserver.observe(requireActivity()) { value ->
+                binding.btnNaviTrace.setImageResource(
+                    ThemeManager.getSkinImageResId(if (value) R.drawable.iv_search_trace else R.drawable.iv_search_untrace)
+                )
+            }
+        }
     }
 
     private fun jumpSearchActivity() {

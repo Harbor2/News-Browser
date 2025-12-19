@@ -27,7 +27,6 @@ import com.habit.app.ui.tag.TagsActivity
 import com.habit.app.viewmodel.MainActivityModel
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.immersiveWindow
-import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.Subscribe
 
 class MainActivity : BaseActivity() {
@@ -61,13 +60,13 @@ class MainActivity : BaseActivity() {
                 Log.d(TAG, "主页渲染home页面")
                 mController.mCurWebSign = transWebSign
                 mController.mCurWebView = null
-                mController.mCurWebPrivacy = dbWebViewData.isPrivacyMode
+                viewModel.setPrivacyObserver(dbWebViewData.isPrivacyMode ?: false)
                 viewModel.setPhoneModeObserver(true)
                 viewModel.setSearchObserver(false)
             } else {
                 if (mController.mCurWebSign != transWebSign) {
                     mController.mCurWebSign = transWebSign
-                    mController.mCurWebPrivacy = dbWebViewData.isPrivacyMode
+                    viewModel.setPrivacyObserver(dbWebViewData.isPrivacyMode ?: false)
                     Log.d(TAG, "主页渲染webView sign：${dbWebViewData.sign}")
                     viewModel.setSearchObserver(true)
                     mController.updateWebView(dbWebViewData)
@@ -136,7 +135,7 @@ class MainActivity : BaseActivity() {
         }
 
         viewModel.privacyObserver.observe(this) { value ->
-            mController.onPrivacyChange(value)
+            mController.onPrivacyModeChange(value)
         }
 
         viewModel.phoneModeObserver.observe(this) { value ->

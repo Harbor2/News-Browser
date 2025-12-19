@@ -63,7 +63,7 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
     }
 
     private fun updateSnapList() {
-        val webSnaps = DBManager.getDao().getWebSnapsFromTable().filter { it.isPrivacyMode }
+        val webSnaps = DBManager.getDao().getWebSnapsFromTable().filter { it.isPrivacyMode == true }
         val items = ArrayList<AbstractFlexibleItem<*>>()
 
         webSnaps.reversed().forEach {

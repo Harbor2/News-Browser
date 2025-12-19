@@ -317,8 +317,8 @@ class DBDao(private val dbHelper: DBHelper) {
             value.put(DBConstant.TAB_NAME, webData.name)
             value.put(DBConstant.TAB_SIGN, webData.sign)
             value.put(DBConstant.TAB_URL, webData.url)
-            value.put(DBConstant.TAB_PHONE_TYPE, if (webData.isPhoneMode) 1 else 0)
-            value.put(DBConstant.TAB_PRIVACY_TYPE, if (webData.isPrivacyMode) 1 else 0)
+            value.put(DBConstant.TAB_PHONE_TYPE, if (webData.isPhoneMode != false) 1 else 0)
+            value.put(DBConstant.TAB_PRIVACY_TYPE, if (webData.isPrivacyMode == true) 1 else 0)
             value.put(DBConstant.TAB_COVER_BITMAP, webData.coverBitmapPath)
             value.put(DBConstant.TAB_ICON_BITMAP, webData.webIconPath)
             value.put(DBConstant.TAB_UPDATE_TIME, System.currentTimeMillis())
@@ -336,7 +336,12 @@ class DBDao(private val dbHelper: DBHelper) {
         val db: SQLiteDatabase = dbHelper.writableDatabase
         try {
             val values = ContentValues().apply {
-                put(DBConstant.TAB_PHONE_TYPE, if (webData.isPhoneMode) 1 else 0)
+                if (webData.isPhoneMode != null) {
+                    put(DBConstant.TAB_PHONE_TYPE, if (webData.isPhoneMode != false) 1 else 0)
+                }
+                if (webData.isPrivacyMode != null) {
+                    put(DBConstant.TAB_PRIVACY_TYPE, if (webData.isPrivacyMode == true) 1 else 0)
+                }
                 if (webData.name.isNotEmpty()) {
                     put(DBConstant.TAB_NAME, webData.name)
                 }
@@ -356,8 +361,9 @@ class DBDao(private val dbHelper: DBHelper) {
             val whereArgs = arrayOf(webData.sign)
 
             db.update(DBConstant.TABLE_TAB, values, whereClause, whereArgs)
+            Log.e(TAG, "更新Web快照：${webData.toString()}")
         } catch (e: Exception) {
-            Log.e(TAG, "插入Web快照异常：${e.message}")
+            Log.e(TAG, "更新Web快照异常：${e.message}")
         }
     }
 
