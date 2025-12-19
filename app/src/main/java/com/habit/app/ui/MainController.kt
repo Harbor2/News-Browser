@@ -270,9 +270,10 @@ class MainController(
 
 
     fun updateTabsCount() {
-        val tabCount = DBManager.getDao().getWebSnapsFromTable().size
-        binding.tvBottomMainTabNum.text = tabCount.toString()
-        binding.tvBottomSearchTabNum.text = tabCount.toString()
+        val webSnapData = DBManager.getDao().getWebSnapsFromTable()
+        val tagCount = if (viewModel.privacyObserver.value!!) webSnapData.filter { it.isPrivacyMode == true }.size.toString() else webSnapData.filter { it.isPrivacyMode == false }.size.toString()
+        binding.tvBottomMainTabNum.text = tagCount
+        binding.tvBottomSearchTabNum.text = tagCount
     }
 
     fun stopLoadingAndGoBack() {
@@ -303,6 +304,7 @@ class MainController(
         mCurWebSign.isNotEmpty().let {
             DBManager.getDao().updateWebSnapItem(WebViewData(sign = mCurWebSign, isPrivacyMode = value))
         }
+        updateTabsCount()
     }
 
 

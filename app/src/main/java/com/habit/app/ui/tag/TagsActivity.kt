@@ -21,7 +21,10 @@ import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.base.BaseFragment
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.immersiveWindow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.util.UUID
 import kotlin.getValue
@@ -54,21 +57,31 @@ class TagsActivity : BaseActivity() {
         loadingObserver.observe(this) { value ->
             binding.loadingView.visibility = if (value) View.VISIBLE else View.GONE
         }
-
-        switchFragment(currentFragmentTag)
     }
 
     private fun initData() {
-        // 数据库读取历史tab
-        val historyList = DBManager.getDao().getWebSnapsFromTable()
-        historyList.map { it.mSelect = false }
-        mWebViewData?.let {
-            Log.d(TAG, "WebTabsActivity接收传递数据：${it.toString()}")
-            it.mSelect = true
-            if (historyList.contains(it)) {
-                historyList[historyList.indexOf(it)] = it
-                // 更新数据库
-                DBManager.getDao().updateWebSnapItem(it)
+        lifecycleScope.launch(Dispatchers.IO) {
+            val isPrivacyMode = intent.getBooleanExtra(KEY_INPUT_PRIVACY_MODE, false)
+            currentFragmentTag = if (isPrivacyMode) privacyFragmentTag else publicFragmentTag
+            binding.tabPublic.updateSelect(!isPrivacyMode)
+            binding.tabPrivacy.updateSelect(isPrivacyMode)
+
+            delay(100)
+            withContext(Dispatchers.Main) {
+                switchFragment(currentFragmentTag)
+            }
+
+            // 数据库读取历史tab
+            val historyList = DBManager.getDao().getWebSnapsFromTable()
+            historyList.map { it.mSelect = false }
+            mWebViewData?.let {
+                Log.d(TAG, "WebTabsActivity接收传递数据：${it.toString()}")
+                it.mSelect = true
+                if (historyList.contains(it)) {
+                    historyList[historyList.indexOf(it)] = it
+                    // 更新数据库
+                    DBManager.getDao().updateWebSnapItem(it)
+                }
             }
         }
     }
@@ -218,7 +231,17 @@ class TagsActivity : BaseActivity() {
 
     companion object {
         var mWebViewData: WebViewData? = null
+
+        /**
+         * 退出页面时携带的webSign
+         */
         const val KEY_TRANS_WEB_SIGN = "key_trans_web_sign"
+
+        /**
+         * 进入时，是否是隐私模式
+         */
+        const val KEY_INPUT_PRIVACY_MODE = "key_input_privacy_mode"
+
         fun startActivity(context: Context) {
             context.startActivity(Intent(context, TagsActivity::class.java))
         }

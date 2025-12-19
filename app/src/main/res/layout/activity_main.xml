@@ -117,7 +117,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/gotham_m"
-                android:text="1"
                 android:layout_marginTop="13dp"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@color/text_main_color_30"/>
@@ -315,7 +314,6 @@
                 android:id="@+id/tv_bottom_search_tab_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1"
                 android:textSize="12sp"
                 android:textColor="@color/text_main_color"
                 android:fontFamily="@font/gotham_m"

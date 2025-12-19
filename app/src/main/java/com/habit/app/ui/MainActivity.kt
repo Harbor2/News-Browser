@@ -120,8 +120,6 @@ class MainActivity : BaseActivity() {
 
         // 获取webSign
         mController.getDBLastSnapAndNewTab()
-        // 更新tab数量
-        mController.updateTabsCount()
     }
 
     private fun setupObserver() {
@@ -162,7 +160,9 @@ class MainActivity : BaseActivity() {
             switchFragment(newsFragmentTag)
         }
         binding.containerTabTag.setOnClickListener{
-            tagsLauncher.launch(Intent(this, TagsActivity::class.java))
+            tagsLauncher.launch(Intent(this, TagsActivity::class.java).apply {
+                putExtra(TagsActivity.KEY_INPUT_PRIVACY_MODE, viewModel.privacyObserver.value!!)
+            })
         }
         binding.containerTabSetting.setOnClickListener{
             binding.tabHome.isChecked = false
@@ -192,7 +192,9 @@ class MainActivity : BaseActivity() {
                 if (webViewData != null) {
                     TagsActivity.mWebViewData = webViewData
                 }
-                tagsLauncher.launch(Intent(this, TagsActivity::class.java))
+                tagsLauncher.launch(Intent(this, TagsActivity::class.java).apply {
+                    putExtra(TagsActivity.KEY_INPUT_PRIVACY_MODE, viewModel.privacyObserver.value!!)
+                })
             }
         }
         binding.btnBottomMenu.setOnClickListener {
