@@ -30,8 +30,10 @@ import com.habit.app.data.USER_AGENT_PHONE
 import com.habit.app.data.WEBVIEW_DEFAULT_NAME
 import com.habit.app.data.assessUrlList
 import com.habit.app.data.db.DBManager
+import com.habit.app.data.model.AccessSingleData
 import com.habit.app.data.model.WebViewData
 import com.habit.app.databinding.ActivityMainBinding
+import com.habit.app.helper.GsonUtil
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.helper.WebViewManager
@@ -287,6 +289,21 @@ class MainController(
     /*
      * ************************  main调用 ************************
      */
+
+    /**
+     * 添加到首页导航栏
+     */
+    fun processNavigationAdd() {
+        UtilHelper.showToast(activity, activity.getString(R.string.toast_succeed))
+
+//        val cacheInfo = KeyValueManager.getValueByKey(KeyValueManager.KEY_HOME_ACCESS_INFO) ?: ""
+//        val selectedAccess = if (cacheInfo.isEmpty()) {
+//            UtilHelper.getDefaultHomeAccessList(activity)
+//        } else {
+//            GsonUtil.gson.fromJson(cacheInfo, object : TypeToken<ArrayList<AccessSingleData>>() {}.type)
+//        }
+//        KeyValueManager.saveValueWithKey(KeyValueManager.KEY_HOME_ACCESS_INFO, GsonUtil.gson.toJson(selectedAccess))
+    }
 
     fun onPhoneModeChange(value: Boolean) {
         Log.d(TAG, "现在的模式：${if (value) "手机" else "桌面"}")

@@ -14,6 +14,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.habit.app.R
 import com.habit.app.data.TAG
+import com.habit.app.data.db.DBManager
+import com.habit.app.data.model.BookmarkData
 import com.wyz.emlibrary.em.EMManager
 import com.habit.app.helper.ThemeManager
 import com.habit.app.databinding.LayoutDialogBrowserMenuBinding
@@ -31,6 +33,10 @@ import kotlin.let
 class BrowserMenuDialog(activity: Activity) : BottomSheetDialog(activity) {
     var binding: LayoutDialogBrowserMenuBinding
     var mCallback: BrowserMenuCallback? = null
+
+    private var mName: String = ""
+    private var mUrl: String = ""
+    private var mWebIconPath: String = ""
 
     private var isPrivate = false
     private var isPhoneMode = true
@@ -51,9 +57,15 @@ class BrowserMenuDialog(activity: Activity) : BottomSheetDialog(activity) {
         initListener()
     }
 
-    fun initData(private: Boolean, phoneMode: Boolean) {
+    fun initData(url: String, name: String, webIconPath: String, private: Boolean, phoneMode: Boolean) {
+        mUrl = url
+        mName = name
+        mWebIconPath = webIconPath
+
         isPrivate = private
         isPhoneMode = phoneMode
+        val bookmarkData = DBManager.getDao().getBookMarkByUrl(mUrl)
+        isAddBookmark = bookmarkData != null
 
         updateDayNightBtnShow()
         updatePrivateMode()
@@ -80,7 +92,10 @@ class BrowserMenuDialog(activity: Activity) : BottomSheetDialog(activity) {
             dismiss()
         }
         binding.itemPrivate.setOnClickListener {
-
+            isPrivate = !isPrivate
+            updatePrivateMode()
+            mCallback?.onPrivateChanged(isPrivate)
+            dismiss()
         }
         binding.itemBookmarks.setOnClickListener {
 
@@ -93,10 +108,10 @@ class BrowserMenuDialog(activity: Activity) : BottomSheetDialog(activity) {
         }
 
         binding.itemBookmarkAdd.setOnClickListener {
-
+            processBookmarkAdd()
         }
         binding.itemNavigationAdd.setOnClickListener {
-
+            processNavigationAdd()
         }
         binding.itemDarkMode.setOnClickListener {
             processDarkMode()
@@ -149,6 +164,29 @@ class BrowserMenuDialog(activity: Activity) : BottomSheetDialog(activity) {
 
     private fun updateDesktopMode() {
         binding.itemDesktopSite.updateData(ThemeManager.getSkinImageResId(if (isPhoneMode) R.drawable.iv_d_m_desktop_site else R.drawable.iv_d_m_phone_site), context.getString(if (isPhoneMode) R.string.text_desktop_site else R.string.text_phone_site))
+    }
+
+    /**
+     * 添加书签 移除书签
+     */
+    private fun processBookmarkAdd() {
+        if (isAddBookmark) {
+            DBManager.getDao().deleteBookmarkByUrl(mUrl)
+        } else {
+            DBManager.getDao().insertBookmarkToTable(BookmarkData(name = mName.ifEmpty { mUrl }, url = mUrl, webIconPath = mWebIconPath))
+        }
+        isAddBookmark = !isAddBookmark
+        updateBookmarkMode()
+        mCallback?.onBookmarkChanged(isAddBookmark)
+        dismiss()
+    }
+
+    /**
+     * 添加到导航栏
+     */
+    private fun processNavigationAdd() {
+        mCallback?.onNavigationAddClick()
+        dismiss()
     }
 
     /**

@@ -185,7 +185,7 @@ class DBDao(private val dbHelper: DBHelper) {
             value.put(DBConstant.BOOKMARK_URL, bookmarkData.url)
             value.put(DBConstant.BOOKMARK_FOLDER_ID, bookmarkData.folderId)
             value.put(DBConstant.BOOKMARK_ICON_BITMAP, bookmarkData.webIconPath)
-            db.replace(DBConstant.TABLE_HISTORY, null, value)
+            db.replace(DBConstant.TABLE_BOOKMARK, null, value)
             Log.d(TAG, "插入bookmark:文件路径信息${bookmarkData.name}")
         } catch (e: Exception) {
             Log.e(TAG, "插入bookmark异常：${e.message}")

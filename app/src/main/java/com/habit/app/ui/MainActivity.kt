@@ -2,6 +2,7 @@ package com.habit.app.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,6 +18,7 @@ import com.habit.app.databinding.ActivityMainBinding
 import com.habit.app.event.HomeTabsCountUpdateEvent
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
+import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.dialog.BrowserMenuDialog
@@ -87,9 +89,20 @@ class MainActivity : BaseActivity() {
     }
 
     private val menuCallback = object : BrowserMenuDialog.BrowserMenuCallback {
+        override fun onPrivateChanged(enter: Boolean) {
+            viewModel.setPrivacyObserver(enter)
+        }
         override fun onDesktopChanged(isPhoneMode: Boolean) {
             if (isPhoneMode == viewModel.phoneModeObserver.value) return
             viewModel.setPhoneModeObserver(isPhoneMode)
+        }
+
+        override fun onBookmarkChanged(add: Boolean) {
+            UtilHelper.showToast(this@MainActivity, getString(if (add) R.string.toast_bookmark_add else R.string.toast_bookmark_remove))
+        }
+
+        override fun onNavigationAddClick() {
+            mController.processNavigationAdd()
         }
     }
 
@@ -198,13 +211,7 @@ class MainActivity : BaseActivity() {
             }
         }
         binding.btnBottomMenu.setOnClickListener {
-            mBrowserMenuDialog = BrowserMenuDialog.tryShowDialog(this)?.apply {
-                this.initData(viewModel.privacyObserver.value!!, viewModel.phoneModeObserver.value!!)
-                this.mCallback = menuCallback
-                setOnDismissListener {
-                    mBrowserMenuDialog = null
-                }
-            }
+            showMenuDialog()
         }
 
         binding.editInput.addTextChangedListener(object : TextWatcher {
@@ -253,6 +260,26 @@ class MainActivity : BaseActivity() {
             }
         }
         transaction.commit()
+    }
+
+    private fun showMenuDialog() {
+        mController.mCurWebView?.let { webView ->
+            mBrowserMenuDialog = BrowserMenuDialog.tryShowDialog(this)?.apply {
+                val webUrl = webView.url ?: ""
+                val webName = webView.getTag(R.id.web_title) as? String ?: ""
+                val iconBitmap = webView.getTag(R.id.web_small_icon) as? Bitmap
+                val iconBitmapPath = if (iconBitmap == null) "" else UtilHelper.writeBitmapToCache(this@MainActivity, iconBitmap) ?: ""
+
+                this.initData(webUrl, webName,  iconBitmapPath,viewModel.privacyObserver.value!!, viewModel.phoneModeObserver.value!!)
+                this.mCallback = menuCallback
+
+                setOnDismissListener {
+                    mBrowserMenuDialog = null
+                }
+            }
+        } ?: run {
+            mBrowserMenuDialog = null
+        }
     }
 
     private fun updateUIConfig() {

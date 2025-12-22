@@ -19,6 +19,8 @@
     <string name="toast_pic_saved">Photo already saved</string>
     <string name="toast_pic_not_support">Picture not support</string>
     <string name="toast_can_not_add_more">Can not add more</string>
+    <string name="toast_bookmark_add">Page added to bookmarks</string>
+    <string name="toast_bookmark_remove">Page removed from bookmarks</string>
 
     <string name="text_get_started_big">GET STARTED</string>
     <string name="text_home">Home</string>
