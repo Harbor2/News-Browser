@@ -10,6 +10,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.habit.app.R
 import com.habit.app.data.ENGINE_BAIDU
@@ -73,7 +74,9 @@ class MainController(
             Log.d(TAG, "当前webView更新：$title, url:${view?.url}")
             view?.setTag(R.id.web_title, title)
             view?.url?.let {
-                binding.editInput.setText(it)
+                if (!binding.editInput.hasFocus()) {
+                    binding.editInput.setText(it)
+                }
             }
             updateGoBackStatus()
         }
@@ -321,6 +324,7 @@ class MainController(
         mCurWebSign.isNotEmpty().let {
             DBManager.getDao().updateWebSnapItem(WebViewData(sign = mCurWebSign, isPrivacyMode = value))
         }
+        binding.ivInputTrace.isVisible = value
         updateTabsCount()
     }
 
@@ -373,7 +377,9 @@ class MainController(
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
             Log.d(TAG, "shouldOverrideUrlLoading url：${request?.url?.toString()}")
             request?.url?.toString()?.let {
-                binding.editInput.setText(it)
+                if (!binding.editInput.hasFocus()) {
+                    binding.editInput.setText(it)
+                }
                 updateGoBackStatus()
             }
             return false
@@ -388,7 +394,9 @@ class MainController(
             super.onPageFinished(view, url)
             if (url.isNullOrEmpty()) return
             Log.d(TAG, "onPageFinished 更新WebSnapData： url ${url}， sign：$mCurWebSign， name：${view?.getTag(R.id.web_title)}")
-            binding.editInput.setText(url)
+            if (!binding.editInput.hasFocus()) {
+                binding.editInput.setText(url)
+            }
             binding.ivNaviPageRefresh.alpha = 1f
             DBManager.getDao().updateWebSnapItem(
                 WebViewData(

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -29,6 +30,7 @@ import com.habit.app.ui.setting.SettingFragment
 import com.habit.app.ui.tag.TagsActivity
 import com.habit.app.viewmodel.MainActivityModel
 import com.wyz.emlibrary.em.EMManager
+import com.wyz.emlibrary.util.EMUtil
 import com.wyz.emlibrary.util.immersiveWindow
 import org.greenrobot.eventbus.Subscribe
 
@@ -42,6 +44,12 @@ class MainActivity : BaseActivity() {
     private val settingFragmentTag = "SettingFragment"
     private var currentFragmentTag: String = homeFragmentTag
     private var lastFragmentTag: String? = null
+
+    /**
+     * 原始输入内容
+     * 用户重新搜索时用到
+     */
+    private var mOriginInputTextStr = ""
 
     /**
      * menu菜单dialog
@@ -192,6 +200,9 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initListener() {
+        binding.containerSearchNavi.setOnClickListener {
+            EMUtil.hideSoftKeyboard(binding.editInput, this)
+        }
         binding.loadingView.setOnClickListener {}
         binding.pageSearch.setOnClickListener {}
         binding.containerBottom.setOnClickListener {}
@@ -269,9 +280,20 @@ class MainActivity : BaseActivity() {
         binding.editInput.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 mController.processWebSearch(v.text.toString().trim())
+                mOriginInputTextStr = ""
                 true
             } else {
                 false
+            }
+        }
+        binding.editInput.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                mOriginInputTextStr = binding.editInput.text.toString()
+                binding.editInput.text?.clear()
+            } else {
+                if (mOriginInputTextStr.isNotEmpty()) {
+                    binding.editInput.setText(mOriginInputTextStr)
+                }
             }
         }
     }
@@ -366,7 +388,7 @@ class MainActivity : BaseActivity() {
         binding.btnBottomContainerNum.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_page_container_num))
         binding.tvBottomSearchTabNum.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.btnBottomMenu.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_page_menu))
-
+        binding.ivInputTrace.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_search_trace))
         // Dialog
         mBrowserMenuDialog?.updateThemeUI()
     }

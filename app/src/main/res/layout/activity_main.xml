@@ -179,10 +179,12 @@
                     android:src="@drawable/iv_navi_tab_add"
                     android:paddingStart="16dp" />
 
-                <FrameLayout
+                <LinearLayout
                     android:id="@+id/container_input"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
                     android:layout_marginStart="52dp"
                     android:layout_marginEnd="52dp">
 
@@ -196,8 +198,9 @@
 
                     <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/edit_input"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:textColor="@color/text_main_color"
                         android:textColorHint="@color/text_main_color_30"
                         android:textSize="14sp"
@@ -206,11 +209,21 @@
                         android:fontFamily="@font/gotham_r"
                         android:layout_gravity="center_vertical"
                         android:inputType="text"
-                        android:singleLine="true"
-                        android:layout_marginStart="44dp"
-                        android:layout_marginEnd="20dp"
-                        android:imeOptions="actionSearch"/>
-                </FrameLayout>
+                        android:lines="1"
+                        android:ellipsize="end"
+                        android:scrollHorizontally="false"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:imeOptions="actionSearch" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_input_trace"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:visibility="gone"
+                        android:src="@drawable/iv_search_trace"
+                        android:layout_marginEnd="12dp"/>
+                </LinearLayout>
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_navi_page_refresh"
