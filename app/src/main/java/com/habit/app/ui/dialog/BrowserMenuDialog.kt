@@ -162,15 +162,15 @@ class BrowserMenuDialog(activity: Activity) : BottomSheetDialog(activity) {
     }
 
     private fun updatePrivateMode() {
-        binding.itemPrivate.updateData(ThemeManager.getSkinImageResId(if (isPrivate) R.drawable.iv_d_m_exit_private else R.drawable.iv_d_m_private), context.getString(if (isPrivate) R.string.text_exit_private else R.string.text_private))
+        binding.itemPrivate.updateData(if (isPrivate) R.drawable.iv_d_m_exit_private else R.drawable.iv_d_m_private, context.getString(if (isPrivate) R.string.text_exit_private else R.string.text_private))
     }
 
     private fun updateBookmarkMode() {
-        binding.itemBookmarkAdd.updateData(ThemeManager.getSkinImageResId(if (isAddBookmark) R.drawable.iv_d_m_remove_bookmarks else R.drawable.iv_d_m_add_bookmarks), context.getString(if (isAddBookmark) R.string.text_remove_bookmarks else R.string.text_add_bookmarks))
+        binding.itemBookmarkAdd.updateData(if (isAddBookmark) R.drawable.iv_d_m_remove_bookmarks else R.drawable.iv_d_m_add_bookmarks, context.getString(if (isAddBookmark) R.string.text_remove_bookmarks else R.string.text_add_bookmarks))
     }
 
     private fun updateDesktopMode() {
-        binding.itemDesktopSite.updateData(ThemeManager.getSkinImageResId(if (isPhoneMode) R.drawable.iv_d_m_desktop_site else R.drawable.iv_d_m_phone_site), context.getString(if (isPhoneMode) R.string.text_desktop_site else R.string.text_phone_site))
+        binding.itemDesktopSite.updateData(if (isPhoneMode) R.drawable.iv_d_m_desktop_site else R.drawable.iv_d_m_phone_site, context.getString(if (isPhoneMode) R.string.text_desktop_site else R.string.text_phone_site))
     }
 
     /**
