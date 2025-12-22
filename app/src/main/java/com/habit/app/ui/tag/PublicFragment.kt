@@ -112,11 +112,16 @@ class PublicFragment() : BaseFragment<FragmentPublicBinding>() {
         webSnaps.reversed().forEach {
             items.add(TagSnapItem(requireContext(), it, snapItemCallback))
         }
-        mAdapter.updateDataSet(items)
-        tagsModel.setPublicTagCount(items.size)
-        binding.recList.post {
-            overlayLayoutManager.scrollToPositionWithOffsetInternal((items.size - 2).coerceAtLeast(0), -400)
+        if (items.isEmpty()) {
+            emptyObserver.value = true
+        } else {
+            emptyObserver.value = false
+            mAdapter.updateDataSet(items)
+            binding.recList.post {
+                overlayLayoutManager.scrollToPositionWithOffsetInternal((items.size - 2).coerceAtLeast(0), -400)
+            }
         }
+        tagsModel.setPublicTagCount(items.size)
     }
 
     override fun onDestroy() {

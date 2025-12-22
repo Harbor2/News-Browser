@@ -61,7 +61,7 @@ data class WebViewData(
     }
 
     override fun toString(): String {
-        return "WebViewData(name='$name', sign='$sign', url='$url', isPhoneMode=$isPhoneMode, coverBitmapPath=$coverBitmapPath, webIconPath=$webIconPath, mSelect=$mSelect, coverBitmap=$coverBitmap, webIconBitmap=$webIconBitmap)"
+        return "WebViewData(name='$name', sign='$sign', url='$url', isPhoneMode=$isPhoneMode, isPrivacyMode=$isPrivacyMode, coverBitmapPath=$coverBitmapPath, webIconPath=$webIconPath, mSelect=$mSelect, coverBitmap=$coverBitmap, webIconBitmap=$webIconBitmap)"
     }
 
 }

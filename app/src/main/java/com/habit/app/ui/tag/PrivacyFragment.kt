@@ -65,7 +65,7 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
             binding.loadingView.visibility = if (value) View.VISIBLE else View.GONE
         }
         emptyObserver.observe(requireActivity()) { value ->
-            binding.tvEmpty.visibility = if (value) View.VISIBLE else View.GONE
+            binding.viewEmpty.visibility = if (value) View.VISIBLE else View.GONE
         }
     }
 
@@ -112,11 +112,16 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
         webSnaps.reversed().forEach {
             items.add(TagSnapItem(requireContext(), it, snapItemCallback))
         }
-        mAdapter.updateDataSet(items)
-        tagsModel.setPrivacyTagCount(items.size)
-        binding.recList.post {
-            overlayLayoutManager.scrollToPositionWithOffsetInternal((items.size - 2).coerceAtLeast(0), -400)
+        if (items.isEmpty()) {
+            emptyObserver.value = true
+        } else {
+            emptyObserver.value = false
+            mAdapter.updateDataSet(items)
+            binding.recList.post {
+                overlayLayoutManager.scrollToPositionWithOffsetInternal((items.size - 2).coerceAtLeast(0), -400)
+            }
         }
+        tagsModel.setPrivacyTagCount(items.size)
     }
 
     override fun onDestroy() {

@@ -4,9 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
+import android.view.KeyEvent
 import androidx.activity.viewModels
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.habit.app.R
 import com.habit.app.data.TAG
@@ -94,7 +93,7 @@ class TagsActivity : BaseActivity() {
         }
 
         binding.ivPre.setOnClickListener {
-            finish()
+            preCheckAndFinish()
         }
         binding.ivAdd.setOnClickListener {
             val newTabSign = newTabAndInsertDB()
@@ -144,7 +143,7 @@ class TagsActivity : BaseActivity() {
         )
         DBManager.getDao().insertWebSnapToTable(newTabViewData)
         EventBus.getDefault().post(HomeTabsCountUpdateEvent())
-        Log.d(TAG, "数据库添加web sign：$newTabSign")
+        Log.d(TAG, "数据库添加webSnapData：$newTabViewData")
         return newTabSign
     }
 
@@ -225,13 +224,22 @@ class TagsActivity : BaseActivity() {
         updateUiConfig()
     }
 
-    override fun finish() {
-        super.finish()
+    private fun preCheckAndFinish() {
         val addSnaps = DBManager.getDao().getWebSnapsFromTable().filter { it.isPrivacyMode == (currentFragmentTag == privacyFragmentTag) }
         if (addSnaps.isEmpty()) {
             Log.d(TAG, "tag页面关闭前为空，新创建一个tab")
             val newTabSign = newTabAndInsertDB()
             setResult(RESULT_OK, Intent().putExtra(KEY_TRANS_WEB_SIGN, newTabSign))
+        }
+        finish()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return if (keyCode == KeyEvent.KEYCODE_BACK) {
+            preCheckAndFinish()
+            true
+        } else {
+            super.onKeyDown(keyCode, event)
         }
     }
 
