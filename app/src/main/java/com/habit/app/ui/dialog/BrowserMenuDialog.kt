@@ -98,13 +98,16 @@ class BrowserMenuDialog(activity: Activity) : BottomSheetDialog(activity) {
             dismiss()
         }
         binding.itemBookmarks.setOnClickListener {
-
+            mCallback?.onBookMarksClick()
+            dismiss()
         }
         binding.itemDownload.setOnClickListener {
-
+            mCallback?.onDownloadClick()
+            dismiss()
         }
         binding.itemHistory.setOnClickListener {
-
+            mCallback?.onHistoryClick()
+            dismiss()
         }
 
         binding.itemBookmarkAdd.setOnClickListener {
@@ -124,16 +127,20 @@ class BrowserMenuDialog(activity: Activity) : BottomSheetDialog(activity) {
         }
 
         binding.itemFeedback.setOnClickListener {
-
+            mCallback?.onFeedbackClick()
+            dismiss()
         }
         binding.itemPageSearch.setOnClickListener {
-
+            mCallback?.onPageSearchClick()
+            dismiss()
         }
         binding.itemShare.setOnClickListener {
-
+            mCallback?.onShareClick()
+            dismiss()
         }
         binding.itemSetting.setOnClickListener {
-
+            mCallback?.onSettingClick()
+            dismiss()
         }
     }
 

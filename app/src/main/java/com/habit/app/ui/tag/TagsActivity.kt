@@ -61,12 +61,8 @@ class TagsActivity : BaseActivity() {
             binding.tabPrivacy.updateSelect(currentFragmentTag == privacyFragmentTag)
 
             mWebViewData?.let {
-                val historyList = DBManager.getDao().getWebSnapsFromTable()
-                if (historyList.contains(it)) {
-                    historyList[historyList.indexOf(it)] = it
-                    // 更新数据库
-                    DBManager.getDao().updateWebSnapItem(it)
-                }
+                DBManager.getDao().updateWebSnapItem(it)
+                mWebViewData = null
             }
 
             delay(50)

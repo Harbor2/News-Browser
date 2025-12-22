@@ -2,6 +2,7 @@ package com.habit.app.helper
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -223,6 +224,14 @@ object UtilHelper {
             Log.e(TAG, "图片缓存到cache目录失败: ${e.message}")
             null
         }
+    }
+
+    fun shareUrl(context: Context, url: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, url)
+        }
+        context.startActivity(Intent.createChooser(intent, "share"))
     }
 
 }

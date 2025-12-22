@@ -16,6 +16,7 @@ import com.habit.app.data.TAG
 import com.habit.app.data.db.DBManager
 import com.habit.app.databinding.ActivityMainBinding
 import com.habit.app.event.HomeTabsCountUpdateEvent
+import com.habit.app.helper.FeedbackUtils
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
@@ -66,12 +67,16 @@ class MainActivity : BaseActivity() {
                 viewModel.setPhoneModeObserver(true)
                 viewModel.setSearchObserver(false)
             } else {
-                if (mController.mCurWebSign != transWebSign) {
+                if (mController.mCurWebSign != transWebSign || (mController.mCurWebView == null)) {
                     mController.mCurWebSign = transWebSign
                     viewModel.setPrivacyObserver(dbWebViewData.isPrivacyMode ?: false)
                     Log.d(TAG, "主页渲染webView sign：${dbWebViewData.sign}")
                     viewModel.setSearchObserver(true)
                     mController.updateWebView(dbWebViewData)
+                } else {
+                    if (!viewModel.searchObserver.value!!) {
+                        viewModel.setSearchObserver(true)
+                    }
                 }
             }
         }
@@ -92,17 +97,49 @@ class MainActivity : BaseActivity() {
         override fun onPrivateChanged(enter: Boolean) {
             viewModel.setPrivacyObserver(enter)
         }
+        override fun onBookMarksClick() {
+
+        }
+        override fun onDownloadClick() {
+
+        }
+        override fun onHistoryClick() {
+
+        }
+
+
         override fun onDesktopChanged(isPhoneMode: Boolean) {
             if (isPhoneMode == viewModel.phoneModeObserver.value) return
             viewModel.setPhoneModeObserver(isPhoneMode)
         }
-
         override fun onBookmarkChanged(add: Boolean) {
             UtilHelper.showToast(this@MainActivity, getString(if (add) R.string.toast_bookmark_add else R.string.toast_bookmark_remove))
         }
-
         override fun onNavigationAddClick() {
             mController.processNavigationAdd()
+        }
+
+        override fun onFeedbackClick() {
+            FeedbackUtils.feedback(this@MainActivity)
+        }
+        override fun onPageSearchClick() {
+        }
+        override fun onShareClick() {
+            mController.mCurWebView?.let {
+                UtilHelper.shareUrl(this@MainActivity, it.url ?: "")
+            }
+        }
+        override fun onSettingClick() {
+            mController.createWebViewSnapshot { webViewData ->
+                if (webViewData != null) {
+                    // 更新封面
+                    DBManager.getDao().updateWebSnapItem(webViewData)
+                    // 返回home页，但保留sign不变
+                    viewModel.setSearchObserver(false)
+                    // 跳转setting
+                    binding.containerTabSetting.performClick()
+                }
+            }
         }
     }
 
