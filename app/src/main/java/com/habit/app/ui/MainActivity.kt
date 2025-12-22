@@ -229,10 +229,18 @@ class MainActivity : BaseActivity() {
         }
 
         binding.btnBottomBack.setOnClickListener {
-
+            mController.mCurWebView?.let {
+                if (it.canGoBack()) {
+                    it.goBack()
+                }
+            }
         }
         binding.btnBottomNext.setOnClickListener {
-
+            mController.mCurWebView?.let {
+                if (it.canGoForward()) {
+                    it.goForward()
+                }
+            }
         }
         binding.btnBottomHome.setOnClickListener {
             viewModel.setSearchObserver(false)
