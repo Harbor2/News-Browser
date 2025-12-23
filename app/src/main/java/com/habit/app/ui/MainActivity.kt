@@ -24,6 +24,7 @@ import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.dialog.BrowserMenuDialog
+import com.habit.app.ui.home.BookmarkHistoryActivity
 import com.habit.app.ui.home.fragment.HomeFragment
 import com.habit.app.ui.news.NewsFragment
 import com.habit.app.ui.setting.SettingFragment
@@ -106,13 +107,13 @@ class MainActivity : BaseActivity() {
             viewModel.setPrivacyObserver(enter)
         }
         override fun onBookMarksClick() {
-
+            BookmarkHistoryActivity.startActivity(this@MainActivity, true)
         }
         override fun onDownloadClick() {
 
         }
         override fun onHistoryClick() {
-
+            BookmarkHistoryActivity.startActivity(this@MainActivity, false)
         }
 
 
