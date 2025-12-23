@@ -35,3 +35,14 @@ const val ENGINE_BAIDU_URL = "https://www.baidu.com/s?wd="
  * 快捷功能url List
  */
 var assessUrlList = listOf("")
+
+/**
+ * folder url 操作
+ */
+const val OPTION_DELETE = "option_delete"
+const val OPTION_OPEN_IN_NEW_TAB = "option_open_in_new_tab"
+const val OPTION_REMOVE = "option_remove"
+const val OPTION_EDIT = "option_edit"
+const val OPTION_ADD_TO_NAVI = "option_add_to_navi"
+const val OPTION_ADD_TO_HOME = "option_add_to_home"
+const val OPTION_SELECT = "option_select"

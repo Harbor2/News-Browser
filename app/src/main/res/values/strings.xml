@@ -21,6 +21,8 @@
     <string name="toast_can_not_add_more">Can not add more</string>
     <string name="toast_bookmark_add">Page added to bookmarks</string>
     <string name="toast_bookmark_remove">Page removed from bookmarks</string>
+    <string name="toast_input_sth">Please enter content</string>
+    <string name="toast_folder_exist">Folder already exist</string>
 
     <string name="text_get_started_big">GET STARTED</string>
     <string name="text_home">Home</string>
@@ -128,4 +130,16 @@
     <string name="text_no_tags">No Tags</string>
     <string name="text_you_have_entered_private_mode">You have entered private mode</string>
     <string name="text_you_have_entered_private_mode_desc">Private mode will NOT record any of your browsing history, but it will save your downloads and bookmarks.</string>
+    <string name="text_all">All</string>
+    <string name="text_new_folder">New Folder</string>
+    <string name="text_name">Name</string>
+    <string name="text_enter_folder_name">Enter folder name</string>
+    <string name="text_save">Save</string>
+    <string name="text_open_in_new_tab">Open In New Tab</string>
+    <string name="text_remove">Remove</string>
+    <string name="text_edit">Edit</string>
+    <string name="text_add_to_navigation">Add To Navigation</string>
+    <string name="text_add_to_home_screen">Add To Home Screen</string>
+    <string name="text_select">Select</string>
+    <string name="text_delete">Delete</string>
 </resources>

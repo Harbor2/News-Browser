@@ -58,6 +58,10 @@ class HistoryFragment() : BaseFragment<FragmentBHistoryBinding>() {
     private fun initListener() {
     }
 
+    fun processClearHistory() {
+
+    }
+
     private fun updateUIConfig() {
         EMManager.from(binding.containerSearch)
             .setCorner(21f)

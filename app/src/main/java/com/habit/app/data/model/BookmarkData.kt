@@ -16,6 +16,7 @@ data class BookmarkData(
 ) {
     private var webIconBitmap: Bitmap? = null
 
+    var mSelect: Boolean? = null
 
     fun getIconBitmap(context: Context): Bitmap {
         if (webIconBitmap != null) return webIconBitmap!!
