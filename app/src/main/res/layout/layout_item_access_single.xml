@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="72dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_marginBottom="16dp">
 
@@ -12,10 +13,11 @@
         android:layout_marginTop="4dp"
         android:layout_gravity="center_horizontal">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.wyz.emlibrary.custom.RoundedImageView
             android:id="@+id/iv_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            app:riCornerRadius="6dp"
             android:src="@drawable/iv_access_single_file"
             android:layout_gravity="center"/>
     </FrameLayout>
@@ -35,6 +37,8 @@
         android:textColor="@color/text_main_color_80"
         android:textSize="12sp"
         android:text="xxx"
+        android:lines="1"
+        android:ellipsize="end"
         android:fontFamily="@font/gotham_r"
         android:layout_gravity="center_horizontal|bottom"/>
 </FrameLayout>

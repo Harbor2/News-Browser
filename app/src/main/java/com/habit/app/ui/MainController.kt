@@ -12,6 +12,7 @@ import android.widget.FrameLayout
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.google.gson.reflect.TypeToken
 import com.habit.app.R
 import com.habit.app.data.ENGINE_BAIDU
 import com.habit.app.data.ENGINE_BAIDU_URL
@@ -34,16 +35,19 @@ import com.habit.app.data.db.DBManager
 import com.habit.app.data.model.AccessSingleData
 import com.habit.app.data.model.WebViewData
 import com.habit.app.databinding.ActivityMainBinding
+import com.habit.app.event.HomeAccessUpdateEvent
 import com.habit.app.helper.GsonUtil
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.helper.WebViewManager
 import com.habit.app.ui.custom.CustomWebView
+import com.habit.app.ui.dialog.NavigationEditDialog
 import com.habit.app.viewmodel.MainActivityModel
 import com.wyz.emlibrary.util.EMUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.greenrobot.eventbus.EventBus
 import java.net.URLEncoder
 
 class MainController(
@@ -60,6 +64,8 @@ class MainController(
     var mCurWebSign: String = ""
 
     private var webScrollCallback: ((Boolean) -> Unit) = { isUpScroll -> }
+
+    private var mNaviEditDialog: NavigationEditDialog? = null
     /**
      * webView加载进度监听
      */
@@ -297,15 +303,28 @@ class MainController(
      * 添加到首页导航栏
      */
     fun processNavigationAdd() {
-        UtilHelper.showToast(activity, activity.getString(R.string.toast_succeed))
+        if (mCurWebView == null) {
+            UtilHelper.showToast(activity, activity.getString(R.string.toast_failed))
+            return
+        }
 
-//        val cacheInfo = KeyValueManager.getValueByKey(KeyValueManager.KEY_HOME_ACCESS_INFO) ?: ""
-//        val selectedAccess = if (cacheInfo.isEmpty()) {
-//            UtilHelper.getDefaultHomeAccessList(activity)
-//        } else {
-//            GsonUtil.gson.fromJson(cacheInfo, object : TypeToken<ArrayList<AccessSingleData>>() {}.type)
-//        }
-//        KeyValueManager.saveValueWithKey(KeyValueManager.KEY_HOME_ACCESS_INFO, GsonUtil.gson.toJson(selectedAccess))
+        val webTitle = mCurWebView!!.getTag(R.id.web_title) as? String ?: (mCurWebView!!.url ?: "")
+        val webUrl = mCurWebView!!.url ?: ""
+        val iconBitmap = mCurWebView!!.getTag(R.id.web_small_icon) as? Bitmap
+        val iconBitmapPath = if (iconBitmap == null) null else UtilHelper.writeBitmapToCache(activity, iconBitmap)
+
+        mNaviEditDialog = NavigationEditDialog.tryShowDialog(activity)?.apply {
+            setData(iconBitmapPath, webTitle)
+            setOnDismissListener {
+                mNaviEditDialog = null
+            }
+            this.mCallback = { name ->
+                val result = UtilHelper.homeAddAccessItem(activity, name, webUrl, iconBitmapPath)
+                if (result) {
+                    EventBus.getDefault().post(HomeAccessUpdateEvent())
+                }
+            }
+        }
     }
 
     fun onPhoneModeChange(value: Boolean) {
@@ -371,6 +390,10 @@ class MainController(
             binding.btnBottomBack.alpha = if (it.canGoBack()) 1f else 0.3f
             binding.btnBottomNext.alpha = if (it.canGoForward()) 1f else 0.3f
         }
+    }
+
+    fun updateUIConfig() {
+        mNaviEditDialog?.updateThemeUI()
     }
 
     inner class CustomWebViewClient : WebViewClient() {

@@ -74,7 +74,7 @@ class HomeAccessItem(
             override fun onEnterEdit() {
                 btnSave.isVisible = true
                 accessList.map { it.isEdit = true }
-                mAdapter.updateDataSet(items)
+                mAdapter.updateDataSet(mAdapter.currentItems)
             }
 
             override fun onItemDelete(item: AccessSingleItem) {

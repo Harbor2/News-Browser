@@ -392,6 +392,7 @@ class MainActivity : BaseActivity() {
         binding.ivInputTrace.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_search_trace))
         // Dialog
         mBrowserMenuDialog?.updateThemeUI()
+        mController.updateUIConfig()
     }
 
     override fun onThemeChanged(theme: String) {

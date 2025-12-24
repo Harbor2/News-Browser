@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.habit.app.R
 import com.habit.app.databinding.LayoutItemAccessSingleBinding
 import com.habit.app.helper.ThemeManager
@@ -38,7 +39,16 @@ class AccessSingleItem(
         EMManager.from(holder.binding.ivIconBg)
             .setCorner(24f)
             .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.view_bg_color))
-        holder.binding.ivIcon.setImageResource(ThemeManager.getSkinImageResId(UtilHelper.getResIdByName(context, data.iconResName)))
+        // 兼容本地资源icon
+        if (data.iconResName.startsWith("iv_")) {
+            holder.binding.ivIcon.setImageResource(ThemeManager.getSkinImageResId(UtilHelper.getResIdByName(context, data.iconResName)))
+        } else {
+            // 本地资源
+            Glide.with(context)
+                .load(data.iconResName)
+                .error(ThemeManager.getSkinImageResId(R.drawable.iv_web_icon_default))
+                .into(holder.binding.ivIcon)
+        }
         holder.binding.tvName.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_80))
         holder.binding.tvName.text = data.name
         holder.binding.ivDelete.isVisible = !data.isSpecial && data.isEdit

@@ -25,6 +25,7 @@ import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.data.model.AccessSingleData
 import com.habit.app.data.model.HomeNewsData
+import com.habit.app.event.HomeAccessUpdateEvent
 import com.habit.app.ui.home.AccessSelectActivity
 import com.habit.app.ui.home.SearchActivity
 import com.habit.app.ui.dialog.SearchEngineDialog
@@ -76,11 +77,7 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
      */
     private val accessAddLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            accessList = getAccessList()
-            mAdapter.currentItems.filterIsInstance<HomeAccessItem>().firstOrNull()?.let {
-                it.accessList = accessList
-                mAdapter.updateItem(it)
-            }
+            updateAccessList()
         }
     }
 
@@ -219,6 +216,17 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
         mAdapter.updateDataSet(items)
     }
 
+    /**
+     * 更新access列表
+     */
+    private fun updateAccessList() {
+        accessList = getAccessList()
+        mAdapter.currentItems.filterIsInstance<HomeAccessItem>().firstOrNull()?.let {
+            it.accessList = accessList
+            mAdapter.updateItem(it)
+        }
+    }
+
     private fun getAccessList(): ArrayList<AccessSingleData> {
         val cacheAccessStr = KeyValueManager.getValueByKey(KeyValueManager.KEY_HOME_ACCESS_INFO) ?: ""
         return if (cacheAccessStr.isEmpty()) {
@@ -309,6 +317,11 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
         super.onThemeChanged(theme)
         Log.d(TAG, "fragment中 onThemeChanged")
         updateUIConfig()
+    }
+
+    @Subscribe
+    fun onAccessChangedEvent(event: HomeAccessUpdateEvent) {
+        updateAccessList()
     }
 
     @Subscribe
