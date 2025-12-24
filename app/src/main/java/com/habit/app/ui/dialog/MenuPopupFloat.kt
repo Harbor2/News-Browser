@@ -106,6 +106,13 @@ class MenuPopupFloat(
             callback?.onOptionSelect(OPTION_DELETE, mData!!)
             dismiss()
         }
+        binding.itemRemove.setOnClickListener {
+            if (mData == null) {
+                return@setOnClickListener
+            }
+            callback?.onOptionSelect(OPTION_REMOVE, mData!!)
+            dismiss()
+        }
         binding.itemOpenNewTab.setOnClickListener {
             if (mData == null) {
                 return@setOnClickListener

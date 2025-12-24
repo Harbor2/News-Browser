@@ -220,14 +220,11 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
      */
     private fun processMenuOption(option: String, data: Any) {
         when (option) {
-            OPTION_DELETE -> {
+            OPTION_DELETE, OPTION_REMOVE -> {
                 deleteSelectItems(data)
             }
             OPTION_OPEN_IN_NEW_TAB -> {
 
-            }
-            OPTION_REMOVE -> {
-                showBookmarkEditDialog(listOf(data))
             }
             OPTION_EDIT -> {
                 showBookmarkEditDialog(listOf(data))
