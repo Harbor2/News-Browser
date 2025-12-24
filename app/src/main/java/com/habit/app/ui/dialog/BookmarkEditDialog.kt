@@ -44,7 +44,7 @@ class BookmarkEditDialog(activity: Activity) : Dialog(activity) {
     /**
      * 新的目录
      */
-    private var mNewDirectory: FolderData? = null
+    private var mNewDirectoryId: Int = -1
 
     private var initialY = 0f
     private val dragThreshold = EMUtil.dp2px(100f).toInt()
@@ -97,9 +97,14 @@ class BookmarkEditDialog(activity: Activity) : Dialog(activity) {
     }
 
     fun updateDirectory(parentFolderId: Int) {
-        mNewDirectory = DBManager.getDao().getFolderById(parentFolderId)
-        mNewDirectory?.let {
-            binding.tvFolderName.text = it.folderName
+        if (parentFolderId == -1) {
+            binding.tvFolderName.text = "/"
+            mNewDirectoryId = -1
+        } else {
+            val mNewDirectory = DBManager.getDao().getFolderById(parentFolderId)
+            mNewDirectory?.let {
+                binding.tvFolderName.text = it.folderName
+            }
         }
     }
 
@@ -180,7 +185,7 @@ class BookmarkEditDialog(activity: Activity) : Dialog(activity) {
             val inputUrlStr = binding.editUrl.text.toString().trim()
             val firstData = mData.first()
             // 移动
-            if (mNewDirectory != null && mNewDirectory!!.folderId != mCurrentFolder) {
+            if (mNewDirectoryId != mCurrentFolder) {
                 shouldMove = true
             }
             when (firstData) {
@@ -198,7 +203,7 @@ class BookmarkEditDialog(activity: Activity) : Dialog(activity) {
                         shouldEditUrl = true
                     }
                     if (shouldMove) {
-                        firstData.folderId = mNewDirectory!!.folderId
+                        firstData.folderId = mNewDirectoryId
                     }
                     if (shouldMove || shouldEditUrl || shouldEditName) {
                         Log.d(TAG, "单文件：名字变化、url变更或目录移动")
@@ -216,7 +221,7 @@ class BookmarkEditDialog(activity: Activity) : Dialog(activity) {
                         shouldEditName = true
                     }
                     if (shouldMove) {
-                        firstData.parentId = mNewDirectory!!.folderId
+                        firstData.parentId = mNewDirectoryId
                     }
                     if (shouldMove || shouldEditName) {
                         Log.d(TAG, "单文件：名字变化或目录移动")
@@ -228,21 +233,21 @@ class BookmarkEditDialog(activity: Activity) : Dialog(activity) {
         } else {
             // 多文件
             Log.d(TAG, "多文件更新")
-            if (mNewDirectory != null && mNewDirectory!!.folderId != mCurrentFolder) {
+            if (mNewDirectoryId != mCurrentFolder) {
                 Log.d(TAG, "多文件：目录移动")
                 val folders = mData.filterIsInstance<FolderData>()
                 val bookmarks = mData.filterIsInstance<BookmarkData>()
                 val folderNames = folders.map { it.folderName }
                 // 校验目录名称
-                val targetNames = DBManager.getDao().getSubFolder(mNewDirectory!!.folderId).map { it.folderName }
+                val targetNames = DBManager.getDao().getSubFolder(mNewDirectoryId).map { it.folderName }
                 if (targetNames.any { folderNames.contains(it) }) {
                     // 重复folder
                     Log.e(TAG, "多文件：有重复命名的目录存在")
                     UtilHelper.showToast(context, context.getString(R.string.toast_folder_exist))
                     return
                 }
-                folders.map { it.parentId = mNewDirectory!!.folderId }
-                bookmarks.map { it.folderId = mNewDirectory!!.folderId }
+                folders.map { it.parentId = mNewDirectoryId }
+                bookmarks.map { it.folderId = mNewDirectoryId }
                 // 移动
                 DBManager.getDao().updateFolders(folders)
                 DBManager.getDao().updateBookmarks(bookmarks)
