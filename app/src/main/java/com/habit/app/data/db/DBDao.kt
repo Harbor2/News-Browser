@@ -76,6 +76,28 @@ class DBDao(private val dbHelper: DBHelper) {
         }
     }
 
+    fun updateFolders(list: List<FolderData>) {
+        val db: SQLiteDatabase = dbHelper.writableDatabase
+        try {
+            db.beginTransaction()
+            list.forEach { folderData ->
+                val values = ContentValues().apply {
+                    put(DBConstant.FOLDER_PARENT_ID, folderData.parentId)
+                    put(DBConstant.FOLDER_NAME, folderData.folderName)
+                }
+
+                val whereClause = "${DBConstant.FOLDER_ID} = ?" // WHERE 条件
+                val whereArgs = arrayOf(folderData.folderId.toString())
+                db.update(DBConstant.TABLE_FOLDER, values, whereClause, whereArgs)
+            }
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            Log.e(TAG, "folders更新异常：${e.message}")
+        } finally {
+            db.endTransaction()
+        }
+    }
+
     fun renameFolder(folderId: Int, newName: String) {
         val db: SQLiteDatabase = dbHelper.writableDatabase
         try {
@@ -311,6 +333,30 @@ class DBDao(private val dbHelper: DBHelper) {
         } catch (e: Exception) {
             Log.e(TAG, "查询bookmark异常：${e.message}")
             return null
+        }
+    }
+
+    fun updateBookmarks(list: List<BookmarkData>) {
+        val db: SQLiteDatabase = dbHelper.writableDatabase
+        try {
+            db.beginTransaction()
+            list.forEach { bookmarkData ->
+                val values = ContentValues().apply {
+                    put(DBConstant.BOOKMARK_NAME, bookmarkData.name)
+                    put(DBConstant.BOOKMARK_URL, bookmarkData.url)
+                    put(DBConstant.BOOKMARK_FOLDER_ID, bookmarkData.folderId)
+                    put(DBConstant.BOOKMARK_ICON_BITMAP, bookmarkData.webIconPath)
+                }
+                val whereClause = "${DBConstant.BOOKMARK_SIGN} = ?"
+                val whereArgs = arrayOf(bookmarkData.sign)
+
+                db.update(DBConstant.TABLE_BOOKMARK, values, whereClause, whereArgs)
+            }
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            Log.e(TAG, "bookmark更新异常：${e.message}")
+        } finally {
+            db.endTransaction()
         }
     }
 

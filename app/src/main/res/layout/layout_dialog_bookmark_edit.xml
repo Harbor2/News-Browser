@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/container_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="12dp"
+            android:layout_gravity="center_horizontal">
+
+            <View
+                android:id="@+id/top_line"
+                android:layout_width="88dp"
+                android:layout_height="4dp"
+                app:rcCornerRadius="2dp"
+                android:layout_gravity="center_horizontal"/>
+        </FrameLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_main_color"
+            android:textSize="18sp"
+            android:text="@string/text_edit_bookmark"
+            android:fontFamily="@font/gotham_m"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"/>
+
+        <LinearLayout
+            android:id="@+id/container_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_name"
+                android:textColor="@color/text_main_color_50"
+                android:textSize="14sp"
+                android:fontFamily="@font/gotham_r"
+                android:layout_marginStart="30dp"/>
+
+            <EditText
+                android:id="@+id/edit_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginHorizontal="30dp"
+                android:paddingVertical="12dp"
+                android:background="@null"
+                android:fontFamily="@font/gotham_r"
+                android:textColor="@color/text_main_color"
+                android:textSize="14sp"
+                android:hint="@string/enter_name"
+                android:textColorHint="@color/text_main_color_30"/>
+
+            <View
+                android:id="@+id/line_name_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/text_main_color_10"
+                android:layout_marginHorizontal="30dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/container_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_url"
+                android:textColor="@color/text_main_color_50"
+                android:textSize="14sp"
+                android:fontFamily="@font/gotham_r"
+                android:layout_marginStart="30dp"/>
+
+            <EditText
+                android:id="@+id/edit_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginHorizontal="30dp"
+                android:paddingVertical="12dp"
+                android:background="@null"
+                android:fontFamily="@font/gotham_r"
+                android:textColor="@color/text_main_color"
+                android:textSize="14sp"
+                android:hint="@string/enter_url"
+                android:textColorHint="@color/text_main_color_30"/>
+
+            <View
+                android:id="@+id/line_url_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/text_main_color_10"
+                android:layout_marginHorizontal="30dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/container_directory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_directory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_directory"
+                android:textColor="@color/text_main_color_50"
+                android:textSize="14sp"
+                android:fontFamily="@font/gotham_r"
+                android:layout_marginStart="30dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="12dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/iv_bookmark_item_folder"
+                    android:layout_marginStart="30dp"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_folder_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_main_color"
+                    android:text=""
+                    android:fontFamily="@font/gotham_r"
+                    android:layout_marginEnd="10dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/iv_b_folder_arrow"
+                    android:layout_marginEnd="30dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:id="@+id/btn_cancel"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:text="@string/text_cancel"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:fontFamily="@font/gotham_m" />
+
+            <View
+                android:layout_width="12dp"
+                android:layout_height="1dp"/>
+
+            <TextView
+                android:id="@+id/btn_save"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:text="@string/text_ok"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:fontFamily="@font/gotham_m" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

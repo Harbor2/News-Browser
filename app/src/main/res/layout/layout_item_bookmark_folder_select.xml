@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="64dp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:src="@drawable/iv_bookmark_item_folder"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="20dp"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_folder_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="78dp"
+        android:layout_marginEnd="60dp"
+        android:text="name"
+        android:textColor="@color/text_main_color"
+        android:textSize="14sp"
+        android:fontFamily="@font/gotham_m"
+        android:lines="1"
+        android:ellipsize="end"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/iv_b_folder_arrow"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="20dp"/>
+</FrameLayout>

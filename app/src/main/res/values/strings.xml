@@ -23,6 +23,7 @@
     <string name="toast_bookmark_remove">Page removed from bookmarks</string>
     <string name="toast_input_sth">Please enter content</string>
     <string name="toast_folder_exist">Folder already exist</string>
+    <string name="toast_cannot_move_here">Cannot move here</string>
 
     <string name="text_get_started_big">GET STARTED</string>
     <string name="text_home">Home</string>
@@ -143,4 +144,9 @@
     <string name="text_add_to_home_screen">Add To Home Screen</string>
     <string name="text_select">Select</string>
     <string name="text_delete">Delete</string>
+    <string name="text_edit_bookmark">Edit Bookmark</string>
+    <string name="text_url">URL</string>
+    <string name="text_directory">Directory</string>
+    <string name="enter_name">Enter name</string>
+    <string name="enter_url">Enter url</string>
 </resources>

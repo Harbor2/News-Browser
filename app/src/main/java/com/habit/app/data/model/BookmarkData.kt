@@ -9,9 +9,9 @@ import java.util.UUID
 
 data class BookmarkData(
     val sign: String = UUID.randomUUID().toString(),
-    val name: String = "",
-    val url: String = "",
-    val folderId: Int = -1,
+    var name: String = "",
+    var url: String = "",
+    var folderId: Int = -1,
     val webIconPath: String = "",
 ) {
     private var webIconBitmap: Bitmap? = null

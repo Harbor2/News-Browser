@@ -42,7 +42,6 @@ class TagsActivity : BaseActivity() {
         binding = ActivityTagsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         immersiveWindow(binding.root, false, binding.containerNavi)
-        KeyValueManager.saveBooleanValue(KeyValueManager.KEY_ENTERED_HOME, true)
 
         initView()
         setUpObservers()

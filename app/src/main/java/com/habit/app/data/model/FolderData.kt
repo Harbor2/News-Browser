@@ -2,8 +2,8 @@ package com.habit.app.data.model
 
 data class FolderData(
     val folderId: Int = -1,
-    val parentId: Int = -1,
-    val folderName: String = ""
+    var parentId: Int = -1,
+    var folderName: String = ""
 ) {
 
     var mSelect: Boolean? = null

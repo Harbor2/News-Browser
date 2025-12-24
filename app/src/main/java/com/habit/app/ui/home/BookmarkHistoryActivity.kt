@@ -9,7 +9,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.habit.app.R
 import com.habit.app.databinding.ActivityBookmarkHistoryBinding
-import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
 import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.base.BaseFragment
@@ -37,7 +36,6 @@ class BookmarkHistoryActivity : BaseActivity() {
         binding = ActivityBookmarkHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
         immersiveWindow(binding.root, false, binding.containerNavi)
-        KeyValueManager.saveBooleanValue(KeyValueManager.KEY_ENTERED_HOME, true)
 
         initView()
         setUpObservers()

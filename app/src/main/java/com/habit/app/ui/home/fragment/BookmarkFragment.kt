@@ -1,5 +1,7 @@
 package com.habit.app.ui.home.fragment
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
@@ -26,9 +29,12 @@ import com.habit.app.data.model.BookmarkData
 import com.habit.app.data.model.FolderData
 import com.habit.app.databinding.FragmentBookmarkBinding
 import com.habit.app.helper.ThemeManager
+import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.base.BaseFragment
+import com.habit.app.ui.dialog.BookmarkEditDialog
 import com.habit.app.ui.dialog.MenuPopupFloat
 import com.habit.app.ui.dialog.NewFolderDialog
+import com.habit.app.ui.home.BookmarkFolderSelectActivity
 import com.habit.app.ui.item.BookmarkFolderItem
 import com.habit.app.ui.item.BookmarkUrlItem
 import com.habit.app.viewmodel.home.BHActivityModel
@@ -45,6 +51,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
     private val loadingObserver = MutableLiveData(false)
     private val emptyObserver = MutableLiveData(false)
     private var newFolderDialog: NewFolderDialog? = null
+    private var bookmarkEditDialog: BookmarkEditDialog? = null
 
     /**
      * 所有的书签
@@ -57,10 +64,38 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
     private var mCurrentFolder: Int = -1
 
     /**
+     * folder 选择回调
+     */
+    private val folderSelectLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val folderId = result.data?.getIntExtra(BookmarkFolderSelectActivity.SELECT_FOLDER_ID, -1) ?: -1
+            bookmarkEditDialog?.updateDirectory(folderId)
+        }
+    }
+
+    /**
      * folder 创建
      */
     private val folderCreateCallback: () -> Unit = {
         updateBookmarkItems(mCurrentFolder)
+    }
+
+    /**
+     * 书签编辑回调
+     */
+    private val bookmarkEditCallback = object : BookmarkEditDialog.EditDialogCallback {
+        override fun onFolderSaved() {
+            UtilHelper.showToast(requireContext(), getString(R.string.toast_succeed))
+            bhActivityModel.setEditObserver(false)
+            binding.containerBottomOption.isVisible = false
+            updateBookmarkItems(mCurrentFolder)
+        }
+
+        override fun onLaunchFolderSelect(folderIds: List<Int>) {
+            folderSelectLauncher.launch(Intent(context, BookmarkFolderSelectActivity::class.java).apply {
+                putExtra(BookmarkFolderSelectActivity.INPUT_FOLDER_IDS, folderIds.joinToString(","))
+            })
+        }
     }
 
     private val folderItemCallback = object : BookmarkFolderItem.FolderCallback {
@@ -148,16 +183,12 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         binding.btnMove.setOnClickListener {
             val selectedDataList = getSelectItemData()
             Log.d(TAG, "move ${selectedDataList.size} 个元素")
+            if (selectedDataList.isEmpty()) return@setOnClickListener
+            showBookmarkEditDialog(selectedDataList)
         }
 
         binding.btnRemove.setOnClickListener {
-            val selectedDataList = getSelectItemData()
-            Log.d(TAG, "remove ${selectedDataList.size} 个元素")
-
-            // 删除folder
-            DBManager.getDao().deleteFolders(selectedDataList.filterIsInstance<FolderData>().map { it.folderId })
-            // 删除url
-            DBManager.getDao().deleteBookmarkByUrls(selectedDataList.filterIsInstance<BookmarkData>().map { it.url })
+            deleteSelectItems()
         }
 
         binding.editInput.addTextChangedListener(object : TextWatcher {
@@ -190,16 +221,16 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
     private fun processMenuOption(option: String, data: Any) {
         when (option) {
             OPTION_DELETE -> {
-
+                deleteSelectItems(data)
             }
             OPTION_OPEN_IN_NEW_TAB -> {
 
             }
             OPTION_REMOVE -> {
-
+                showBookmarkEditDialog(listOf(data))
             }
             OPTION_EDIT -> {
-                enterSelectMode()
+                showBookmarkEditDialog(listOf(data))
             }
             OPTION_ADD_TO_NAVI -> {
 
@@ -278,6 +309,24 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
             mCurrentFolder = DBManager.getDao().getFolderById(mCurrentFolder)?.parentId ?: -1
             updateBookmarkItems(mCurrentFolder)
         }
+    }
+
+    /**
+     * 删除选中item
+     */
+    private fun deleteSelectItems(data: Any? = null) {
+        val selectedDataList = if (data == null) getSelectItemData() else listOf(data)
+        Log.d(TAG, "remove ${selectedDataList.size} 个元素")
+        if (selectedDataList.isEmpty()) return
+
+        // 删除folder
+        DBManager.getDao().deleteFolders(selectedDataList.filterIsInstance<FolderData>().map { it.folderId })
+        // 删除url
+        DBManager.getDao().deleteBookmarkByUrls(selectedDataList.filterIsInstance<BookmarkData>().map { it.url })
+        // 刷新当前目录
+        updateBookmarkItems(mCurrentFolder)
+        bhActivityModel.setEditObserver(false)
+        binding.containerBottomOption.isVisible = false
     }
 
     /**
@@ -426,6 +475,20 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         MenuPopupFloat(requireActivity()).setData(payload).setCallback(popMenuCallback).show(anchorView, menuList)
     }
 
+    /**
+     * 显示编辑书签 dialog
+     */
+    private fun showBookmarkEditDialog(list: List<Any>) {
+        bookmarkEditDialog = BookmarkEditDialog.tryShowDialog(requireActivity())?.apply {
+            this.mCallback = bookmarkEditCallback
+            setData(list, mCurrentFolder)
+
+            setOnDismissListener {
+                bookmarkEditDialog = null
+            }
+        }
+    }
+
     private fun updateUIConfig() {
         EMManager.from(binding.containerSearch)
             .setCorner(21f)
@@ -442,6 +505,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         binding.editInput.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.editInput.setHintTextColor(ThemeManager.getSkinColor(R.color.text_main_color_30))
         newFolderDialog?.updateThemeUI()
+        bookmarkEditDialog?.updateThemeUI()
         mAdapter.currentItems.forEach { item ->
             mAdapter.updateItem(item, "update")
         }
