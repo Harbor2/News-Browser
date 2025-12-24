@@ -69,6 +69,12 @@ class BookmarkUrlItem(
                         else R.drawable.iv_checkbox_unselect
                     )
                 )
+                EMManager.from(holder.binding.root)
+                    .setBackGroundRealColor(
+                        ThemeManager.getSkinColor(
+                            if (bookmarkData.mSelect == true) R.color.view_bg_color
+                            else R.color.transparent)
+                    )
                 mCallback.onBookmarkSelect(this)
             }
         }

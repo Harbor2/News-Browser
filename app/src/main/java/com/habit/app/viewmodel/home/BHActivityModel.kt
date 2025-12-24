@@ -14,4 +14,10 @@ class BHActivityModel : ViewModel() {
     fun setEditObserver(edit: Boolean) {
         editObserver.value = edit
     }
+
+    var bookmarkSelectAllObserver = MutableLiveData(false)
+    fun setBookmarkSelectAll(all: Boolean) {
+        bookmarkSelectAllObserver.value = all
+    }
+
 }

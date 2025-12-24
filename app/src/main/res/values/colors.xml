@@ -48,12 +48,14 @@
     <color name="text_main_color_30">#4D0E0B1F</color>
     <color name="text_main_color_40">#660E0B1F</color>
     <color name="text_main_color_50">#800E0B1F</color>
+    <color name="text_main_color_60">#990E0B1F</color>
     <color name="text_main_color_70">#B30E0B1F</color>
     <color name="text_main_color_80">#CC0E0B1F</color>
     <color name="save_border_color">#4D0051FF</color>
     <color name="save_text_color">#0051FF</color>
     <color name="save_text_color_60">#990051FF</color>
     <color name="tag_top_bg_color">#F2F4F8</color>
+    <color name="create_folder_cancel_color">#F2F4F8</color>
 
     <color name="home_top_bg_start">#E3F1FF</color>
     <color name="home_top_bg_end">#FFFFFF</color>

@@ -92,6 +92,31 @@ class DBDao(private val dbHelper: DBHelper) {
         }
     }
 
+    fun getFolderById(folderId: Int): FolderData? {
+        val db: SQLiteDatabase = dbHelper.writableDatabase
+        var result: FolderData? = null
+        try {
+            val sql = "select * from ${DBConstant.TABLE_FOLDER} where ${DBConstant.FOLDER_ID} = '${folderId}'"
+            val cursor = db.rawQuery(sql, null)
+            while (cursor.moveToNext()) {
+                val parentIndex = cursor.getColumnIndex(DBConstant.FOLDER_PARENT_ID)
+                val nameIndex = cursor.getColumnIndex(DBConstant.FOLDER_NAME)
+                if (parentIndex < 0 || folderId < 0) {
+                    continue
+                }
+                result = FolderData(
+                    folderId,
+                    cursor.getInt(parentIndex),
+                    cursor.getString(nameIndex)
+                )
+            }
+            cursor.close()
+        } catch (e: Exception) {
+            Log.e(TAG, "folder获取异常：${e.message}")
+        }
+        return result
+    }
+
     fun getSubFolder(parentFolderId: Int): ArrayList<FolderData> {
         try {
             val db: SQLiteDatabase = dbHelper.writableDatabase
@@ -293,6 +318,19 @@ class DBDao(private val dbHelper: DBHelper) {
         try {
             val whereClause = "${DBConstant.BOOKMARK_URL} = ?"
             val whereArgs = arrayOf(url)
+            db.delete(DBConstant.TABLE_BOOKMARK, whereClause, whereArgs)
+        } catch (e: Exception) {
+            Log.e(TAG, "删除bookmark异常：${e.message}")
+        }
+    }
+
+    fun deleteBookmarkByUrls(urls: List<String>) {
+        if (urls.isEmpty()) return
+        val db = dbHelper.writableDatabase
+        try {
+            val placeholders = urls.joinToString(",") { "?" }
+            val whereClause = "${DBConstant.BOOKMARK_URL} IN ($placeholders)"
+            val whereArgs = urls.map { it }.toTypedArray()
             db.delete(DBConstant.TABLE_BOOKMARK, whereClause, whereArgs)
         } catch (e: Exception) {
             Log.e(TAG, "删除bookmark异常：${e.message}")

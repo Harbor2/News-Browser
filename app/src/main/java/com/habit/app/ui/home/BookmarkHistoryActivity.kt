@@ -3,6 +3,7 @@ package com.habit.app.ui.home
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -107,6 +108,10 @@ class BookmarkHistoryActivity : BaseActivity() {
             binding.containerNaviNormal.isVisible = !value
             binding.containerNaviClose.isVisible = value
         }
+        bhActivityModel.bookmarkSelectAllObserver.observe(this) { value ->
+            binding.ivNaviAll.setImageResource(
+                ThemeManager.getSkinImageResId(if (value) R.drawable.iv_checkbox_select else R.drawable.iv_checkbox_unselect))
+        }
     }
 
 
@@ -144,16 +149,18 @@ class BookmarkHistoryActivity : BaseActivity() {
         if (currentFragmentTag == historyFragmentTag) {
             finish()
         } else {
-            (supportFragmentManager.findFragmentByTag(bookmarkFragmentTag) as? BookmarkFragment)?.processActivityBack()
+            checkPageFinish()
         }
     }
 
     private fun processCloseEvent() {
-
+        (supportFragmentManager.findFragmentByTag(bookmarkFragmentTag) as? BookmarkFragment)?.selectAllOrNot(true)
     }
 
     private fun processAllEvent() {
-
+        if (currentFragmentTag == bookmarkFragmentTag) {
+            (supportFragmentManager.findFragmentByTag(bookmarkFragmentTag) as? BookmarkFragment)?.selectAllOrNot(false)
+        }
     }
 
     private fun updateUiConfig() {
@@ -168,11 +175,26 @@ class BookmarkHistoryActivity : BaseActivity() {
         binding.tabHistory.updateSelect(currentFragmentTag == historyFragmentTag)
         binding.tabBookmark.updateSelect(currentFragmentTag == bookmarkFragmentTag)
         binding.ivNaviClose.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_navi_close))
+        binding.ivNaviAll.setImageResource(
+            ThemeManager.getSkinImageResId(if (bhActivityModel.bookmarkSelectAllObserver.value!!) R.drawable.iv_checkbox_select else R.drawable.iv_checkbox_unselect))
+
     }
 
     override fun onThemeChanged(theme: String) {
         super.onThemeChanged(theme)
         updateUiConfig()
+    }
+
+    private fun checkPageFinish() {
+        (supportFragmentManager.findFragmentByTag(bookmarkFragmentTag) as? BookmarkFragment)?.checkPageFinish()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK && currentFragmentTag == bookmarkFragmentTag) {
+            checkPageFinish()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun onDestroy() {

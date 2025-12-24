@@ -5,12 +5,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.habit.app.R
 import com.habit.app.data.OPTION_ADD_TO_HOME
 import com.habit.app.data.OPTION_ADD_TO_NAVI
+import com.habit.app.data.OPTION_DELETE
 import com.habit.app.data.OPTION_EDIT
 import com.habit.app.data.OPTION_OPEN_IN_NEW_TAB
 import com.habit.app.data.OPTION_REMOVE
@@ -28,12 +30,14 @@ import com.habit.app.ui.item.BookmarkFolderItem
 import com.habit.app.ui.item.BookmarkUrlItem
 import com.habit.app.viewmodel.home.BHActivityModel
 import com.wyz.emlibrary.em.EMManager
+import com.wyz.emlibrary.util.EMUtil
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 
 class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
 
     private val mAdapter = FlexibleAdapter<AbstractFlexibleItem<*>>(null)
+
     private val bhActivityModel: BHActivityModel by activityViewModels<BHActivityModel>()
     private val loadingObserver = MutableLiveData(false)
     private val emptyObserver = MutableLiveData(false)
@@ -53,6 +57,8 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
 
     private val folderItemCallback = object : BookmarkFolderItem.FolderCallback {
         override fun onFolderClick(item: BookmarkFolderItem) {
+            mCurrentFolder = item.folderData.folderId
+            updateBookmarkItems(mCurrentFolder)
         }
 
         override fun onFolderMenu(anchorView: View, item: BookmarkFolderItem) {
@@ -60,24 +66,32 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         }
 
         override fun onFolderSelect(item: BookmarkFolderItem) {
+            // 判断是否全选
+            bhActivityModel.setBookmarkSelectAll(checkSelectAll())
         }
     }
 
     private val urlItemCallback = object : BookmarkUrlItem.BookmarkCallback {
-        override fun onBookmarkSelect(item: BookmarkUrlItem) {
-        }
-
         override fun onBookmarkClick(item: BookmarkUrlItem) {
+            // 打开webview
         }
 
         override fun onBookmarkMenu(anchorView: View, item: BookmarkUrlItem) {
             showMenu(anchorView, item.bookmarkData)
         }
+
+        override fun onBookmarkSelect(item: BookmarkUrlItem) {
+            // 判断是否全选
+            bhActivityModel.setBookmarkSelectAll(checkSelectAll())
+        }
     }
 
+    /**
+     * menu回调
+     */
     private val popMenuCallback = object :MenuPopupFloat.PopupCallback {
-        override fun onOptionSelect(option: String, data: Any?) {
-
+        override fun onOptionSelect(option: String, data: Any) {
+            processMenuOption(option, data)
         }
     }
 
@@ -92,6 +106,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
+        setUpObservers()
         initData()
         initListener()
     }
@@ -121,10 +136,90 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
     }
 
     private fun initListener() {
+        binding.btnMove.setOnClickListener {
+            val selectedDataList = getSelectItemData()
+            Log.d(TAG, "move ${selectedDataList.size} 个元素")
+        }
+
+        binding.btnRemove.setOnClickListener {
+            val selectedDataList = getSelectItemData()
+            Log.d(TAG, "remove ${selectedDataList.size} 个元素")
+
+            // 删除folder
+            DBManager.getDao().deleteFolders(selectedDataList.filterIsInstance<FolderData>().map { it.folderId })
+            // 删除url
+            DBManager.getDao().deleteBookmarkByUrls(selectedDataList.filterIsInstance<BookmarkData>().map { it.url })
+        }
     }
 
-    fun processActivityBack() {
-        activity?.finish()
+    /**
+     * 处理menu回调
+     */
+    private fun processMenuOption(option: String, data: Any) {
+        when (option) {
+            OPTION_DELETE -> {
+
+            }
+            OPTION_OPEN_IN_NEW_TAB -> {
+
+            }
+            OPTION_REMOVE -> {
+
+            }
+            OPTION_EDIT -> {
+                enterSelectMode()
+            }
+            OPTION_ADD_TO_NAVI -> {
+
+            }
+            OPTION_ADD_TO_HOME -> {
+
+            }
+            OPTION_SELECT -> {
+                enterSelectMode(data)
+                // 判断是否全选
+                bhActivityModel.setBookmarkSelectAll(checkSelectAll())
+            }
+        }
+    }
+
+    private fun setUpObservers() {
+    }
+
+    /**
+     * 获取选中item 的data list
+     */
+    private fun getSelectItemData(): ArrayList<Any> {
+        val selectedDataList: ArrayList<Any> = arrayListOf()
+        mAdapter.currentItems.map { item ->
+            when (item) {
+                is BookmarkFolderItem -> {
+                    if (item.folderData.mSelect == true) {
+                        selectedDataList.add(item.folderData)
+                    }
+                }
+
+                is BookmarkUrlItem -> {
+                    if (item.bookmarkData.mSelect == true) {
+                        selectedDataList.add(item.bookmarkData)
+                    }
+                }
+            }
+        }
+        return selectedDataList
+    }
+
+    /**
+     * @param exitEdit 是否X按钮 退出编辑模式
+     */
+    fun selectAllOrNot(exitEdit: Boolean = false) {
+        if (exitEdit) {
+            bhActivityModel.setBookmarkSelectAll(false)
+            exitSelectMode()
+        } else {
+            bhActivityModel.setBookmarkSelectAll(!bhActivityModel.bookmarkSelectAllObserver.value!!)
+            processSelectAllOrNot(bhActivityModel.bookmarkSelectAllObserver.value!!)
+        }
     }
 
     fun processAddFolder() {
@@ -136,6 +231,110 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
                 newFolderDialog = null
             }
         }
+    }
+
+    fun checkPageFinish() {
+        // 退出选择模式
+        if (bhActivityModel.editObserver.value!!) {
+            selectAllOrNot(true)
+            return
+        }
+        if (mCurrentFolder == -1) {
+            activity?.finish()
+        } else {
+            // 返回上一级
+            mCurrentFolder = DBManager.getDao().getFolderById(mCurrentFolder)?.parentId ?: -1
+            updateBookmarkItems(mCurrentFolder)
+        }
+    }
+
+    /**
+     * 进入选择模式
+     */
+    private fun enterSelectMode(selectData: Any? = null) {
+        mAdapter.currentItems.forEach { item ->
+            when (item) {
+                is BookmarkFolderItem -> {
+                    // folder
+                    item.folderData.mSelect = (selectData as? FolderData)?.folderId == item.folderData.folderId
+                }
+
+                is BookmarkUrlItem -> {
+                    // url
+                    item.bookmarkData.mSelect = (selectData as? BookmarkData)?.sign == item.bookmarkData.sign
+                }
+            }
+        }
+        mAdapter.updateDataSet(mAdapter.currentItems)
+
+        if (!binding.containerBottomOption.isVisible) {
+            binding.containerBottomOption.isVisible = true
+            bhActivityModel.setEditObserver(true)
+            binding.containerSearch.isVisible = false
+        }
+    }
+
+    /**
+     * 处理全选 非全选
+     */
+    private fun processSelectAllOrNot(selectAll: Boolean) {
+        mAdapter.currentItems.forEach { item ->
+            when (item) {
+                is BookmarkFolderItem -> {
+                    // folder
+                    item.folderData.mSelect = selectAll
+                }
+
+                is BookmarkUrlItem -> {
+                    // url
+                    item.bookmarkData.mSelect = selectAll
+                }
+            }
+        }
+        mAdapter.updateDataSet(mAdapter.currentItems)
+    }
+
+    /**
+     * 退出选择模式
+     */
+    private fun exitSelectMode() {
+        mAdapter.currentItems.forEach { item ->
+            when (item) {
+                is BookmarkFolderItem -> {
+                    // folder
+                    item.folderData.mSelect = null
+                }
+
+                is BookmarkUrlItem -> {
+                    // url
+                    item.bookmarkData.mSelect = null
+                }
+            }
+        }
+        mAdapter.updateDataSet(mAdapter.currentItems)
+        if (binding.containerBottomOption.isVisible) {
+            binding.containerBottomOption.isVisible = false
+            bhActivityModel.setEditObserver(false)
+            binding.containerSearch.isVisible = true
+        }
+    }
+
+    /**
+     * 判断item是否全选
+     */
+    private fun checkSelectAll(): Boolean {
+        mAdapter.currentItems.forEach { item ->
+            when (item) {
+                is BookmarkFolderItem -> {
+                    if (item.folderData.mSelect == false) return false
+                }
+
+                is BookmarkUrlItem -> {
+                    if (item.bookmarkData.mSelect == false) return false
+                }
+            }
+        }
+        return true
     }
 
     /**
@@ -161,14 +360,22 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
     }
 
     private fun showMenu(anchorView: View, payload: Any) {
-        val menuList = arrayListOf(
-            OPTION_OPEN_IN_NEW_TAB,
-            OPTION_REMOVE,
-            OPTION_EDIT,
-            OPTION_ADD_TO_NAVI,
-            OPTION_ADD_TO_HOME,
-            OPTION_SELECT
-        )
+        val menuList = if (payload is FolderData) {
+            arrayListOf(
+                OPTION_DELETE,
+                OPTION_EDIT,
+                OPTION_SELECT
+            )
+        } else {
+            arrayListOf(
+                OPTION_OPEN_IN_NEW_TAB,
+                OPTION_REMOVE,
+                OPTION_EDIT,
+                OPTION_ADD_TO_NAVI,
+                OPTION_ADD_TO_HOME,
+                OPTION_SELECT
+            )
+        }
         MenuPopupFloat(requireActivity()).setData(payload).setCallback(popMenuCallback).show(anchorView, menuList)
     }
 
@@ -177,6 +384,13 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
             .setCorner(21f)
             .setBorderWidth(1f)
             .setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_30))
+        EMManager.from(binding.btnMove)
+            .setCorner(12f)
+            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.create_folder_cancel_color))
+        EMManager.from(binding.btnRemove)
+            .setCorner(12f)
+            .setBackGroundRealColor(EMUtil.getColor("#FF1B0B"))
+        binding.btnMove.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_60))
         binding.ivSearch.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_bh_search_icon))
         binding.editInput.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.editInput.setHintTextColor(ThemeManager.getSkinColor(R.color.text_main_color_30))

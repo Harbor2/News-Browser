@@ -136,6 +136,7 @@
     <string name="text_enter_folder_name">Enter folder name</string>
     <string name="text_save">Save</string>
     <string name="text_open_in_new_tab">Open In New Tab</string>
+    <string name="text_move">move</string>
     <string name="text_remove">Remove</string>
     <string name="text_edit">Edit</string>
     <string name="text_add_to_navigation">Add To Navigation</string>

@@ -32,6 +32,7 @@ class BookmarkFolderItem(
                                 payloads: MutableList<Any>?) {
         EMManager.from(holder.binding.root)
             .setBackGroundRealColor(ThemeManager.getSkinColor(if (folderData.mSelect == true) R.color.view_bg_color else R.color.transparent))
+        holder.binding.ivMenu.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_b_folder_menu))
         holder.binding.tvFolderName.text = folderData.folderName
         holder.binding.tvFolderName.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         if (folderData.mSelect == null) {
@@ -45,7 +46,7 @@ class BookmarkFolderItem(
                     else R.drawable.iv_checkbox_unselect
                 )
             )
-            holder.binding.ivCheckbox.visibility = View.GONE
+            holder.binding.ivCheckbox.visibility = View.VISIBLE
         }
 
         holder.binding.root.setOnClickListener {
@@ -59,6 +60,12 @@ class BookmarkFolderItem(
                         else R.drawable.iv_checkbox_unselect
                     )
                 )
+                EMManager.from(holder.binding.root)
+                    .setBackGroundRealColor(
+                        ThemeManager.getSkinColor(
+                            if (folderData.mSelect == true) R.color.view_bg_color
+                        else R.color.transparent)
+                    )
                 mCallback.onFolderSelect(this)
             }
         }

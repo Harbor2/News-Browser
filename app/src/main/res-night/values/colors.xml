@@ -6,6 +6,7 @@
     <color name="t_night_text_main_color_10">#1AFFFFFF</color>
     <color name="t_night_text_main_color_30">#4DFFFFFF</color>
     <color name="t_night_text_main_color_50">#80FFFFFF</color>
+    <color name="t_night_text_main_color_60">#99FFFFFF</color>
     <color name="t_night_text_main_color_70">#B3FFFFFF</color>
     <color name="t_night_text_main_color_80">#CCFFFFFF</color>
 
@@ -17,4 +18,5 @@
 
     <color name="t_night_home_top_bg_start">#1E2C53</color>
     <color name="t_night_home_top_bg_end">#0E0B1F</color>
+    <color name="t_night_create_folder_cancel_color">#1E1C2D</color>
 </resources>

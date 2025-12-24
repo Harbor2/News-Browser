@@ -103,42 +103,42 @@ class MenuPopupFloat(
             if (mData == null) {
                 return@setOnClickListener
             }
-            callback?.onOptionSelect(OPTION_DELETE, mData)
+            callback?.onOptionSelect(OPTION_DELETE, mData!!)
             dismiss()
         }
         binding.itemOpenNewTab.setOnClickListener {
             if (mData == null) {
                 return@setOnClickListener
             }
-            callback?.onOptionSelect(OPTION_OPEN_IN_NEW_TAB, mData)
+            callback?.onOptionSelect(OPTION_OPEN_IN_NEW_TAB, mData!!)
             dismiss()
         }
         binding.itemEdit.setOnClickListener {
             if (mData == null) {
                 return@setOnClickListener
             }
-            callback?.onOptionSelect(OPTION_EDIT, mData)
+            callback?.onOptionSelect(OPTION_EDIT, mData!!)
             dismiss()
         }
         binding.itemAddNavigation.setOnClickListener {
             if (mData == null) {
                 return@setOnClickListener
             }
-            callback?.onOptionSelect(OPTION_ADD_TO_NAVI, mData)
+            callback?.onOptionSelect(OPTION_ADD_TO_NAVI, mData!!)
             dismiss()
         }
         binding.itemAddScreen.setOnClickListener {
             if (mData == null) {
                 return@setOnClickListener
             }
-            callback?.onOptionSelect(OPTION_ADD_TO_HOME, mData)
+            callback?.onOptionSelect(OPTION_ADD_TO_HOME, mData!!)
             dismiss()
         }
         binding.itemSelect.setOnClickListener {
             if (mData == null) {
                 return@setOnClickListener
             }
-            callback?.onOptionSelect(OPTION_SELECT, mData)
+            callback?.onOptionSelect(OPTION_SELECT, mData!!)
             dismiss()
         }
     }
@@ -148,6 +148,6 @@ class MenuPopupFloat(
     }
 
     interface PopupCallback {
-        fun onOptionSelect(option: String, data: Any? = null)
+        fun onOptionSelect(option: String, data: Any)
     }
 }
