@@ -24,6 +24,7 @@
     <string name="toast_input_sth">Please enter content</string>
     <string name="toast_folder_exist">Folder already exist</string>
     <string name="toast_cannot_move_here">Cannot move here</string>
+    <string name="toast_access_exist">Access already exist</string>
 
     <string name="text_get_started_big">GET STARTED</string>
     <string name="text_home">Home</string>

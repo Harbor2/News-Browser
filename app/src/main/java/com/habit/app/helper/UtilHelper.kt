@@ -252,14 +252,18 @@ object UtilHelper {
             return false
         }
 
-        selectedAccess.add(
-            3,
-            AccessSingleData(
-                iconResName = iconPath ?: "iv_web_icon_default",
-                name = title,
-                linkUrl = url,
-            )
+        val accessData = AccessSingleData(
+            iconResName = iconPath ?: "iv_web_icon_default",
+            name = title,
+            linkUrl = url,
         )
+
+        if (selectedAccess.contains(accessData)) {
+            showToast(context, context.getString(R.string.toast_access_exist))
+            return false
+        }
+
+        selectedAccess.add(3, accessData)
 
         // 重新设置sortIndex
         selectedAccess.forEachIndexed { index, accessSingleData ->

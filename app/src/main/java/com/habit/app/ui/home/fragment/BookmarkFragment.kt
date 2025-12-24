@@ -28,11 +28,13 @@ import com.habit.app.data.db.DBManager
 import com.habit.app.data.model.BookmarkData
 import com.habit.app.data.model.FolderData
 import com.habit.app.databinding.FragmentBookmarkBinding
+import com.habit.app.event.HomeAccessUpdateEvent
 import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.dialog.BookmarkEditDialog
 import com.habit.app.ui.dialog.MenuPopupFloat
+import com.habit.app.ui.dialog.NavigationEditDialog
 import com.habit.app.ui.dialog.NewFolderDialog
 import com.habit.app.ui.home.BookmarkFolderSelectActivity
 import com.habit.app.ui.item.BookmarkFolderItem
@@ -42,6 +44,7 @@ import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
+import org.greenrobot.eventbus.EventBus
 
 class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
 
@@ -52,6 +55,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
     private val emptyObserver = MutableLiveData(false)
     private var newFolderDialog: NewFolderDialog? = null
     private var bookmarkEditDialog: BookmarkEditDialog? = null
+    private var naviAddEditDialog: NavigationEditDialog? = null
 
     /**
      * 所有的书签
@@ -230,7 +234,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
                 showBookmarkEditDialog(listOf(data))
             }
             OPTION_ADD_TO_NAVI -> {
-
+                showNaviAddEditDialog(data)
             }
             OPTION_ADD_TO_HOME -> {
 
@@ -486,6 +490,27 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         }
     }
 
+    /**
+     * 添加编辑导航 dialog
+     */
+    private fun showNaviAddEditDialog(data: Any) {
+        if (data !is BookmarkData) return
+
+        naviAddEditDialog = NavigationEditDialog.tryShowDialog(requireActivity())?.apply {
+            setData(data.webIconPath, data.name.ifEmpty { data.url })
+            setOnDismissListener {
+                naviAddEditDialog = null
+            }
+
+            this.mCallback = { name ->
+                val result = UtilHelper.homeAddAccessItem(requireContext(), name, data.url, data.webIconPath)
+                if (result) {
+                    EventBus.getDefault().post(HomeAccessUpdateEvent())
+                }
+            }
+        }
+    }
+
     private fun updateUIConfig() {
         EMManager.from(binding.containerSearch)
             .setCorner(21f)
@@ -503,6 +528,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         binding.editInput.setHintTextColor(ThemeManager.getSkinColor(R.color.text_main_color_30))
         newFolderDialog?.updateThemeUI()
         bookmarkEditDialog?.updateThemeUI()
+        naviAddEditDialog?.updateThemeUI()
         mAdapter.currentItems.forEach { item ->
             mAdapter.updateItem(item, "update")
         }
