@@ -247,6 +247,39 @@ class DBDao(private val dbHelper: DBHelper) {
         return qrInfoList
     }
 
+    fun getBookMarks(): ArrayList<BookmarkData> {
+        try {
+            val db: SQLiteDatabase = dbHelper.writableDatabase
+            val sql = "select * from ${DBConstant.TABLE_BOOKMARK} order by ${DBConstant.BOOKMARK_ID} desc"
+            val cursor = db.rawQuery(sql, null)
+            val qrInfoList: ArrayList<BookmarkData> = arrayListOf()
+            while (cursor.moveToNext()) {
+                val signIndex = cursor.getColumnIndex(DBConstant.BOOKMARK_SIGN)
+                val nameIndex = cursor.getColumnIndex(DBConstant.BOOKMARK_NAME)
+                val urlIndex = cursor.getColumnIndex(DBConstant.BOOKMARK_URL)
+                val folderIdIndex = cursor.getColumnIndex(DBConstant.BOOKMARK_FOLDER_ID)
+                val iconPathIndex = cursor.getColumnIndex(DBConstant.BOOKMARK_ICON_BITMAP)
+                if (signIndex < 0 || nameIndex < 0 || urlIndex < 0 || folderIdIndex < 0 || iconPathIndex < 0) {
+                    continue
+                }
+                qrInfoList.add(
+                    BookmarkData(
+                        cursor.getString(signIndex),
+                        cursor.getString(nameIndex),
+                        cursor.getString(urlIndex),
+                        cursor.getInt(folderIdIndex),
+                        cursor.getString(iconPathIndex)
+                    )
+                )
+            }
+            cursor.close()
+            return qrInfoList
+        } catch (e: Exception) {
+            Log.e(TAG, "查询bookmark异常：${e.message}")
+            return arrayListOf()
+        }
+    }
+
     fun getBookMarkByUrl(url: String): BookmarkData? {
         if (url.isEmpty()) return null
         try {

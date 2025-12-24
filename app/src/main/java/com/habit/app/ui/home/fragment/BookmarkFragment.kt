@@ -1,10 +1,13 @@
 package com.habit.app.ui.home.fragment
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
@@ -42,6 +45,11 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
     private val loadingObserver = MutableLiveData(false)
     private val emptyObserver = MutableLiveData(false)
     private var newFolderDialog: NewFolderDialog? = null
+
+    /**
+     * 所有的书签
+     */
+    private var mAllBookmarks: ArrayList<BookmarkData> = arrayListOf()
 
     /**
      * 当前层级
@@ -131,8 +139,9 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         mCurrentFolder = bhActivityModel.initBookmarkUrl?.let {
             DBManager.getDao().getBookMarkByUrl(url = it)?.folderId ?: -1
         } ?: -1
-
         updateBookmarkItems(mCurrentFolder)
+        // 查询所有书签
+        mAllBookmarks = DBManager.getDao().getBookMarks()
     }
 
     private fun initListener() {
@@ -149,6 +158,29 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
             DBManager.getDao().deleteFolders(selectedDataList.filterIsInstance<FolderData>().map { it.folderId })
             // 删除url
             DBManager.getDao().deleteBookmarkByUrls(selectedDataList.filterIsInstance<BookmarkData>().map { it.url })
+        }
+
+        binding.editInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                // 内容为空则刷新当前目录
+                if (s.toString().trim().isEmpty()) {
+                    updateBookmarkItems(mCurrentFolder)
+                }
+            }
+        })
+
+        binding.editInput.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                val query = binding.editInput.text.toString().trim()
+                if (query.isNotEmpty()) {
+                    updateSearchBookmark(query)
+                }
+                true
+            } else {
+                false
+            }
         }
     }
 
@@ -338,7 +370,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
     }
 
     /**
-     * 刷新bookmark
+     * 刷新bookmark列表
      */
     private fun updateBookmarkItems(parentFolder: Int) {
         // folder
@@ -356,6 +388,21 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
             }
         }
 
+        mAdapter.updateDataSet(items)
+    }
+
+    /**
+     * 更新搜索书签列表
+     */
+    private fun updateSearchBookmark(query: String) {
+        // 过滤数据
+        val filterList = mAllBookmarks.filter { bookmark ->
+            bookmark.name.contains(query, true) || bookmark.url.contains(query, true)
+        }
+        val items = ArrayList<AbstractFlexibleItem<*>>()
+        filterList.forEach { data ->
+            items.add(BookmarkUrlItem(requireActivity(), data, urlItemCallback))
+        }
         mAdapter.updateDataSet(items)
     }
 

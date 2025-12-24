@@ -35,7 +35,8 @@
             android:hint="@string/text_search_point"
             android:textColorHint="@color/text_main_color_30"
             android:textColor="@color/text_main_color"
-            android:fontFamily="@font/gotham_r"/>
+            android:fontFamily="@font/gotham_r"
+            android:imeOptions="actionSearch"/>
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
