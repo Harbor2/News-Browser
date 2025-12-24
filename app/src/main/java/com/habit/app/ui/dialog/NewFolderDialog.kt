@@ -57,7 +57,7 @@ class NewFolderDialog(activity: Activity) : Dialog(activity) {
         EMManager.from(binding.lineView).setBackGroundRealColor(ThemeManager.getSkinColor(R.color.view_bg_color))
         EMManager.from(binding.btnCancel)
             .setCorner(12f)
-            .setBackGroundColor(R.color.view_bg_color)
+            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.create_folder_cancel_color))
         EMManager.from(binding.btnSave)
             .setCorner(12f)
             .setBackGroundColor(R.color.btn_color)
