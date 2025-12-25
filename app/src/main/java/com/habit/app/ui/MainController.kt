@@ -25,6 +25,7 @@ import com.habit.app.data.ENGINE_YAHOO
 import com.habit.app.data.ENGINE_YAHOO_URL
 import com.habit.app.data.ENGINE_YANDEX
 import com.habit.app.data.ENGINE_YANDEX_URL
+import com.habit.app.data.MAX_SNAP_COUNT
 import com.habit.app.data.TAG
 import com.habit.app.data.USER_AGENT_DESKTOP
 import com.habit.app.data.USER_AGENT_PHONE
@@ -164,6 +165,10 @@ class MainController(
      * 保存当前web快照，创建新tab
      */
     fun saveCurSnapAndCreateNewWebTab() {
+        if (DBManager.getDao().getWebSnapsCount(viewModel.privacyObserver.value!!) >= MAX_SNAP_COUNT) {
+            UtilHelper.showToast(activity, activity.getString(R.string.toast_snap_max_count))
+           return
+        }
         // 保存当前快照
         createWebViewSnapshot { webViewData ->
             if (webViewData != null) {

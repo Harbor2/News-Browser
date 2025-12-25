@@ -8,14 +8,15 @@ import android.view.KeyEvent
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.habit.app.R
+import com.habit.app.data.MAX_SNAP_COUNT
 import com.habit.app.data.TAG
 import com.habit.app.data.WEBVIEW_DEFAULT_NAME
 import com.habit.app.data.db.DBManager
 import com.habit.app.data.model.WebViewData
 import com.habit.app.databinding.ActivityTagsBinding
 import com.habit.app.event.HomeTabsCountUpdateEvent
-import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
+import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.base.BaseFragment
 import com.wyz.emlibrary.em.EMManager
@@ -91,6 +92,11 @@ class TagsActivity : BaseActivity() {
             preCheckAndFinish()
         }
         binding.ivAdd.setOnClickListener {
+            if (DBManager.getDao().getWebSnapsCount(currentFragmentTag == privacyFragmentTag) >= MAX_SNAP_COUNT) {
+                UtilHelper.showToast(this, getString(R.string.toast_snap_max_count))
+                return@setOnClickListener
+            }
+
             val newTabSign = newTabAndInsertDB()
             setResult(RESULT_OK, Intent().putExtra(KEY_TRANS_WEB_SIGN, newTabSign))
             finish()

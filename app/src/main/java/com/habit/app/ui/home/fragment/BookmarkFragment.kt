@@ -28,7 +28,6 @@ import com.habit.app.data.TAG
 import com.habit.app.data.db.DBManager
 import com.habit.app.data.model.BookmarkData
 import com.habit.app.data.model.FolderData
-import com.habit.app.data.model.HistoryData
 import com.habit.app.databinding.FragmentBookmarkBinding
 import com.habit.app.event.HomeAccessUpdateEvent
 import com.habit.app.helper.ThemeManager
@@ -43,6 +42,7 @@ import com.habit.app.ui.dialog.NewFolderDialog
 import com.habit.app.ui.home.BookmarkFolderSelectActivity
 import com.habit.app.ui.item.BookmarkFolderItem
 import com.habit.app.ui.item.BookmarkUrlItem
+import com.habit.app.viewmodel.MainActivityModel
 import com.habit.app.viewmodel.home.BHActivityModel
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
@@ -542,8 +542,8 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
             UtilHelper.showToast(requireContext(), getString(R.string.toast_failed))
             return
         }
-        val count = DBManager.getDao().getWebSnapsCount()
-        if (count >= MAX_SNAP_COUNT) {
+
+        if (DBManager.getDao().getWebSnapsCount(bhActivityModel.homeWebViewPrivacy) >= MAX_SNAP_COUNT) {
             UtilHelper.showToast(requireContext(), getString(R.string.toast_snap_max_count))
             return
         }

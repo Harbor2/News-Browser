@@ -20,4 +20,8 @@ class BHActivityModel : ViewModel() {
         bookmarkSelectAllObserver.value = all
     }
 
+    /**
+     * 首页浏览器无痕模式
+     */
+    var homeWebViewPrivacy: Boolean = false
 }

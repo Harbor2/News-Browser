@@ -46,6 +46,7 @@ class BookmarkHistoryActivity : BaseActivity() {
     private fun initView() {
         currentFragmentTag = if (intent.getBooleanExtra(KEY_INPUT_TAB_BOOKMARK, false)) bookmarkFragmentTag else historyFragmentTag
         bhActivityModel.setBookMarkInit(intent.getStringExtra(KEY_INPUT_CUR_URL))
+        bhActivityModel.homeWebViewPrivacy = intent.getBooleanExtra(KEY_INPUT_HOME_PRIVACY, false)
         updateUiConfig()
     }
 
@@ -210,10 +211,13 @@ class BookmarkHistoryActivity : BaseActivity() {
          */
         const val KEY_INPUT_CUR_URL = "key_input_cur_url"
 
-        fun startActivity(context: Context, isBookmark: Boolean, curUrl: String? = null) {
+        const val KEY_INPUT_HOME_PRIVACY = "key_input_home_privacy"
+
+        fun startActivity(context: Context, isPrivacy: Boolean, isBookmark: Boolean, curUrl: String? = null) {
             context.startActivity(Intent(context, BookmarkHistoryActivity::class.java).apply {
                 putExtra(KEY_INPUT_TAB_BOOKMARK, isBookmark)
                 putExtra(KEY_INPUT_CUR_URL, curUrl)
+                putExtra(KEY_INPUT_HOME_PRIVACY, isPrivacy)
             })
         }
     }

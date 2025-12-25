@@ -109,13 +109,13 @@ class MainActivity : BaseActivity() {
             viewModel.setPrivacyObserver(enter)
         }
         override fun onBookMarksClick() {
-            BookmarkHistoryActivity.startActivity(this@MainActivity, true, mController.mCurWebView?.url)
+            BookmarkHistoryActivity.startActivity(this@MainActivity, viewModel.privacyObserver.value!!, true, mController.mCurWebView?.url)
         }
         override fun onDownloadClick() {
 
         }
         override fun onHistoryClick() {
-            BookmarkHistoryActivity.startActivity(this@MainActivity, false)
+            BookmarkHistoryActivity.startActivity(this@MainActivity, viewModel.privacyObserver.value!!, false)
         }
 
 

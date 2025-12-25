@@ -483,9 +483,9 @@ class DBDao(private val dbHelper: DBHelper) {
     /**
      * 获取web snap 数量
      */
-    fun getWebSnapsCount(): Int {
+    fun getWebSnapsCount(privacy: Boolean = false): Int {
         val db = dbHelper.readableDatabase
-        val sql = "SELECT COUNT(*) FROM ${DBConstant.TABLE_TAB}"
+        val sql = "SELECT COUNT(*) FROM ${DBConstant.TABLE_TAB} WHERE ${DBConstant.TAB_PRIVACY_TYPE} = ${if (privacy) 1 else 0}"
         db.rawQuery(sql, null).use { cursor ->
             return if (cursor.moveToFirst()) cursor.getInt(0) else 0
         }

@@ -4,18 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import com.habit.app.databinding.FragmentSettingBinding
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.home.BookmarkHistoryActivity
+import com.habit.app.viewmodel.MainActivityModel
 import com.wyz.emlibrary.util.EMUtil
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlin.getValue
 
 class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
 
     private val mScope = MainScope()
     private val loadingObserver = MutableLiveData(false)
+    private val viewModel: MainActivityModel by activityViewModels()
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater,
@@ -48,7 +52,7 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
     private fun initListener() {
         binding.loadingView.setOnClickListener {}
         binding.containerNavi.setOnClickListener {
-            BookmarkHistoryActivity.startActivity(requireActivity(), false)
+            BookmarkHistoryActivity.startActivity(requireActivity(), viewModel.privacyObserver.value!!, false)
         }
     }
 
