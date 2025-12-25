@@ -47,6 +47,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.net.URLEncoder
+import java.security.PrivateKey
 
 class MainController(
     val activity: MainActivity,
@@ -138,7 +139,7 @@ class MainController(
     /**
      * 初始化时，创建新tab
      */
-    private fun createNewWebTabAndInsertDB() {
+    private fun createNewWebTabAndInsertDB(privacyMode: Boolean? = null) {
         // 插入数据库新快照
         val newTabSign = System.currentTimeMillis().toString()
         val newTabViewData = WebViewData(
@@ -146,7 +147,7 @@ class MainController(
             newTabSign,
             "",
             true,
-            false,
+            privacyMode ?: false,
             "",
             ""
         )
@@ -156,7 +157,7 @@ class MainController(
         mCurWebSign = newTabSign
         mCurWebView = null
         viewModel.setPhoneModeObserver(true)
-        viewModel.setPrivacyObserver(false)
+        viewModel.setPrivacyObserver(privacyMode ?: false)
     }
 
     /**
@@ -299,6 +300,23 @@ class MainController(
     /*
      * ************************  main调用 ************************
      */
+
+    /**
+     * 打开新的标签页并搜素
+     */
+    fun openNewSnapAndSearch(postUrl: String) {
+        createWebViewSnapshot { webViewData ->
+            Log.d(TAG, "更新上一个封面图，新建snap并搜索内容")
+            if (webViewData != null) {
+                // 更新封面
+                DBManager.getDao().updateWebSnapItem(webViewData)
+            }
+            // 创建新的webview
+            createNewWebTabAndInsertDB(viewModel.privacyObserver.value!!)
+            // search
+            processWebSearch(postUrl)
+        }
+    }
 
     /**
      * 添加到首页导航栏

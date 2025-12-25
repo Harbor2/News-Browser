@@ -4,6 +4,11 @@ const val TAG = "NEWS_BROWSER"
 const val TAG_TEST = "NEWS_BROWSER_TEST"
 
 /**
+ * 最大web snap 数量
+ */
+const val MAX_SNAP_COUNT = 20
+
+/**
  * 网站Agen 桌面端 移动端
  */
 const val USER_AGENT_DESKTOP = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"

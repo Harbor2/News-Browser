@@ -481,6 +481,17 @@ class DBDao(private val dbHelper: DBHelper) {
     }
 
     /**
+     * 获取web snap 数量
+     */
+    fun getWebSnapsCount(): Int {
+        val db = dbHelper.readableDatabase
+        val sql = "SELECT COUNT(*) FROM ${DBConstant.TABLE_TAB}"
+        db.rawQuery(sql, null).use { cursor ->
+            return if (cursor.moveToFirst()) cursor.getInt(0) else 0
+        }
+    }
+
+    /**
      * TABLE_ALL_FILE: 分类查询
      */
     fun getWebSnapsFromTable(): ArrayList<WebViewData> {

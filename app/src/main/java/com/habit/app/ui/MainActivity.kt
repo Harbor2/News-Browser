@@ -1,5 +1,6 @@
 package com.habit.app.ui
 
+import android.app.ComponentCaller
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -165,6 +166,25 @@ class MainActivity : BaseActivity() {
         initData()
         setupObserver()
         initListener()
+    }
+
+    override fun onNewIntent(intent: Intent, caller: ComponentCaller) {
+        super.onNewIntent(intent, caller)
+        val postUrl =  intent.getStringExtra("post_url")
+        Log.d(TAG, "获取准备打开的url：$postUrl")
+        if (!postUrl.isNullOrEmpty()) {
+            // search
+            if (!viewModel.searchObserver.value!!) {
+                viewModel.setSearchObserver(true)
+            }
+            // home
+            if (currentFragmentTag != homeFragmentTag) {
+                binding.containerTabHome.performClick()
+            }
+            binding.containerWeb.post {
+                mController.openNewSnapAndSearch(postUrl)
+            }
+        }
     }
 
     private fun initView() {

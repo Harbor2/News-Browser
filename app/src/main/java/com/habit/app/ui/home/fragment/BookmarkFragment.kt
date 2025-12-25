@@ -16,6 +16,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.habit.app.R
+import com.habit.app.data.MAX_SNAP_COUNT
 import com.habit.app.data.OPTION_ADD_TO_HOME
 import com.habit.app.data.OPTION_ADD_TO_NAVI
 import com.habit.app.data.OPTION_DELETE
@@ -27,10 +28,12 @@ import com.habit.app.data.TAG
 import com.habit.app.data.db.DBManager
 import com.habit.app.data.model.BookmarkData
 import com.habit.app.data.model.FolderData
+import com.habit.app.data.model.HistoryData
 import com.habit.app.databinding.FragmentBookmarkBinding
 import com.habit.app.event.HomeAccessUpdateEvent
 import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
+import com.habit.app.ui.MainActivity
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.dialog.BookmarkEditDialog
 import com.habit.app.ui.dialog.DeleteConfirmDialog
@@ -230,7 +233,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
                 deleteSelectItems(data)
             }
             OPTION_OPEN_IN_NEW_TAB -> {
-
+                openWebUrl(data)
             }
             OPTION_EDIT -> {
                 showBookmarkEditDialog(listOf(data))
@@ -532,6 +535,24 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
                 }
             }
         }
+    }
+
+    private fun openWebUrl(data: Any) {
+        if (data !is BookmarkData) {
+            UtilHelper.showToast(requireContext(), getString(R.string.toast_failed))
+            return
+        }
+        val count = DBManager.getDao().getWebSnapsCount()
+        if (count >= MAX_SNAP_COUNT) {
+            UtilHelper.showToast(requireContext(), getString(R.string.toast_snap_max_count))
+            return
+        }
+
+        val intent = Intent(requireActivity(), MainActivity::class.java).apply {
+            putExtra("post_url", data.url)
+        }
+        requireActivity().startActivity(intent)
+        requireActivity().finish()
     }
 
     private fun updateUIConfig() {

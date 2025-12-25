@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
 import com.habit.app.databinding.FragmentSettingBinding
 import com.habit.app.ui.base.BaseFragment
+import com.habit.app.ui.home.BookmarkHistoryActivity
 import com.wyz.emlibrary.util.EMUtil
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -46,6 +47,9 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
 
     private fun initListener() {
         binding.loadingView.setOnClickListener {}
+        binding.containerNavi.setOnClickListener {
+            BookmarkHistoryActivity.startActivity(requireActivity(), false)
+        }
     }
 
     override fun onDestroy() {

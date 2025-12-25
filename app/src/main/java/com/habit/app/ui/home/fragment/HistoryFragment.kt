@@ -14,7 +14,6 @@ import com.habit.app.data.OPTION_ADD_TO_BOOKMARK
 import com.habit.app.data.OPTION_ADD_TO_HOME
 import com.habit.app.data.OPTION_ADD_TO_NAVI
 import com.habit.app.data.OPTION_DELETE
-import com.habit.app.data.OPTION_OPEN_IN_NEW_TAB
 import com.habit.app.data.db.DBManager
 import com.habit.app.data.model.BookmarkData
 import com.habit.app.data.model.HistoryData
@@ -130,9 +129,6 @@ class HistoryFragment() : BaseFragment<FragmentBHistoryBinding>() {
             OPTION_DELETE -> {
                 deleteSelectHistory(data)
             }
-            OPTION_OPEN_IN_NEW_TAB -> {
-
-            }
             OPTION_ADD_TO_BOOKMARK -> {
                 processAddToBookmark(data)
             }
@@ -237,7 +233,6 @@ class HistoryFragment() : BaseFragment<FragmentBHistoryBinding>() {
         DBManager.getDao().deleteHistoryFromTable(data)
         updateHistoryList()
     }
-
     private fun showMenu(anchorView: View, payload: Any) {
         val menuList = arrayListOf(
             OPTION_DELETE,
