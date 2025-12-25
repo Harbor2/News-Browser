@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken
 import com.habit.app.R
 import com.habit.app.data.TAG
 import com.habit.app.data.model.AccessSingleData
+import com.wyz.emlibrary.util.EMUtil
 import java.io.File
 import java.time.Instant
 import java.time.LocalDate
@@ -271,5 +272,13 @@ object UtilHelper {
         }
         KeyValueManager.saveValueWithKey(KeyValueManager.KEY_HOME_ACCESS_INFO, GsonUtil.gson.toJson(selectedAccess))
         return true
+    }
+
+    /**
+     * 判断是否是当前自然日
+     */
+    fun getTodayDate(): String {
+        val now = System.currentTimeMillis()
+        return EMUtil.formatDateFromTimestamp("dd/MM/yyyy", now)
     }
 }

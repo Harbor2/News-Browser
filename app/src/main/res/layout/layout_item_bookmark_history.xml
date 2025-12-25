@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.wyz.emlibrary.custom.RoundedImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        app:riCornerRadius="6dp"
+        android:src="@drawable/iv_web_icon_default"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="20dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="64dp"
+        android:layout_marginEnd="60dp"
+        android:layout_gravity="center_vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_web_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="name"
+            android:textColor="@color/text_main_color"
+            android:textSize="14sp"
+            android:fontFamily="@font/gotham_m"
+            android:lines="1"
+            android:ellipsize="end"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_web_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="name"
+            android:textColor="@color/text_main_color_50"
+            android:textSize="12sp"
+            android:fontFamily="@font/gotham_r"
+            android:lines="1"
+            android:ellipsize="end"/>
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/iv_b_folder_menu"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="20dp"/>
+</FrameLayout>

@@ -33,6 +33,7 @@ import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.dialog.BookmarkEditDialog
+import com.habit.app.ui.dialog.DeleteConfirmDialog
 import com.habit.app.ui.dialog.MenuPopupFloat
 import com.habit.app.ui.dialog.NavigationEditDialog
 import com.habit.app.ui.dialog.NewFolderDialog
@@ -56,6 +57,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
     private var newFolderDialog: NewFolderDialog? = null
     private var bookmarkEditDialog: BookmarkEditDialog? = null
     private var naviAddEditDialog: NavigationEditDialog? = null
+    private var mDeleteDialog: DeleteConfirmDialog? = null
 
     /**
      * 所有的书签
@@ -192,7 +194,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         }
 
         binding.btnRemove.setOnClickListener {
-            deleteSelectItems()
+            showDeleteConfirmDialog()
         }
 
         binding.editInput.addTextChangedListener(object : TextWatcher {
@@ -437,7 +439,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
                 is BookmarkData -> items.add(BookmarkUrlItem(requireActivity(), data, urlItemCallback))
             }
         }
-
+        emptyObserver.value = items.isEmpty()
         mAdapter.updateDataSet(items)
     }
 
@@ -453,6 +455,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         filterList.forEach { data ->
             items.add(BookmarkUrlItem(requireActivity(), data, urlItemCallback))
         }
+        emptyObserver.value = items.isEmpty()
         mAdapter.updateDataSet(items)
     }
 
@@ -505,7 +508,27 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
             this.mCallback = { name ->
                 val result = UtilHelper.homeAddAccessItem(requireContext(), name, data.url, data.webIconPath)
                 if (result) {
+                    UtilHelper.showToast(requireContext(), getString(R.string.toast_succeed))
                     EventBus.getDefault().post(HomeAccessUpdateEvent())
+                }
+            }
+        }
+    }
+
+    fun showDeleteConfirmDialog() {
+        // 二次确认
+        mDeleteDialog = DeleteConfirmDialog.tryShowDialog(requireActivity())?.apply {
+            this.initData(
+                R.drawable.iv_dialog_delete_icon,
+                getString(R.string.text_delete_all_selected),
+                getString(R.string.text_cancel),
+                getString(R.string.text_delete))
+            setOnDismissListener {
+                mDeleteDialog = null
+            }
+            this.mCallback = { result ->
+                if (result) {
+                    deleteSelectItems()
                 }
             }
         }
@@ -526,6 +549,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         binding.ivSearch.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_bh_search_icon))
         binding.editInput.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.editInput.setHintTextColor(ThemeManager.getSkinColor(R.color.text_main_color_30))
+        binding.tvEmpty.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         newFolderDialog?.updateThemeUI()
         bookmarkEditDialog?.updateThemeUI()
         naviAddEditDialog?.updateThemeUI()

@@ -25,6 +25,7 @@
     <string name="toast_folder_exist">Folder already exist</string>
     <string name="toast_cannot_move_here">Cannot move here</string>
     <string name="toast_access_exist">Access already exist</string>
+    <string name="toast_bookmark_exist">Bookmark already exist</string>
 
     <string name="text_get_started_big">GET STARTED</string>
     <string name="text_home">Home</string>
@@ -130,6 +131,8 @@
     <string name="text_share">Share</string>
     <string name="text_public">Public</string>
     <string name="text_no_tags">No Tags</string>
+    <string name="text_no_bookmarks">No Bookmarks</string>
+    <string name="text_no_history">No Histories</string>
     <string name="text_you_have_entered_private_mode">You have entered private mode</string>
     <string name="text_you_have_entered_private_mode_desc">Private mode will NOT record any of your browsing history, but it will save your downloads and bookmarks.</string>
     <string name="text_all">All</string>
@@ -150,4 +153,7 @@
     <string name="text_directory">Directory</string>
     <string name="enter_name">Enter name</string>
     <string name="enter_url">Enter url</string>
+    <string name="text_add_to_bookmark">Add To Bookmark</string>
+    <string name="text_delete_all_history_title">Do You Want To Delete All History?</string>
+    <string name="text_delete_all_selected">Do You Want To Delete All Selected?</string>
 </resources>

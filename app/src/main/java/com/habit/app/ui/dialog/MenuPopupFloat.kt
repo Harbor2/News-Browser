@@ -7,6 +7,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.PopupWindow
 import com.habit.app.R
+import com.habit.app.data.OPTION_ADD_TO_BOOKMARK
 import com.habit.app.data.OPTION_ADD_TO_HOME
 import com.habit.app.data.OPTION_ADD_TO_NAVI
 import com.habit.app.data.OPTION_DELETE
@@ -34,6 +35,7 @@ class MenuPopupFloat(
     init {
         binding = LayoutPopupMenuBinding.inflate(LayoutInflater.from(context), null, false)
         binding.itemDelete.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
+        binding.itemAddBookmark.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.itemOpenNewTab.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.itemRemove.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.itemEdit.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
@@ -66,6 +68,7 @@ class MenuPopupFloat(
         )
 
         binding.itemDelete.visibility = if (menuList.contains(OPTION_DELETE)) View.VISIBLE else View.GONE
+        binding.itemAddBookmark.visibility = if (menuList.contains(OPTION_ADD_TO_BOOKMARK)) View.VISIBLE else View.GONE
         binding.itemOpenNewTab.visibility = if (menuList.contains(OPTION_OPEN_IN_NEW_TAB)) View.VISIBLE else View.GONE
         binding.itemRemove.visibility = if (menuList.contains(OPTION_REMOVE)) View.VISIBLE else View.GONE
         binding.itemEdit.visibility = if (menuList.contains(OPTION_EDIT)) View.VISIBLE else View.GONE
@@ -104,6 +107,13 @@ class MenuPopupFloat(
                 return@setOnClickListener
             }
             callback?.onOptionSelect(OPTION_DELETE, mData!!)
+            dismiss()
+        }
+        binding.itemAddBookmark.setOnClickListener {
+            if (mData == null) {
+                return@setOnClickListener
+            }
+            callback?.onOptionSelect(OPTION_ADD_TO_BOOKMARK, mData!!)
             dismiss()
         }
         binding.itemRemove.setOnClickListener {

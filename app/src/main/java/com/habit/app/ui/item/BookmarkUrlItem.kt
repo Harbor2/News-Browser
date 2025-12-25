@@ -44,6 +44,7 @@ class BookmarkUrlItem(
             .setBackGroundRealColor(ThemeManager.getSkinColor(if (bookmarkData.mSelect == true) R.color.view_bg_color else R.color.transparent))
         holder.binding.tvWebTitle.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         holder.binding.tvWebUrl.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_50))
+        holder.binding.ivMenu.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_b_folder_menu))
         if (bookmarkData.mSelect == null) {
             holder.binding.ivMenu.visibility = View.VISIBLE
             holder.binding.ivCheckbox.visibility = View.GONE
