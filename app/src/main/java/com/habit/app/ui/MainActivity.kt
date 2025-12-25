@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
@@ -403,6 +404,18 @@ class MainActivity : BaseActivity() {
     @Subscribe
     fun updateTabsCountEvent(event: HomeTabsCountUpdateEvent) {
         mController.updateTabsCount()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            mController.mCurWebView?.let {
+                if (it.canGoBack()) {
+                    it.goBack()
+                    return true
+                }
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun onDestroy() {

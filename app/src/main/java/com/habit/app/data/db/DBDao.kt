@@ -628,7 +628,7 @@ class DBDao(private val dbHelper: DBHelper) {
         try {
             val value = ContentValues()
             value.put(DBConstant.HISTORY_NAME, historyData.name)
-            value.put(DBConstant.HISTORY_NAME, historyData.url)
+            value.put(DBConstant.HISTORY_URL, historyData.url)
             value.put(DBConstant.HISTORY_ICON_BITMAP, historyData.webIconPath)
             value.put(DBConstant.HISTORY_UPDATE_TIME, historyData.timeStamp)
             db.replace(DBConstant.TABLE_HISTORY, null, value)

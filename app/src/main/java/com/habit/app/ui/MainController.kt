@@ -12,7 +12,6 @@ import android.widget.FrameLayout
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import com.google.gson.reflect.TypeToken
 import com.habit.app.R
 import com.habit.app.data.ENGINE_BAIDU
 import com.habit.app.data.ENGINE_BAIDU_URL
@@ -32,11 +31,10 @@ import com.habit.app.data.USER_AGENT_PHONE
 import com.habit.app.data.WEBVIEW_DEFAULT_NAME
 import com.habit.app.data.assessUrlList
 import com.habit.app.data.db.DBManager
-import com.habit.app.data.model.AccessSingleData
+import com.habit.app.data.model.HistoryData
 import com.habit.app.data.model.WebViewData
 import com.habit.app.databinding.ActivityMainBinding
 import com.habit.app.event.HomeAccessUpdateEvent
-import com.habit.app.helper.GsonUtil
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.helper.WebViewManager
@@ -72,12 +70,15 @@ class MainController(
     private val webProgressListener = object : WebChromeClient() {
         override fun onReceivedIcon(view: WebView?, icon: Bitmap?) {
             super.onReceivedIcon(view, icon)
+            Log.d(TAG, "网页icon加载完成")
             view?.setTag(R.id.web_small_icon, icon)
+            // 保存搜索历史
+            saveSearchHistory(view, icon)
         }
 
         override fun onReceivedTitle(view: WebView?, title: String?) {
             super.onReceivedTitle(view, title)
-            Log.d(TAG, "当前webView更新：$title, url:${view?.url}")
+            Log.d(TAG, "网页标题加载完成：$title")
             view?.setTag(R.id.web_title, title)
             view?.url?.let {
                 if (!binding.editInput.hasFocus()) {
@@ -394,6 +395,39 @@ class MainController(
 
     fun updateUIConfig() {
         mNaviEditDialog?.updateThemeUI()
+    }
+
+    /**
+     * 历史记录防止多次回调保存多次
+     */
+    private var lastLoadUrlTimeStamp = 0L
+    private var lastLoadUrl = ""
+
+    /**
+     * 保存搜索历史
+     */
+    private fun saveSearchHistory(wevView: WebView?, iconBitmap: Bitmap?) {
+        if (wevView == null) return
+        if (viewModel.privacyObserver.value!!) return
+
+        val loadUrl = wevView.url ?: ""
+        if (loadUrl.isEmpty()) return
+        val curTimeStamp = System.currentTimeMillis()
+        if (curTimeStamp - lastLoadUrlTimeStamp < 5000 && loadUrl == lastLoadUrl) return
+        lastLoadUrlTimeStamp = System.currentTimeMillis()
+        lastLoadUrl = loadUrl
+
+        // 当前网页信息
+        val titleStr = wevView.getTag(R.id.web_title) as? String ?: loadUrl
+        val iconPathStr = if (iconBitmap == null) "" else UtilHelper.writeBitmapToCache(activity, iconBitmap) ?: ""
+
+        // 保存网页信息
+        activity.lifecycleScope.launch(Dispatchers.IO) {
+            Log.d(TAG, "保存搜索历史：$titleStr，$loadUrl，$iconPathStr，$curTimeStamp")
+            DBManager.getDao().insertHistoryToTable(
+                HistoryData(name = titleStr, url = loadUrl, webIconPath = iconPathStr, timeStamp = curTimeStamp)
+            )
+        }
     }
 
     inner class CustomWebViewClient : WebViewClient() {
