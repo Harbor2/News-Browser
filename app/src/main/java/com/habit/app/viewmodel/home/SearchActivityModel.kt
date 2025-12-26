@@ -30,4 +30,13 @@ class SearchActivityModel : ViewModel() {
     fun loadHistory() {
         _searchHistory.tryEmit(DBManager.getDao().getAllSearchRecords())
     }
+
+    /**
+     * 联想词
+     */
+    private val _thinkWordObserver = MutableSharedFlow<ArrayList<String>>(replay = 1)
+    val thinkWordObserver: SharedFlow<ArrayList<String>> = _thinkWordObserver
+    fun loadThinkWord() {
+        _thinkWordObserver.tryEmit(arrayListOf())
+    }
 }

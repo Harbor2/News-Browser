@@ -147,7 +147,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/container_navi"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.habit.app.ui.custom.SearchThinkWordItem
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:stwIcon="@drawable/iv_think_word_search_icon"/>
+
+        <com.habit.app.ui.custom.SearchThinkWordItem
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:stwIcon="@drawable/iv_think_word_search_icon"/>
+
+        <com.habit.app.ui.custom.SearchThinkWordItem
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:stwIcon="@drawable/iv_think_word_search_icon"/>
+    </LinearLayout>
 
     <!-- 底部工具条 -->
     <LinearLayout

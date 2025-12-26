@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.content.withStyledAttributes
 import com.habit.app.R
-import com.habit.app.databinding.LayoutEngineSelectItemBinding
+import com.habit.app.databinding.LayoutBrowserMenuItemBinding
 import com.habit.app.helper.ThemeManager
 import com.wyz.emlibrary.em.EMManager
 
@@ -16,13 +16,13 @@ class BrowserMenuItem @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-    private val binding: LayoutEngineSelectItemBinding
+    private val binding: LayoutBrowserMenuItemBinding
     private var mIcon: Int = -1
     var engineTag: String = ""
         private set
 
     init {
-        binding = LayoutEngineSelectItemBinding.inflate(LayoutInflater.from(context), this, true)
+        binding = LayoutBrowserMenuItemBinding.inflate(LayoutInflater.from(context), this, true)
         context.withStyledAttributes(attrs, R.styleable.BrowserMenuItem) {
             val title = getString(R.styleable.BrowserMenuItem_bmiTitle) ?: ""
             mIcon = getResourceId(R.styleable.BrowserMenuItem_bmiIcon, -1)

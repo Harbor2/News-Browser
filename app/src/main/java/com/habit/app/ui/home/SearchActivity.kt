@@ -27,6 +27,7 @@ import com.habit.app.databinding.ActivitySearchBinding
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
 import com.habit.app.ui.base.BaseActivity
+import com.habit.app.ui.custom.SearchThinkWordItem
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.habit.app.viewmodel.home.SearchActivityModel
 import com.wyz.emlibrary.custom.AutoWrapLayout
@@ -132,16 +133,21 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun setupObserver() {
-        lifecycleScope.launch {
-            viewModel.searchHistory.collect { historyList ->
-                updateSearchHistory(historyList)
-            }
-        }
         viewModel.cancelObserver.observe(this) { value ->
             binding.tvSearchCancel.text = getString(if (value) R.string.text_cancel else R.string.text_search)
             binding.tvSearchCancel.setTextColor(ThemeManager.getSkinColor(if (value) R.color.text_main_color_30 else R.color.btn_color))
             binding.containerTopicHistory.isVisible = value
             binding.containerThink.isVisible = !value
+        }
+        lifecycleScope.launch {
+            viewModel.searchHistory.collect { historyList ->
+                updateSearchHistory(historyList)
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.thinkWordObserver.collect { wordList ->
+                updateThinkWord(wordList)
+            }
         }
     }
 
@@ -178,6 +184,10 @@ class SearchActivity : BaseActivity() {
                 }
             }
         })
+    }
+
+    private fun updateThinkWord(wordList: ArrayList<String>) {
+
     }
 
     private fun adjustBottomTool(height: Int) {
@@ -235,6 +245,9 @@ class SearchActivity : BaseActivity() {
         binding.tvHistory.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_50))
         binding.ivDelete.setImageResource(ThemeManager.getSkinImageResId(R.drawable.t_night_iv_search_history_delete))
         viewModel.loadHistory()
+        binding.containerThink.forEach {
+            (it as? SearchThinkWordItem)?.updateThemeUI()
+        }
     }
 
     override fun onThemeChanged(theme: String) {
