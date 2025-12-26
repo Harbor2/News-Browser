@@ -46,7 +46,7 @@ class ThemeSelectDialog(activity: Activity) : BottomSheetDialog(activity) {
     }
 
     private fun initData() {
-        mSelectMode = KeyValueManager.getValueByKey(KeyValueManager.KEY_NIGHT_MODE)?.toInt() ?: DayNightUtil.NIGHT_MODE_FOLLOW_SYSTEM
+        mSelectMode = KeyValueManager.getValueByKey(KeyValueManager.KEY_DARK_MODE)?.toInt() ?: DayNightUtil.NIGHT_MODE_FOLLOW_SYSTEM
         updateThemeSelect()
     }
 
@@ -68,7 +68,7 @@ class ThemeSelectDialog(activity: Activity) : BottomSheetDialog(activity) {
     private fun initListener() {
         binding.btnConfirm.setOnClickListener {
             mCallback?.invoke(mSelectMode)
-            KeyValueManager.saveValueWithKey(KeyValueManager.KEY_NIGHT_MODE, mSelectMode.toString())
+            KeyValueManager.saveValueWithKey(KeyValueManager.KEY_DARK_MODE, mSelectMode.toString())
             dismiss()
         }
 

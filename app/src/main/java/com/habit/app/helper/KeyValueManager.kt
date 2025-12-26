@@ -8,7 +8,6 @@ object KeyValueManager {
     private const val STR_NUM_ZERO = "0"
 
     const val KEY_ENTERED_HOME = "key_entered_home"
-    const val KEY_NIGHT_MODE = "key_night_mode"
 
     /**
      * 搜索引擎选择

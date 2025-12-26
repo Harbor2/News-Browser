@@ -71,6 +71,5 @@ object DayNightUtil {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             }
         }
-        KeyValueManager.saveValueWithKey(KeyValueManager.KEY_NIGHT_MODE, nightMode.toString())
     }
 }
