@@ -28,6 +28,7 @@ import kotlin.let
 class SearchEngineDialog(activity: Activity) : BottomSheetDialog(activity) {
     var binding: LayoutDialogSearchEngineBinding
     private var mSelectEngine = ENGINE_GOOGLE
+    var mCallback: ((String) -> Unit)? = null
 
     init {
         window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -72,6 +73,7 @@ class SearchEngineDialog(activity: Activity) : BottomSheetDialog(activity) {
     private fun initListener() {
         binding.btnConfirm.setOnClickListener {
             if (mSelectEngine.isNotEmpty()) {
+                mCallback?.invoke(mSelectEngine)
                 KeyValueManager.saveValueWithKey(KeyValueManager.KEY_ENGINE_SELECT, mSelectEngine)
                 EventBus.getDefault().post(EngineChangedEvent())
             }

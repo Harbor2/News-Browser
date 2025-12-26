@@ -157,4 +157,12 @@
     <string name="text_add_to_bookmark">Add To Bookmark</string>
     <string name="text_delete_all_history_title">Do You Want To Delete All History?</string>
     <string name="text_delete_all_selected">Do You Want To Delete All Selected?</string>
+    <string name="text_basic">Basic</string>
+    <string name="text_browser">Browser</string>
+    <string name="text_application">Application</string>
+    <string name="text_set_as_default_browser">Set As Default Browser</string>
+    <string name="text_theme">Theme</string>
+    <string name="text_add_components">Add Components</string>
+    <string name="text_download">Download</string>
+    <string name="text_delete_browser_data">Delete Browser Data</string>
 </resources>

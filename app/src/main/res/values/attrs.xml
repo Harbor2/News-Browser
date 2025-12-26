@@ -22,4 +22,10 @@
         <attr name="ttiCount" format="integer"/>
         <attr name="ttiSelect" format="boolean"/>
     </declare-styleable>
+
+    <declare-styleable name="SettingItem">
+        <attr name="stiType" format="integer"/>
+        <attr name="stiTitle" format="string"/>
+        <attr name="stiIcon" format="reference"/>
+    </declare-styleable>
 </resources>
