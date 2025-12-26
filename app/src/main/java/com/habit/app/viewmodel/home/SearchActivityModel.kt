@@ -3,10 +3,9 @@ package com.habit.app.viewmodel.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.habit.app.data.model.HistoryData
 import com.habit.app.data.db.DBManager
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 class SearchActivityModel : ViewModel() {
     private val _loadObserver = MutableLiveData(false)
@@ -26,9 +25,9 @@ class SearchActivityModel : ViewModel() {
     /**
      * 搜索历史
      */
-    private val _searchHistory = MutableStateFlow<ArrayList<HistoryData>>(arrayListOf())
-    val searchHistory: StateFlow<ArrayList<HistoryData>> = _searchHistory
+    private val _searchHistory = MutableSharedFlow<ArrayList<String>>(replay = 1)
+    val searchHistory: SharedFlow<ArrayList<String>> = _searchHistory
     fun loadHistory() {
-        _searchHistory.value = DBManager.getDao().getAllHistoryFromTable()
+        _searchHistory.tryEmit(DBManager.getDao().getAllSearchRecords())
     }
 }

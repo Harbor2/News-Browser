@@ -101,7 +101,7 @@ class MainActivity : BaseActivity() {
         override fun onSearch(searchStr: String) {
             Log.d(TAG, "search input: $searchStr")
             viewModel.setSearchObserver(true)
-            mController.processWebSearch(searchStr)
+            mController.processWebSearch(searchStr, true)
         }
     }
 
@@ -302,7 +302,7 @@ class MainActivity : BaseActivity() {
         })
         binding.editInput.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                mController.processWebSearch(v.text.toString().trim())
+                mController.processWebSearch(v.text.toString().trim(), true)
                 mOriginInputTextStr = ""
                 true
             } else {

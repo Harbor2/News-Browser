@@ -200,10 +200,15 @@ class MainController(
     /**
      * 处理web搜索
      */
-    fun processWebSearch(searchStr: String) {
+    fun processWebSearch(searchStr: String, recordSearch: Boolean = false) {
         if (searchStr.isEmpty()) {
             hideSoftKeyBoard()
             return
+        }
+        if (recordSearch) {
+            Log.d(TAG, "记录搜索记录：$searchStr")
+            // 记录搜索记录
+            DBManager.getDao().insertSearchRecord(searchStr)
         }
 
         mCurInputStr = searchStr

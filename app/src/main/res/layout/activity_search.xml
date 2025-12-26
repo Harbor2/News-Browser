@@ -96,7 +96,45 @@
         app:layout_constraintTop_toBottomOf="@id/container_navi"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp">
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/iv_search_history_icon"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="16dp"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_history"
+                android:textColor="@color/text_main_color_50"
+                android:textSize="12sp"
+                android:fontFamily="@font/gotham_r"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="40dp"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:src="@drawable/iv_search_history_delete"
+                android:padding="6dp"
+                android:layout_marginEnd="10dp"/>
+        </FrameLayout>
+
+        <com.wyz.emlibrary.custom.AutoWrapLayout
+            android:id="@+id/wrap_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:awHorSpace="12dp"
+            app:awVerSpace="8dp"
+            android:layout_marginHorizontal="16dp"/>
     </LinearLayout>
 
     <!-- 联想词 -->

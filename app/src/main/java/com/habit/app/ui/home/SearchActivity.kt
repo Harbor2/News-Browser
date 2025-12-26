@@ -4,8 +4,11 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.core.view.forEach
@@ -19,12 +22,14 @@ import com.habit.app.data.ENGINE_GOOGLE
 import com.habit.app.data.ENGINE_YAHOO
 import com.habit.app.data.ENGINE_YANDEX
 import com.habit.app.data.TAG
+import com.habit.app.data.db.DBManager
 import com.habit.app.databinding.ActivitySearchBinding
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
 import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.habit.app.viewmodel.home.SearchActivityModel
+import com.wyz.emlibrary.custom.AutoWrapLayout
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
 import com.wyz.emlibrary.util.SoftKeyboardHelper
@@ -108,6 +113,10 @@ class SearchActivity : BaseActivity() {
                 false
             }
         }
+        binding.ivDelete.setOnClickListener {
+            DBManager.getDao().clearSearchRecords()
+            viewModel.loadHistory()
+        }
     }
 
 
@@ -122,7 +131,7 @@ class SearchActivity : BaseActivity() {
     private fun setupObserver() {
         lifecycleScope.launch {
             viewModel.searchHistory.collect { historyList ->
-                Log.d(TAG, "searchHistory: $historyList")
+                updateSearchHistory(historyList)
             }
         }
         viewModel.cancelObserver.observe(this) { value ->
@@ -131,6 +140,37 @@ class SearchActivity : BaseActivity() {
             binding.containerTopicHistory.isVisible = value
             binding.containerThink.isVisible = !value
         }
+    }
+
+    private fun updateSearchHistory(historyList: ArrayList<String>) {
+        Log.d(TAG, "searchHistory: $historyList")
+        binding.wrapLayout.clearChild()
+        binding.wrapLayout.setAdapter(object : AutoWrapLayout.WrapAdapter {
+            override fun getItemCount(): Int {
+                return historyList.size
+            }
+
+            override fun onCreateView(p0: Int): View? {
+                return TextView(this@SearchActivity).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        EMUtil.dp2px(31f).toInt()
+                    )
+                    text = historyList[p0]
+                    gravity = Gravity.CENTER_VERTICAL
+                    val horPadding = EMUtil.dp2px(12f).toInt()
+                    val verPadding = EMUtil.dp2px(9f).toInt()
+                    setPadding(horPadding, verPadding, horPadding, verPadding)
+
+                    EMManager.from(this)
+                        .setCorner(16f).setBackGroundRealColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+                    setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
+                    setOnClickListener {
+                        Log.d(TAG, "搜索历史点击：${historyList[p0]}")
+                    }
+                }
+            }
+        })
     }
 
     private fun adjustBottomTool(height: Int) {
@@ -163,18 +203,31 @@ class SearchActivity : BaseActivity() {
         binding.ivEngineIconArrow.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_engine_select_arrow))
         binding.editInput.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.editInput.setHintTextColor(ThemeManager.getSkinColor(R.color.text_main_color_30))
-        binding.tvSearchCancel.setTextColor(ThemeManager.getSkinColor(if (viewModel.cancelObserver.value!!) R.color.text_main_color_30 else R.color.btn_color))
+        binding.tvSearchCancel.setTextColor(ThemeManager.getSkinColor(if (viewModel.cancelObserver.value!!) R.color.text_main_color_50 else R.color.btn_color))
         updateEngineIcon()
         EMManager.from(binding.containerArea)
             .setCorner(21f)
             .setBorderWidth(1f)
             .setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_30))
         EMManager.from(binding.bottomTool).setBackGroundRealColor(ThemeManager.getSkinColor(R.color.view_bg_color))
-        EMManager.from(binding.tvWwww).setCorner(4f).setBorderWidth(1f).setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_10))
-        EMManager.from(binding.tvCom).setCorner(4f).setBorderWidth(1f).setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_10))
-        EMManager.from(binding.tvCn).setCorner(4f).setBorderWidth(1f).setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_10))
-        EMManager.from(binding.tvPoint).setCorner(4f).setBorderWidth(1f).setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_10))
-        EMManager.from(binding.tvSlash).setCorner(4f).setBorderWidth(1f).setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_10))
+        EMManager.from(binding.tvWwww).setCorner(4f).setBorderWidth(1f)
+            .setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_10))
+            .setTextRealColor(ThemeManager.getSkinColor(R.color.text_main_color))
+        EMManager.from(binding.tvCom).setCorner(4f).setBorderWidth(1f)
+            .setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_10))
+            .setTextRealColor(ThemeManager.getSkinColor(R.color.text_main_color))
+        EMManager.from(binding.tvCn).setCorner(4f).setBorderWidth(1f)
+            .setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_10))
+            .setTextRealColor(ThemeManager.getSkinColor(R.color.text_main_color))
+        EMManager.from(binding.tvPoint).setCorner(4f).setBorderWidth(1f)
+            .setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_10))
+            .setTextRealColor(ThemeManager.getSkinColor(R.color.text_main_color))
+        EMManager.from(binding.tvSlash).setCorner(4f).setBorderWidth(1f)
+            .setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_10))
+            .setTextRealColor(ThemeManager.getSkinColor(R.color.text_main_color))
+        binding.tvHistory.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_50))
+        binding.ivDelete.setImageResource(ThemeManager.getSkinImageResId(R.drawable.t_night_iv_search_history_delete))
+        viewModel.loadHistory()
     }
 
     override fun onThemeChanged(theme: String) {

@@ -726,7 +726,7 @@ class DBDao(private val dbHelper: DBHelper) {
      */
     fun getAllSearchRecords(): ArrayList<String> {
         val db: SQLiteDatabase = dbHelper.writableDatabase
-        val sql = "select * from ${DBConstant.TABLE_SEARCH_RECORD} order by ${DBConstant.SEARCH_ID} desc limit 10"
+        val sql = "select * from ${DBConstant.TABLE_SEARCH_RECORD} order by ${DBConstant.SEARCH_ID} desc limit 8"
         val cursor = db.rawQuery(sql, null)
         val resultList: ArrayList<String> = arrayListOf()
         while (cursor.moveToNext()) {
