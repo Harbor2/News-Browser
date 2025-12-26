@@ -18,6 +18,7 @@ class EngineSelectItem @JvmOverloads constructor(
 
     private val binding: LayoutEngineSelectItemBinding
     private var isSelect: Boolean = false
+    private var mIcon: Int = -1
     var engineTag: String = ""
         private set
 
@@ -25,12 +26,12 @@ class EngineSelectItem @JvmOverloads constructor(
         binding = LayoutEngineSelectItemBinding.inflate(LayoutInflater.from(context), this, true)
         context.withStyledAttributes(attrs, R.styleable.EngineSelectItem) {
             val title = getString(R.styleable.EngineSelectItem_egsTitle) ?: ""
-            val icon = getResourceId(R.styleable.EngineSelectItem_egsIcon, -1)
+            mIcon = getResourceId(R.styleable.EngineSelectItem_egsIcon, -1)
             isSelect = getBoolean(R.styleable.EngineSelectItem_egsSelect, false)
             engineTag = tag as? String ?: ""
 
-            if (icon != -1) {
-                binding.ivIcon.setImageResource(icon)
+            if (mIcon != -1) {
+                binding.ivIcon.setImageResource(mIcon)
             }
             binding.tvTitle.text = title
             updateThemeUI()
@@ -43,6 +44,9 @@ class EngineSelectItem @JvmOverloads constructor(
             .setBorderWidth(1f)
             .setBorderColor(if (isSelect) R.color.btn_color else R.color.transparent)
             .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+        if (mIcon != -1) {
+            binding.ivIcon.setImageResource(ThemeManager.getSkinImageResId(mIcon))
+        }
         EMManager.from(binding.tvTitle).setTextRealColor(ThemeManager.getSkinColor(R.color.text_main_color))
     }
 

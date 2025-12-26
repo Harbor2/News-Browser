@@ -12,6 +12,9 @@ import com.habit.app.R
 import com.habit.app.data.ENGINE_GOOGLE
 import com.habit.app.data.TAG
 import com.habit.app.databinding.FragmentSettingBinding
+import com.habit.app.helper.DayNightUtil
+import com.habit.app.helper.DayNightUtil.NIGHT_MODE_DAY
+import com.habit.app.helper.DayNightUtil.NIGHT_MODE_FOLLOW_SYSTEM
 import com.habit.app.helper.FeedbackUtils
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
@@ -19,6 +22,7 @@ import com.habit.app.ui.BrowseActivity
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.custom.SettingItem
 import com.habit.app.ui.dialog.SearchEngineDialog
+import com.habit.app.ui.dialog.ThemeSelectDialog
 import com.habit.app.ui.home.BookmarkHistoryActivity
 import com.habit.app.viewmodel.MainActivityModel
 import com.wyz.emlibrary.em.Direction
@@ -34,6 +38,7 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
     private val viewModel: MainActivityModel by activityViewModels()
 
     private var searchEngineDialog: SearchEngineDialog? = null
+    private var themeSelectDialog: ThemeSelectDialog? = null
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater,
@@ -80,7 +85,7 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
 
         }
         binding.itemTheme.setOnClickListener {
-
+            processThemeSelect()
         }
         binding.itemAddComponents.setOnClickListener {
 
@@ -110,6 +115,33 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
         }
     }
 
+    private fun processThemeSelect() {
+        themeSelectDialog = ThemeSelectDialog.tryShowDialog(requireActivity())?.apply {
+            this.mCallback = { mode ->
+                Log.d(TAG, "用户选择日夜间模式: $mode")
+                var realMode = mode
+                if (realMode == NIGHT_MODE_FOLLOW_SYSTEM) {
+                    realMode = DayNightUtil.getRealCurrentNightMode(context)
+                }
+                // 执行切换
+                if (realMode == NIGHT_MODE_DAY) {
+                    if (ThemeManager.getCurTheme() != ThemeManager.THEME_DEFAULT) {
+                        Log.d(TAG, "实际切换到日间模式")
+                        ThemeManager.switchTheme(ThemeManager.THEME_DEFAULT)
+                    }
+                } else {
+                    if (ThemeManager.getCurTheme() != ThemeManager.THEME_NIGHT) {
+                        Log.d(TAG, "实际切换到夜间模式")
+                        ThemeManager.switchTheme(ThemeManager.THEME_NIGHT)
+                    }
+                }
+            }
+            setOnDismissListener {
+                themeSelectDialog = null
+            }
+        }
+    }
+
     private fun updateUIConfig() {
         EMManager.from(binding.root)
             .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.page_main_color))
@@ -130,6 +162,7 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
             }
         }
         searchEngineDialog?.updateThemeUI()
+        themeSelectDialog?.updateThemeUI()
     }
 
     override fun onThemeChanged(theme: String) {
