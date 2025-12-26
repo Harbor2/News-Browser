@@ -8,27 +8,38 @@ import android.view.ViewGroup
 import androidx.core.view.forEach
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import com.habit.app.R
 import com.habit.app.data.ENGINE_GOOGLE
 import com.habit.app.data.TAG
+import com.habit.app.data.db.DBManager
 import com.habit.app.databinding.FragmentSettingBinding
+import com.habit.app.event.HomeTabsClearedEvent
 import com.habit.app.helper.DayNightUtil
 import com.habit.app.helper.DayNightUtil.NIGHT_MODE_DAY
 import com.habit.app.helper.DayNightUtil.NIGHT_MODE_FOLLOW_SYSTEM
 import com.habit.app.helper.FeedbackUtils
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
+import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.BrowseActivity
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.custom.SettingItem
+import com.habit.app.ui.dialog.DataDeleteDialog
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.habit.app.ui.dialog.ThemeSelectDialog
 import com.habit.app.ui.home.BookmarkHistoryActivity
 import com.habit.app.viewmodel.MainActivityModel
 import com.wyz.emlibrary.em.Direction
 import com.wyz.emlibrary.em.EMManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.greenrobot.eventbus.EventBus
+import java.io.File
 import kotlin.getValue
 
 class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
@@ -39,6 +50,7 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
 
     private var searchEngineDialog: SearchEngineDialog? = null
     private var themeSelectDialog: ThemeSelectDialog? = null
+    private var dataDeleteDialog: DataDeleteDialog? = null
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater,
@@ -101,7 +113,7 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
             BookmarkHistoryActivity.startActivity(requireContext(), viewModel.privacyObserver.value!!, false)
         }
         binding.itemDeleteData.setOnClickListener {
-
+            processDataDelete()
         }
 
         binding.itemFeedback.setOnClickListener {
@@ -112,6 +124,42 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
         }
         binding.itemTerms.setOnClickListener {
             BrowseActivity.startTermOfService(requireContext())
+        }
+    }
+
+    private fun processDataDelete() {
+        dataDeleteDialog = DataDeleteDialog.tryShowDialog(requireActivity())?.apply {
+            setOnDismissListener {
+                dataDeleteDialog = null
+            }
+            this.mCallback = { list ->
+                loadingObserver.value = true
+                this@SettingFragment.lifecycleScope.launch(Dispatchers.IO) {
+                    if (list.contains(DataDeleteDialog.HISTORY)) {
+                        DBManager.getDao().clearHistories()
+                    }
+                    if (list.contains(DataDeleteDialog.CACHE)) {
+                        val parentFile = File(context.cacheDir, "webPic")
+                        if (parentFile.exists()) {
+                            parentFile.deleteRecursively()
+                        }
+                    }
+                    if (list.contains(DataDeleteDialog.TABS)) {
+                        KeyValueManager.saveBooleanValue(KeyValueManager.KEY_REOPEN_LAST_TAB, false)
+                        DBManager.getDao().clearWebSnaps()
+                    }
+                    if (list.contains(DataDeleteDialog.HISTORY_RECORDS)) {
+
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        EventBus.getDefault().post(HomeTabsClearedEvent())
+                        delay(1000)
+                        UtilHelper.showToast(context, context.getString(R.string.toast_succeed))
+                        loadingObserver.value = false
+                    }
+                }
+            }
         }
     }
 
@@ -163,6 +211,7 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
         }
         searchEngineDialog?.updateThemeUI()
         themeSelectDialog?.updateThemeUI()
+        dataDeleteDialog?.updateThemeUI()
     }
 
     override fun onThemeChanged(theme: String) {

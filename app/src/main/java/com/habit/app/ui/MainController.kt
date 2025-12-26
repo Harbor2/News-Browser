@@ -48,7 +48,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.net.URLEncoder
-import java.security.PrivateKey
 
 class MainController(
     val activity: MainActivity,
@@ -140,7 +139,7 @@ class MainController(
     /**
      * 初始化时，创建新tab
      */
-    private fun createNewWebTabAndInsertDB(privacyMode: Boolean? = null) {
+    fun createNewWebTabAndInsertDB(privacyMode: Boolean? = null) {
         // 插入数据库新快照
         val newTabSign = System.currentTimeMillis().toString()
         val newTabViewData = WebViewData(
@@ -288,8 +287,7 @@ class MainController(
 
 
     fun updateTabsCount() {
-        val webSnapData = DBManager.getDao().getWebSnapsFromTable()
-        val tagCount = if (viewModel.privacyObserver.value!!) webSnapData.filter { it.isPrivacyMode == true }.size.toString() else webSnapData.filter { it.isPrivacyMode == false }.size.toString()
+        val tagCount = DBManager.getDao().getWebSnapsCount(viewModel.privacyObserver.value!!).toString()
         binding.tvBottomMainTabNum.text = tagCount
         binding.tvBottomSearchTabNum.text = tagCount
     }
@@ -335,7 +333,7 @@ class MainController(
         val webTitle = mCurWebView!!.getTag(R.id.web_title) as? String ?: (mCurWebView!!.url ?: "")
         val webUrl = mCurWebView!!.url ?: ""
         val iconBitmap = mCurWebView!!.getTag(R.id.web_small_icon) as? Bitmap
-        val iconBitmapPath = if (iconBitmap == null) null else UtilHelper.writeBitmapToCache(activity, iconBitmap)
+        val iconBitmapPath = if (iconBitmap == null) null else UtilHelper.writeBitmapToCache(activity, iconBitmap, "naviIcon")
 
         mNaviEditDialog = NavigationEditDialog.tryShowDialog(activity)?.apply {
             setData(iconBitmapPath, webTitle)

@@ -213,9 +213,9 @@ object UtilHelper {
      * bitmap存储到cache目录
      * @return 返回文件路径
      */
-    fun writeBitmapToCache(context: Context, bitmap: Bitmap): String? {
+    fun writeBitmapToCache(context: Context, bitmap: Bitmap, fileName: String = "webPic"): String? {
         return try {
-            val parentFile = File(context.cacheDir, "webPic")
+            val parentFile = File(context.cacheDir, fileName)
             if (!parentFile.exists()) parentFile.mkdirs()
             val bitmapFile = File(parentFile, "${System.currentTimeMillis()}.png")
             bitmapFile.outputStream().use { out ->

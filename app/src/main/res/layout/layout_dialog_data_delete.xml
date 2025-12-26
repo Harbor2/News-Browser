@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/container_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="12dp"
+            android:layout_gravity="center_horizontal">
+
+            <View
+                android:id="@+id/top_line"
+                android:layout_width="88dp"
+                android:layout_height="4dp"
+                app:rcCornerRadius="2dp"
+                android:layout_gravity="center_horizontal"/>
+        </FrameLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_main_color"
+            android:textSize="18sp"
+            android:text="@string/text_theme"
+            android:fontFamily="@font/gotham_m"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"/>
+
+
+        <LinearLayout
+            android:id="@+id/container_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical">
+
+            <com.habit.app.ui.custom.DeleteDataItem
+                android:id="@+id/item_cookies"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:ddiTitle="@string/text_cookies"
+                app:ddiSelect="true"/>
+
+            <com.habit.app.ui.custom.DeleteDataItem
+                android:id="@+id/item_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:ddiTitle="@string/text_history"
+                app:ddiSelect="true"/>
+
+            <com.habit.app.ui.custom.DeleteDataItem
+                android:id="@+id/item_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:ddiTitle="@string/text_open_tabs"
+                app:ddiSelect="true"/>
+
+            <com.habit.app.ui.custom.DeleteDataItem
+                android:id="@+id/item_history_records"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:ddiTitle="@string/text_historical_records"
+                app:ddiSelect="true"/>
+
+            <com.habit.app.ui.custom.DeleteDataItem
+                android:id="@+id/item_cache"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:ddiTitle="@string/text_cache"
+                app:ddiSelect="true"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="22dp"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:id="@+id/btn_cancel"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:text="@string/text_cancel"
+                android:textColor="@color/white"
+                android:fontFamily="@font/gotham_m" />
+
+            <View
+                android:layout_width="12dp"
+                android:layout_height="1dp"/>
+
+            <TextView
+                android:id="@+id/btn_confirm"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:text="@string/text_delete"
+                android:textColor="@color/white"
+                android:fontFamily="@font/gotham_m" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

@@ -27,6 +27,7 @@
     <string name="toast_access_exist">Access already exist</string>
     <string name="toast_bookmark_exist">Bookmark already exist</string>
     <string name="toast_snap_max_count">The number of public windows has reached the limit of 20</string>
+    <string name="toast_you_must_select_one">You must select at least one item</string>
 
     <string name="text_get_started_big">GET STARTED</string>
     <string name="text_home">Home</string>
@@ -168,4 +169,9 @@
     <string name="text_system">System</string>
     <string name="text_light">Light</string>
     <string name="text_dark">Dark</string>
+    <string name="text_cookies">Cookies</string>
+    <string name="text_search_history">Search History</string>
+    <string name="text_open_tabs">Open Tabs</string>
+    <string name="text_historical_records">Historical Records</string>
+    <string name="text_cache">Cache</string>
 </resources>

@@ -18,6 +18,7 @@ import com.habit.app.R
 import com.habit.app.data.TAG
 import com.habit.app.data.db.DBManager
 import com.habit.app.databinding.ActivityMainBinding
+import com.habit.app.event.HomeTabsClearedEvent
 import com.habit.app.event.HomeTabsCountUpdateEvent
 import com.habit.app.helper.FeedbackUtils
 import com.habit.app.helper.KeyValueManager
@@ -423,6 +424,12 @@ class MainActivity : BaseActivity() {
 
     @Subscribe
     fun updateTabsCountEvent(event: HomeTabsCountUpdateEvent) {
+        mController.updateTabsCount()
+    }
+
+    @Subscribe
+    fun onHomeTabsClearedEvent(event: HomeTabsClearedEvent) {
+        mController.createNewWebTabAndInsertDB()
         mController.updateTabsCount()
     }
 

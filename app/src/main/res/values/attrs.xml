@@ -28,4 +28,9 @@
         <attr name="stiTitle" format="string"/>
         <attr name="stiIcon" format="reference"/>
     </declare-styleable>
+
+    <declare-styleable name="DeleteDataItem">
+        <attr name="ddiTitle" format="string"/>
+        <attr name="ddiSelect" format="boolean"/>
+    </declare-styleable>
 </resources>
