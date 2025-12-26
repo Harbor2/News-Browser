@@ -714,7 +714,7 @@ class DBDao(private val dbHelper: DBHelper) {
         try {
             val value = ContentValues()
             value.put(DBConstant.SEARCH_CONTENT, searchRecord)
-            db.insert(DBConstant.TABLE_SEARCH_RECORD, null, value)
+            db.replace(DBConstant.TABLE_SEARCH_RECORD, null, value)
             Log.d(TAG, "插入search record:$searchRecord")
         } catch (e: Exception) {
             Log.e(TAG, "插入search record异常：${e.message}")

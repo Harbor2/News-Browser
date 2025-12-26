@@ -95,6 +95,9 @@ class SearchActivity : BaseActivity() {
                 val tagStr = child.tag as? String
                 if (child is TextView && !tagStr.isNullOrEmpty()) {
                     Log.d(TAG, "点击tool文案：$tagStr")
+                    val originText = binding.editInput.text.toString().trim()
+                    binding.editInput.setText(originText.plus(tagStr))
+                    binding.editInput.setSelection(originText.length + tagStr.length)
                 }
             }
         }
@@ -156,7 +159,8 @@ class SearchActivity : BaseActivity() {
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         EMUtil.dp2px(31f).toInt()
                     )
-                    text = historyList[p0]
+                    val showTextStr = historyList[p0].trim()
+                    text = if (showTextStr.length > 30) showTextStr.substring(0, 30).plus("…") else showTextStr
                     gravity = Gravity.CENTER_VERTICAL
                     val horPadding = EMUtil.dp2px(12f).toInt()
                     val verPadding = EMUtil.dp2px(9f).toInt()
@@ -166,7 +170,10 @@ class SearchActivity : BaseActivity() {
                         .setCorner(16f).setBackGroundRealColor(ThemeManager.getSkinColor(R.color.view_bg_color))
                     setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
                     setOnClickListener {
-                        Log.d(TAG, "搜索历史点击：${historyList[p0]}")
+                        Log.d(TAG, "搜索历史点击：${showTextStr}")
+                        binding.editInput.setText(showTextStr)
+                        binding.editInput.setSelection(showTextStr.length)
+                        processSearch()
                     }
                 }
             }
