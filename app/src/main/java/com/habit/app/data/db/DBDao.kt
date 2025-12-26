@@ -701,4 +701,52 @@ class DBDao(private val dbHelper: DBHelper) {
             Log.d(TAG, "清空history失败")
         }
     }
+
+    /*
+     * ************************  search record 相关 *******************************
+     */
+
+    /**
+     * 插入单个文件
+     */
+    fun insertSearchRecord(searchRecord: String) {
+        val db: SQLiteDatabase = dbHelper.writableDatabase
+        try {
+            val value = ContentValues()
+            value.put(DBConstant.SEARCH_CONTENT, searchRecord)
+            db.insert(DBConstant.TABLE_SEARCH_RECORD, null, value)
+            Log.d(TAG, "插入search record:$searchRecord")
+        } catch (e: Exception) {
+            Log.e(TAG, "插入search record异常：${e.message}")
+        }
+    }
+
+    /**
+     * TABLE_HISTORY: 查询所有history
+     */
+    fun getAllSearchRecords(): ArrayList<String> {
+        val db: SQLiteDatabase = dbHelper.writableDatabase
+        val sql = "select * from ${DBConstant.TABLE_SEARCH_RECORD} order by ${DBConstant.SEARCH_ID} desc limit 10"
+        val cursor = db.rawQuery(sql, null)
+        val resultList: ArrayList<String> = arrayListOf()
+        while (cursor.moveToNext()) {
+            val nameIndex = cursor.getColumnIndex(DBConstant.SEARCH_CONTENT)
+            if (nameIndex < 0) {
+                continue
+            }
+            resultList.add(cursor.getString(nameIndex))
+        }
+        cursor.close()
+        return resultList
+    }
+
+    fun clearSearchRecords() {
+        val db: SQLiteDatabase = dbHelper.writableDatabase
+        try {
+            val sql = "DELETE FROM ${DBConstant.TABLE_SEARCH_RECORD}"
+            db.execSQL(sql)
+        } catch (e: Exception) {
+            Log.d(TAG, "清空search失败")
+        }
+    }
 }

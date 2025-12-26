@@ -18,6 +18,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         db.execSQL(DBConstant.CREATE_HISTORY_TABLE)
         db.execSQL(DBConstant.CREATE_BOOKMARK_TABLE)
         db.execSQL(DBConstant.CREATE_FOLDER_TABLE)
+        db.execSQL(DBConstant.CREATE_SEARCH_RECORD_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {

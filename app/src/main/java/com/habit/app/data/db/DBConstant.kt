@@ -30,6 +30,15 @@ object DBConstant {
     const val CREATE_TAB_TABLE =
         "CREATE TABLE $TABLE_TAB ($TAB_ID INTEGER PRIMARY KEY,$TAB_SIGN TEXT UNIQUE, $TAB_NAME TEXT, $TAB_URL TEXT, $TAB_PHONE_TYPE INTEGER, $TAB_PRIVACY_TYPE INTEGER, $TAB_COVER_BITMAP TEXT, $TAB_ICON_BITMAP TEXT, $TAB_UPDATE_TIME INTEGER)"
 
+    /**
+     * 搜索记录表
+     */
+    const val TABLE_SEARCH_RECORD = "search_record"
+    const val SEARCH_ID = "search_id"
+    const val SEARCH_CONTENT = "search_content"
+    const val CREATE_SEARCH_RECORD_TABLE =
+        "CREATE TABLE $TABLE_SEARCH_RECORD ($SEARCH_ID INTEGER PRIMARY KEY, $SEARCH_CONTENT TEXT)"
+
 
     /**
      * 历史记录表
