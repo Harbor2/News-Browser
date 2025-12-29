@@ -2,6 +2,7 @@ package com.habit.app.ui
 
 import android.graphics.Bitmap
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import android.webkit.DownloadListener
 import android.webkit.WebChromeClient
@@ -267,6 +268,10 @@ class MainController(
             // 设置文件下载监听
             setDownloadListener(webDownloadListener)
             (this as? CustomWebView)?.mScrollBack = webScrollCallback
+            // 获取焦点
+            isFocusable = true
+            isFocusableInTouchMode = true
+            requestFocus(View.FOCUS_DOWN)
 
             // web装填
             if (this.parent != null) {
