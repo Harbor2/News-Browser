@@ -34,7 +34,5 @@
         <attr name="ddiSelect" format="boolean"/>
     </declare-styleable>
 
-    <declare-styleable name="SearchThinkWordItem">
-        <attr name="stwIcon" format="reference"/>
-    </declare-styleable>
+    <declare-styleable name="SearchThinkWordItem"/>
 </resources>

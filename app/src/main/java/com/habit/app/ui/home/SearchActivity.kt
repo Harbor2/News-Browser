@@ -23,6 +23,7 @@ import com.habit.app.data.ENGINE_YAHOO
 import com.habit.app.data.ENGINE_YANDEX
 import com.habit.app.data.TAG
 import com.habit.app.data.db.DBManager
+import com.habit.app.data.repority.ThinkWordRepository
 import com.habit.app.databinding.ActivitySearchBinding
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
@@ -30,6 +31,7 @@ import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.custom.SearchThinkWordItem
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.habit.app.viewmodel.home.SearchActivityModel
+import com.habit.app.viewmodel.home.SearchActivityModelFactory
 import com.wyz.emlibrary.custom.AutoWrapLayout
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
@@ -40,7 +42,10 @@ import kotlin.getValue
 
 class SearchActivity : BaseActivity() {
     private lateinit var binding: ActivitySearchBinding
-    private val viewModel: SearchActivityModel by viewModels()
+    private val viewModel: SearchActivityModel by viewModels {
+        SearchActivityModelFactory(ThinkWordRepository())
+    }
+
     private lateinit var softKeyboardHelper: SoftKeyboardHelper
 
     private val keyboardListener = object : SoftKeyboardHelper.OnSoftKeyBoardChangeListener {
@@ -107,6 +112,10 @@ class SearchActivity : BaseActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable) {
                 viewModel.setCancelObserver(s.isEmpty())
+                // 联想词搜索
+                if (!s.isEmpty()) {
+                    viewModel.loadThinkWord(s.toString().trim())
+                }
             }
         })
         binding.editInput.setOnEditorActionListener { v, actionId, event ->
@@ -145,8 +154,8 @@ class SearchActivity : BaseActivity() {
             }
         }
         lifecycleScope.launch {
-            viewModel.thinkWordObserver.collect { wordList ->
-                updateThinkWord(wordList)
+            viewModel.thinkWordObserver.collect { (keyWord, wordList) ->
+                updateThinkWord(keyWord, wordList)
             }
         }
     }
@@ -186,8 +195,32 @@ class SearchActivity : BaseActivity() {
         })
     }
 
-    private fun updateThinkWord(wordList: ArrayList<String>) {
+    /**
+     * 更新联想词
+     */
+    private fun updateThinkWord(keyWord: String, wordList: ArrayList<String>) {
+        Log.d(TAG, "thinkWord: ${wordList.joinToString(",")}")
+        binding.containerThink.removeAllViews()
+        wordList.forEach { word ->
+            SearchThinkWordItem(this@SearchActivity).apply {
+                this.updateKeyWord(keyWord, word)
+                layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                if (this.parent != null) {
+                    (this.parent as? ViewGroup)?.removeView(this)
+                }
+                this@SearchActivity.binding.containerThink.addView(this)
 
+                setOnClickListener {
+                    Log.d(TAG, "联想词点击：$word")
+                    this@SearchActivity.binding.editInput.setText(word)
+                    this@SearchActivity.binding.editInput.setSelection(word.length)
+                    processSearch()
+                }
+            }
+        }
     }
 
     private fun adjustBottomTool(height: Int) {

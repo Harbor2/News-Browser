@@ -3,11 +3,18 @@ package com.habit.app.viewmodel.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.habit.app.data.db.DBManager
+import com.habit.app.data.repority.ThinkWordRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 
-class SearchActivityModel : ViewModel() {
+class SearchActivityModel(
+    val repository: ThinkWordRepository
+) : ViewModel() {
     private val _loadObserver = MutableLiveData(false)
     val loadObserver: LiveData<Boolean> = _loadObserver
     fun setLoadObserver(load: Boolean) {
@@ -34,9 +41,22 @@ class SearchActivityModel : ViewModel() {
     /**
      * 联想词
      */
-    private val _thinkWordObserver = MutableSharedFlow<ArrayList<String>>(replay = 1)
-    val thinkWordObserver: SharedFlow<ArrayList<String>> = _thinkWordObserver
-    fun loadThinkWord() {
-        _thinkWordObserver.tryEmit(arrayListOf())
+    private val _thinkWordObserver = MutableSharedFlow<Pair<String, ArrayList<String>>>(replay = 1)
+    val thinkWordObserver: SharedFlow<Pair<String, ArrayList<String>>> = _thinkWordObserver
+    fun loadThinkWord(keyWord: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getThinkWordTemplateHabit(keyWord) { wordList ->
+                _thinkWordObserver.tryEmit(Pair(keyWord, wordList))
+            }
+        }
+    }
+}
+
+class SearchActivityModelFactory(
+    private val repository: ThinkWordRepository
+) : ViewModelProvider.Factory {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return SearchActivityModel(repository) as T
     }
 }

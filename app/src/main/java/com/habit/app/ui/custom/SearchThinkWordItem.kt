@@ -20,19 +20,16 @@ class SearchThinkWordItem @JvmOverloads constructor(
 ): LinearLayout(context, attrs, defStyleAttr) {
 
     val binding: LayoutSearchThinkWordItemBinding
-    private var mIcon: Int = -1
-    private var mKeyWord: String = "2025发"
-    private var mWord: String = "2025发大财身体健康"
+    private var mKeyWord: String = ""
+    private var mWord: String = ""
     init {
         binding = LayoutSearchThinkWordItemBinding.inflate(LayoutInflater.from(context), this, true)
         context.withStyledAttributes(attrs, R.styleable.SearchThinkWordItem) {
-            mIcon = getResourceId(R.styleable.SearchThinkWordItem_stwIcon, -1)
-
             updateThemeUI()
         }
     }
 
-    private fun updateKeyWord(key: String, word: String) {
+    fun updateKeyWord(key: String, word: String) {
         this.mKeyWord = key
         this.mWord = word
 
@@ -40,9 +37,7 @@ class SearchThinkWordItem @JvmOverloads constructor(
     }
 
     fun updateThemeUI() {
-        if (mIcon != -1) {
-            binding.ivSearchIcon.setImageResource(ThemeManager.getSkinImageResId(mIcon))
-        }
+        binding.ivSearchIcon.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_think_word_search_icon))
         if (mWord.isNotEmpty()) {
             val spannable = SpannableString(mWord)
             if (mKeyWord.isEmpty()) {
