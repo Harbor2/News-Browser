@@ -20,6 +20,7 @@ import com.habit.app.data.TAG
 import com.habit.app.data.model.AccessSingleData
 import com.wyz.emlibrary.util.EMUtil
 import java.io.File
+import java.net.URLDecoder
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -288,5 +289,17 @@ object UtilHelper {
      */
     fun jumpWifiSetting(context: Context) {
         context.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+    }
+
+    /**
+     * url解码
+     */
+    fun decodeUrlCode(url: String): String {
+        try {
+            return URLDecoder.decode(url, "UTF-8")
+        } catch (e: Exception) {
+            Log.e(TAG, "url解码失败: ${e.message}")
+        }
+        return url
     }
 }

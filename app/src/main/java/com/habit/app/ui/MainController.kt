@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.DownloadListener
+import android.webkit.URLUtil
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -15,6 +16,7 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.habit.app.R
+import com.habit.app.data.DOWNLOADING_NAME_PREFIX
 import com.habit.app.data.ENGINE_BAIDU
 import com.habit.app.data.ENGINE_BAIDU_URL
 import com.habit.app.data.ENGINE_BING
@@ -27,6 +29,7 @@ import com.habit.app.data.ENGINE_YAHOO
 import com.habit.app.data.ENGINE_YAHOO_URL
 import com.habit.app.data.ENGINE_YANDEX
 import com.habit.app.data.ENGINE_YANDEX_URL
+import com.habit.app.data.MAX_COUNT_DOWNLOAD_TASKS
 import com.habit.app.data.MAX_SNAP_COUNT
 import com.habit.app.data.TAG
 import com.habit.app.data.USER_AGENT_DESKTOP
@@ -38,10 +41,13 @@ import com.habit.app.data.model.HistoryData
 import com.habit.app.data.model.WebViewData
 import com.habit.app.databinding.ActivityMainBinding
 import com.habit.app.event.HomeAccessUpdateEvent
+import com.habit.app.helper.DownloadManager
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.helper.WebViewManager
 import com.habit.app.ui.custom.CustomWebView
+import com.habit.app.ui.dialog.DeleteConfirmDialog
+import com.habit.app.ui.dialog.FileDownloadDialog
 import com.habit.app.ui.dialog.NavigationEditDialog
 import com.habit.app.viewmodel.MainActivityModel
 import com.wyz.emlibrary.util.EMUtil
@@ -49,6 +55,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
+import java.io.File
 import java.net.URLEncoder
 
 class MainController(
@@ -67,6 +74,9 @@ class MainController(
     private var webScrollCallback: ((Boolean) -> Unit) = { isUpScroll -> }
 
     private var mNaviEditDialog: NavigationEditDialog? = null
+    private var mPreDownloadDialog: FileDownloadDialog? = null
+    private var mDownloadFailedDialog: DeleteConfirmDialog? = null
+
     /**
      * webView加载进度监听
      */
@@ -110,8 +120,42 @@ class MainController(
             mimeType: String?,
             contentLength: Long
         ) {
+            if (url.isNullOrEmpty()) {
+                UtilHelper.showToast(activity, activity.getString(R.string.toast_url_invalid))
+                return
+            }
+            if (DownloadManager.getTaskCount() >= MAX_COUNT_DOWNLOAD_TASKS) {
+                UtilHelper.showToast(activity, activity.getString(R.string.toast_download_tasks_max))
+                return
+            }
 
+            UtilHelper.showToast(activity, "准备下载app")
+            showFileDownloadDialog(url, contentDisposition, mimeType, contentLength)
         }
+    }
+
+    /**
+     * 下载进度回调
+     */
+    private val progressCallback: (taskSign: Long, String, Long, Long, Int, Long, Double, String?, String?, String) -> Unit = {taskSign: Long, url: String, downloaded: Long, total: Long, percent: Int, eta: Long, speed: Double, contentDisposition: String?, mimeType: String?, filePath: String ->
+        Log.d(TAG, "onProgress 进度: $percent% (${EMUtil.formatBytesSize(downloaded)} / ${EMUtil.formatBytesSize(total)}), 预计剩余时间：$eta 秒")
+    }
+
+    /**
+     * 下载完成回调
+     */
+    private val completeCallback: (taskSign: Long, String, Long, String?, String?, String) -> Unit = {taskSign: Long, url: String, total: Long, contentDisposition: String?, mimeType: String?, filePath: String ->
+        Log.d(TAG, "onCompleted 下载完成：$url")
+        val fileName = UtilHelper.decodeUrlCode(URLUtil.guessFileName(url, contentDisposition, mimeType))
+        UtilHelper.showToast(activity, activity.getString(R.string.text_download_completed, fileName))
+    }
+
+    /**
+     * 下载失败回调
+     */
+    private var errorCallback: (taskSign: Long, String, String?, String?, String, String) -> Unit = {taskSign: Long, url: String, contentDisposition: String?, mimeType: String?, filePath: String, msg: String ->
+        Log.d(TAG, "onError 下载失败：$msg")
+        showFileErrorDialog(url, contentDisposition, mimeType)
     }
 
     /**
@@ -396,6 +440,52 @@ class MainController(
      */
 
     /**
+     * 文件下载dialog
+     */
+    private fun showFileDownloadDialog(
+        url: String,
+        contentDisposition: String?,
+        mimeType: String?,
+        contentLength: Long
+    ) {
+        val fileName = UtilHelper.decodeUrlCode(URLUtil.guessFileName(url, contentDisposition, mimeType))
+        Log.d(TAG, "解析下载的文件名称：$fileName")
+        mPreDownloadDialog = FileDownloadDialog.tryShowDialog(activity)?.apply {
+            this.setData(fileName)
+            this.mCallback = { beginDownload: Boolean ->
+                if (beginDownload) {
+                    val downloadDir = File(activity.cacheDir, "downloads")
+                    if (!downloadDir.exists()) downloadDir.mkdirs()
+                    var destFile = File(downloadDir, fileName)
+                    if (destFile.exists()) {
+                        destFile = File(downloadDir, "${System.currentTimeMillis()}_$fileName")
+                    }
+                    // 文件重命名为下载中状态
+                    val downloadFile = File(downloadDir, DOWNLOADING_NAME_PREFIX.plus(destFile.name))
+                    DownloadManager.createAndStartDownloadTask(url, downloadFile, contentDisposition, mimeType, contentLength, progressCallback, completeCallback, errorCallback)
+                }
+            }
+            setOnDismissListener {
+                mPreDownloadDialog = null
+            }
+        }
+    }
+
+    private fun showFileErrorDialog(url: String, contentDisposition: String?, mimeType: String?) {
+        val fileName = UtilHelper.decodeUrlCode(URLUtil.guessFileName(url, contentDisposition, mimeType))
+        mDownloadFailedDialog = DeleteConfirmDialog.tryShowDialog(activity)?.apply {
+            this.initData(
+                R.drawable.iv_download_failed_icon,
+                activity.getString(R.string.text_download_failed, fileName),
+                activity.getString(R.string.text_cancel),
+                activity.getString(R.string.text_ok))
+            setOnDismissListener {
+                mDownloadFailedDialog = null
+            }
+        }
+    }
+
+    /**
      * 创建webView快照
      */
     fun createWebViewSnapshot(callback: (WebViewData?) -> Unit) {
@@ -437,6 +527,8 @@ class MainController(
 
     fun updateUIConfig() {
         mNaviEditDialog?.updateThemeUI()
+        mPreDownloadDialog?.updateThemeUI()
+        mDownloadFailedDialog?.updateThemeUI()
     }
 
     /**

@@ -112,6 +112,9 @@ class MainActivity : BaseActivity() {
         override fun onSearch(searchStr: String) {
             Log.d(TAG, "search input: $searchStr")
             viewModel.setSearchObserver(true)
+            // todo
+            // url 下载测试
+            // https://a.app.qq.com/o/simple.jsp?pkgname=com.tencent.mobileqq&channel=0002160650432d595942
             mController.processWebSearch(searchStr, true)
         }
     }

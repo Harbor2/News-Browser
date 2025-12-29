@@ -52,3 +52,13 @@ const val OPTION_ADD_TO_NAVI = "option_add_to_navi"
 const val OPTION_ADD_TO_HOME = "option_add_to_home"
 const val OPTION_ADD_TO_BOOKMARK = "option_add_to_bookmark"
 const val OPTION_SELECT = "option_select"
+
+/**
+ * 最大同时下载任务数
+ */
+const val MAX_COUNT_DOWNLOAD_TASKS = 5
+
+/**
+ * 文件下载中名字标识符
+ */
+const val DOWNLOADING_NAME_PREFIX = "downloading_"
