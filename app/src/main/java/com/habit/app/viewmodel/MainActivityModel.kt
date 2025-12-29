@@ -11,6 +11,8 @@ class MainActivityModel : ViewModel() {
         _loadObserver.value = load
     }
 
+    val noNetObserver = MutableLiveData(false)
+
     private val _searchObserver = MutableLiveData(false)
     val searchObserver: LiveData<Boolean> = _searchObserver
     fun setSearchObserver(cancel: Boolean) {

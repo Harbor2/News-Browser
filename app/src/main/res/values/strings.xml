@@ -174,4 +174,6 @@
     <string name="text_open_tabs">Open Tabs</string>
     <string name="text_historical_records">Historical Records</string>
     <string name="text_cache">Cache</string>
+    <string name="text_no_net_available">No Network Available</string>
+    <string name="text_check_the_network">Check The Network></string>
 </resources>

@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.ViewGroup
 import android.webkit.DownloadListener
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -220,18 +221,6 @@ class MainController(
             viewModel.setSearchObserver(true)
         }
 
-        if (!UtilHelper.isNetworkAvailable(activity)) {
-//            binding.btnRetryNet.setTag(R.id.no_net_select_engine, engine)
-//            binding.btnRetryNet.setTag(R.id.no_net_input_str, mCurInputStr)
-//            noNetObserver.value = true
-//            changeStatusBarMode(true)
-//            binding.editInput.setText(mCurInputStr)
-//            hideSoftKeyBoard()
-            return
-        }
-//        noNetObserver.value = false
-//        changeStatusBarMode(false)
-
         // 直接打开链接
         if (assessUrlList.contains(mCurInputStr) || mCurInputStr.startsWith("http://") || mCurInputStr.startsWith("https://")) {
             Log.d(TAG, "直接打开网页链接：$mCurInputStr")
@@ -297,7 +286,7 @@ class MainController(
         binding.tvBottomSearchTabNum.text = tagCount
     }
 
-    fun stopLoadingAndGoBack() {
+    fun refreshWebView() {
         mCurWebView?.let {
             if (binding.ivNaviPageRefresh.alpha != 1f) return
             it.reload()
@@ -470,6 +459,7 @@ class MainController(
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
+            viewModel.noNetObserver.value = false
             binding.ivNaviPageRefresh.alpha = 0.3f
         }
 
@@ -493,6 +483,15 @@ class MainController(
                 )
             )
             updateGoBackStatus()
+        }
+
+        override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
+            if (request?.isForMainFrame == true) {
+                // 无网处理
+                if (!UtilHelper.isNetworkAvailable(activity)) {
+                    viewModel.noNetObserver.value = true
+                }
+            }
         }
     }
 

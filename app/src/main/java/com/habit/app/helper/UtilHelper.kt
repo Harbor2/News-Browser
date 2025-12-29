@@ -9,6 +9,7 @@ import android.graphics.Canvas
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -280,5 +281,12 @@ object UtilHelper {
     fun getTodayDate(): String {
         val now = System.currentTimeMillis()
         return EMUtil.formatDateFromTimestamp("dd/MM/yyyy", now)
+    }
+
+    /**
+     * 跳转wifisetting
+     */
+    fun jumpWifiSetting(context: Context) {
+        context.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
     }
 }

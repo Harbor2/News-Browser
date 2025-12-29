@@ -6,7 +6,10 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.text.Editable
+import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextWatcher
+import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -201,9 +204,19 @@ class MainActivity : BaseActivity() {
 
         // 获取webSign
         mController.getDBLastSnapAndNewTab()
+
+        // 下划线
+        val checkNetText = getString(R.string.text_check_the_network)
+        val checkNetSpan = SpannableString(checkNetText)
+        checkNetSpan.setSpan(UnderlineSpan(), 0, checkNetText.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+        binding.tvCheckNet.text = checkNetSpan
     }
 
     private fun setupObserver() {
+        viewModel.noNetObserver.observe(this) { value ->
+            binding.containerNoNet.isVisible = value
+        }
+
         viewModel.loadObserver.observe(this) { value ->
             binding.loadingView.isVisible = value
         }
@@ -259,7 +272,10 @@ class MainActivity : BaseActivity() {
             mController.saveCurSnapAndCreateNewWebTab()
         }
         binding.ivNaviPageRefresh.setOnClickListener {
-            mController.stopLoadingAndGoBack()
+            mController.refreshWebView()
+        }
+        binding.tvCheckNet.setOnClickListener {
+            UtilHelper.jumpWifiSetting(this)
         }
 
         binding.btnBottomBack.setOnClickListener {
@@ -412,6 +428,11 @@ class MainActivity : BaseActivity() {
         binding.tvBottomSearchTabNum.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.btnBottomMenu.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_page_menu))
         binding.ivInputTrace.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_search_trace))
+
+        binding.containerNoNet.setBackgroundColor(ThemeManager.getSkinColor(R.color.page_main_color))
+        binding.ivIconNoNet.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_home_no_net))
+        binding.tvNoNet.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_50))
+
         // Dialog
         mBrowserMenuDialog?.updateThemeUI()
         mController.updateUIConfig()
