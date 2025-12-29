@@ -36,6 +36,7 @@ import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.dialog.BrowserMenuDialog
 import com.habit.app.ui.home.BookmarkHistoryActivity
+import com.habit.app.ui.home.FileDownloadActivity
 import com.habit.app.ui.home.fragment.HomeFragment
 import com.habit.app.ui.news.NewsFragment
 import com.habit.app.ui.setting.SettingFragment
@@ -127,7 +128,7 @@ class MainActivity : BaseActivity() {
             BookmarkHistoryActivity.startActivity(this@MainActivity, viewModel.privacyObserver.value!!, true, mController.mCurWebView?.url)
         }
         override fun onDownloadClick() {
-
+            FileDownloadActivity.startActivity(this@MainActivity)
         }
         override fun onHistoryClick() {
             BookmarkHistoryActivity.startActivity(this@MainActivity, viewModel.privacyObserver.value!!, false)

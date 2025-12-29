@@ -36,6 +36,11 @@
         </provider>
 
 
+        <activity android:name=".ui.home.FileDownloadActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:configChanges="uiMode"
+            tools:ignore="LockedOrientationActivity"/>
         <activity android:name=".ui.home.BookmarkFolderSelectActivity"
             android:exported="false"
             android:screenOrientation="portrait"
