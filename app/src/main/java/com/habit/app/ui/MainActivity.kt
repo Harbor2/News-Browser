@@ -197,8 +197,8 @@ class MainActivity : BaseActivity() {
         initListener()
     }
 
-    override fun onNewIntent(intent: Intent, caller: ComponentCaller) {
-        super.onNewIntent(intent, caller)
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
         val postUrl =  intent.getStringExtra("post_url")
         Log.d(TAG, "获取准备打开的url：$postUrl")
         if (!postUrl.isNullOrEmpty()) {
