@@ -81,6 +81,7 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.0-alpha13")
     implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.webkit:webkit:1.15.0")
     // lifecycle
     val lifecycleVersion = "2.8.7"
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
@@ -97,7 +98,7 @@ dependencies {
     // work manager
     implementation("androidx.work:work-runtime-ktx:2.9.1")
     // eventbus
-    implementation("org.greenrobot:eventbus:3.2.0")
+    implementation("org.greenrobot:eventbus:3.3.1")
     // ui
     implementation("com.github.Harbor2:Emlibrary:v2.6.2")
     // calendar

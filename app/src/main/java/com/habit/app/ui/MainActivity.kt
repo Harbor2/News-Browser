@@ -1,9 +1,11 @@
 package com.habit.app.ui
 
+import android.annotation.SuppressLint
 import android.app.ComponentCaller
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableString
@@ -18,6 +20,8 @@ import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewFeature
 import com.habit.app.R
 import com.habit.app.data.TAG
 import com.habit.app.data.db.DBManager
@@ -438,6 +442,7 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    @SuppressLint("RequiresFeature")
     private fun updateUIConfig() {
         // main
         binding.tabsMainBottom.setBackgroundColor(ThemeManager.getSkinColor(R.color.page_main_color))
@@ -492,6 +497,27 @@ class MainActivity : BaseActivity() {
         binding.tvSearchNum2.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_50))
         binding.editContentInput.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.editContentInput.setHintTextColor(ThemeManager.getSkinColor(R.color.text_main_color_50))
+
+        mController.mCurWebView?.let {
+//            if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
+//                // Android 13+ 推荐
+//                WebSettingsCompat.setAlgorithmicDarkeningAllowed(it.settings, ThemeManager.isNightTheme())
+//            } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+//                WebSettingsCompat.setForceDark(
+//                    it.settings,
+//                    if (ThemeManager.isNightTheme())
+//                        WebSettingsCompat.FORCE_DARK_ON
+//                    else
+//                        WebSettingsCompat.FORCE_DARK_OFF
+//                )
+//
+//                WebSettingsCompat.setForceDarkStrategy(
+//                    it.settings,
+//                    WebSettingsCompat.DARK_STRATEGY_PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING
+//                )
+//            }
+//            it.setBackgroundColor(Color.TRANSPARENT)
+        }
 
         // Dialog
         mBrowserMenuDialog?.updateThemeUI()
