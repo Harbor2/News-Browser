@@ -363,6 +363,28 @@ class MainController(
         updateTabsCount()
     }
 
+    /**
+     * 处理webView内容搜索
+     */
+    fun processWebContentSearch(keyword: String) {
+        if (mCurWebView == null) return
+        mCurWebView!!.setFindListener { activeMatchOrdinal, numberOfMatches, isDoneCounting ->
+            if (isDoneCounting) {
+                binding.tvSearchNum1.text = if (numberOfMatches > 0) "${activeMatchOrdinal + 1}" else "$activeMatchOrdinal"
+                binding.tvSearchNum2.text = "/$numberOfMatches"
+            }
+            binding.ivSearchPre.alpha = if (numberOfMatches > 0) 1f else 0.3f
+            binding.ivSearchNext.alpha = if (numberOfMatches > 0) 1f else 0.3f
+        }
+        mCurWebView!!.findAllAsync(keyword)
+    }
+
+    fun processWebContentSearchPreOrNext(isNext: Boolean) {
+        if (mCurWebView == null) return
+        if (!binding.containerContentSearch.isVisible) return
+        mCurWebView!!.findNext(isNext)
+    }
+
 
     /*
      * ************************  私有方法 ************************

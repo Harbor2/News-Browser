@@ -13,6 +13,7 @@ import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -38,6 +39,7 @@ import com.habit.app.ui.tag.TagsActivity
 import com.habit.app.viewmodel.MainActivityModel
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
+import com.wyz.emlibrary.util.SoftKeyboardHelper
 import com.wyz.emlibrary.util.immersiveWindow
 import org.greenrobot.eventbus.Subscribe
 
@@ -62,6 +64,8 @@ class MainActivity : BaseActivity() {
      * menu菜单dialog
      */
     private var mBrowserMenuDialog: BrowserMenuDialog? = null
+
+    private lateinit var softKeyboardHelper: SoftKeyboardHelper
 
     private val tagsLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
@@ -138,6 +142,8 @@ class MainActivity : BaseActivity() {
             FeedbackUtils.feedback(this@MainActivity)
         }
         override fun onPageSearchClick() {
+            binding.containerContentSearch.isVisible = true
+            EMUtil.showSoftKeyboard(binding.editContentInput, this@MainActivity)
         }
         override fun onShareClick() {
             mController.mCurWebView?.let {
@@ -158,6 +164,16 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    private val keyboardListener = object : SoftKeyboardHelper.OnSoftKeyBoardChangeListener {
+        override fun keyBoardHide(height: Int) {
+            adjustBottomTool(0)
+        }
+
+        override fun keyBoardShow(height: Int) {
+            adjustBottomTool(height)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -165,6 +181,7 @@ class MainActivity : BaseActivity() {
         immersiveWindow(binding.root, false, binding.containerSearchNavi)
         KeyValueManager.saveBooleanValue(KeyValueManager.KEY_ENTERED_HOME, true)
         mController = MainController(this, viewModel, binding)
+        softKeyboardHelper = SoftKeyboardHelper()
 
         initView()
         initData()
@@ -236,9 +253,11 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initListener() {
+        softKeyboardHelper.addKeyboardListener(this, keyboardListener)
         binding.containerSearchNavi.setOnClickListener {
             EMUtil.hideSoftKeyboard(binding.editInput, this)
         }
+        binding.containerContentSearch.setOnClickListener {}
         binding.loadingView.setOnClickListener {}
         binding.pageSearch.setOnClickListener {}
         binding.containerBottom.setOnClickListener {}
@@ -276,6 +295,25 @@ class MainActivity : BaseActivity() {
         }
         binding.tvCheckNet.setOnClickListener {
             UtilHelper.jumpWifiSetting(this)
+        }
+        binding.ivSearchClose.setOnClickListener {
+            mController.mCurWebView?.clearMatches()
+            EMUtil.hideSoftKeyboard(binding.editContentInput, this)
+            binding.containerContentSearch.isVisible = false
+        }
+        binding.ivSearchPre.setOnClickListener {
+            mController.processWebContentSearchPreOrNext(false)
+        }
+        binding.ivSearchNext.setOnClickListener {
+            mController.processWebContentSearchPreOrNext(true)
+        }
+        binding.editContentInput.setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    mController.processWebContentSearch(v.text.toString().trim())
+                    true
+                } else {
+                    false
+                }
         }
 
         binding.btnBottomBack.setOnClickListener {
@@ -388,6 +426,18 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    /**
+     * 调整搜索框位置
+     */
+    private fun adjustBottomTool(height: Int) {
+        if (!binding.containerContentSearch.isVisible) return
+        val bottomTabHeight = binding.containerBottom.height
+        (binding.containerContentSearch.layoutParams as? ViewGroup.MarginLayoutParams)?.apply {
+            bottomMargin = if (height > bottomTabHeight) height - bottomTabHeight else height
+            binding.containerContentSearch.layoutParams = this
+        }
+    }
+
     private fun updateUIConfig() {
         // main
         binding.tabsMainBottom.setBackgroundColor(ThemeManager.getSkinColor(R.color.page_main_color))
@@ -432,6 +482,16 @@ class MainActivity : BaseActivity() {
         binding.containerNoNet.setBackgroundColor(ThemeManager.getSkinColor(R.color.page_main_color))
         binding.ivIconNoNet.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_home_no_net))
         binding.tvNoNet.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_50))
+
+        EMManager.from(binding.containerContentSearch).setBackGroundRealColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+        EMManager.from(binding.containerSearchInput).setCorner(18f).setBorderWidth(1f).setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_30))
+        binding.ivSearchClose.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_navi_close))
+        binding.ivSearchIcon2.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_bh_search_icon))
+        binding.ivSearchPre.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_search_pre))
+        binding.ivSearchNext.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_search_next))
+        binding.tvSearchNum2.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_50))
+        binding.editContentInput.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
+        binding.editContentInput.setHintTextColor(ThemeManager.getSkinColor(R.color.text_main_color_50))
 
         // Dialog
         mBrowserMenuDialog?.updateThemeUI()
