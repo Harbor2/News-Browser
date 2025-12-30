@@ -29,6 +29,7 @@ import com.habit.app.event.HomeAccessUpdateEvent
 import com.habit.app.ui.home.AccessSelectActivity
 import com.habit.app.ui.home.SearchActivity
 import com.habit.app.ui.dialog.SearchEngineDialog
+import com.habit.app.ui.home.CameraScanActivity
 import com.habit.app.ui.item.HomeAccessItem
 import com.habit.app.ui.item.HomeNewsCardItem
 import com.habit.app.ui.item.HomeNewsHeadItem
@@ -63,6 +64,15 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
     private var isListLoading = false
     private var curPage = 1
 
+    /**
+     * 相机权限
+     */
+    private val cameraPermLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
+        if (result) {
+            checkAndJumpScanActivity()
+        }
+    }
+
     private val searchLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val searchStr = result.data?.getStringExtra("searchStr")
@@ -94,11 +104,11 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
         }
 
         override fun onMicrophoneSelect() {
-
+            checkAndJumpMicSearch()
         }
 
         override fun onScanSelect() {
-
+            checkAndJumpScanActivity()
         }
     }
 
@@ -194,6 +204,18 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
                 )
             }
         }
+    }
+
+    private fun checkAndJumpMicSearch() {
+
+    }
+
+    private fun checkAndJumpScanActivity() {
+        if (!UtilHelper.hasCameraPermission(requireContext())) {
+            cameraPermLauncher.launch(android.Manifest.permission.CAMERA)
+            return
+        }
+        CameraScanActivity.startActivity(requireActivity())
     }
 
     private fun jumpSearchActivity() {

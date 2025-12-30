@@ -113,4 +113,6 @@ dependencies {
     // retrofit
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    // zxing
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }

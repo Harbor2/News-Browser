@@ -6,6 +6,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Matrix
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -324,5 +327,61 @@ object UtilHelper {
             apkTypes.contains(fileExtension) -> DownloadFileData.TYPE_APK
             else -> DownloadFileData.TYPE_UNKNOWN
         }
+    }
+
+    /**
+     * 判断有无相机权限
+     */
+    fun hasCameraPermission(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+    }
+
+    /**
+     * 设备是否支持闪光灯
+     */
+    fun isDeviceFlashSupported(context: Context): Boolean {
+        val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        val cameraIdList = cameraManager.cameraIdList
+        // 遍历所有摄像头，检查是否有支持闪光灯的摄像头
+        for (cameraId in cameraIdList) {
+            val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+            val flashAvailable =
+                characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) ?: false
+
+            if (flashAvailable) {
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * 设备是否支持前后摄像头
+     */
+    fun isDeviceCameraSupported(context: Context): Pair<Boolean, Boolean> {
+        val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        val cameraIdList = cameraManager.cameraIdList
+        var hasFrontCamera = false
+        var hasBackCamera = false
+        for (cameraId in cameraIdList) {
+            val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+            val lensFacing = characteristics.get(CameraCharacteristics.LENS_FACING)
+            if (lensFacing == CameraCharacteristics.LENS_FACING_FRONT) {
+                hasFrontCamera = true
+            } else if (lensFacing == CameraCharacteristics.LENS_FACING_BACK) {
+                hasBackCamera = true
+            }
+        }
+        return Pair(hasBackCamera, hasFrontCamera)
+    }
+
+    /**
+     * 旋转图片
+     * 正数为顺时针旋转，否则逆时针旋转
+     */
+    fun rotateBitmap(bitmap: Bitmap, degrees: Float): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(degrees)
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 }
