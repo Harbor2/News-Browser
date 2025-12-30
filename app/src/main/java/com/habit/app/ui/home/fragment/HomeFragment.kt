@@ -73,6 +73,15 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
         }
     }
 
+    /**
+     * 麦克风权限
+     */
+    private val micPermLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
+        if (result) {
+            checkAndJumpMicSearch()
+        }
+    }
+
     private val searchLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val searchStr = result.data?.getStringExtra("searchStr")
@@ -96,7 +105,7 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
      */
     private val searchItemCallback = object : HomeSearchItem.HomeSearchItemCallback {
         override fun onSearch() {
-            jumpSearchActivity()
+            jumpSearchActivity(hasFocus = true, hasMic = false)
         }
 
         override fun onEngineSelect() {
@@ -207,7 +216,11 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
     }
 
     private fun checkAndJumpMicSearch() {
-
+        if (!UtilHelper.hasMicPerm(requireContext())) {
+            micPermLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+            return
+        }
+        jumpSearchActivity(hasFocus = false, hasMic = true)
     }
 
     private fun checkAndJumpScanActivity() {
@@ -218,9 +231,10 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
         CameraScanActivity.startActivity(requireActivity())
     }
 
-    private fun jumpSearchActivity() {
+    private fun jumpSearchActivity(hasFocus: Boolean = false, hasMic: Boolean = false) {
         searchLauncher.launch(Intent(requireContext(), SearchActivity::class.java).apply {
-            putExtra("hasFocus", true)
+            putExtra("hasFocus", hasFocus)
+            putExtra("hasMic", hasMic)
         })
     }
 

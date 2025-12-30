@@ -29,6 +29,7 @@ import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
 import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.custom.SearchThinkWordItem
+import com.habit.app.ui.dialog.MicReceiveDialog
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.habit.app.viewmodel.home.SearchActivityModel
 import com.habit.app.viewmodel.home.SearchActivityModelFactory
@@ -42,6 +43,8 @@ import kotlin.getValue
 
 class SearchActivity : BaseActivity() {
     private lateinit var binding: ActivitySearchBinding
+    private var micDialog: MicReceiveDialog? = null
+
     private val viewModel: SearchActivityModel by viewModels {
         SearchActivityModelFactory(ThinkWordRepository())
     }
@@ -74,7 +77,12 @@ class SearchActivity : BaseActivity() {
 
     private fun initView() {
         updateUIConfig()
-        if (intent.getBooleanExtra("hasFocus", false)) {
+        val hasFocus = intent.getBooleanExtra("hasFocus", false)
+        val hasMic = intent.getBooleanExtra("hasMic", false)
+        // 麦克风优先级高
+        if (hasMic) {
+            showMicDialog()
+        } else if (hasFocus) {
             EMUtil.showSoftKeyboard(binding.editInput, this)
         }
     }
@@ -233,6 +241,17 @@ class SearchActivity : BaseActivity() {
         SearchEngineDialog.Companion.tryShowDialog(this)
     }
 
+    /**
+     * 麦克风dialog
+     */
+    private fun showMicDialog() {
+        micDialog = MicReceiveDialog.tryShowDialog(this)?.apply {
+            setOnDismissListener {
+                micDialog = null
+            }
+        }
+    }
+
     fun updateEngineIcon() {
         val iconRes = when (KeyValueManager.getValueByKey(KeyValueManager.KEY_ENGINE_SELECT) ?: ENGINE_GOOGLE) {
             ENGINE_GOOGLE -> R.drawable.iv_engine_icon_google
@@ -281,6 +300,7 @@ class SearchActivity : BaseActivity() {
         binding.containerThink.forEach {
             (it as? SearchThinkWordItem)?.updateThemeUI()
         }
+        micDialog?.updateThemeUI()
     }
 
     override fun onThemeChanged(theme: String) {
