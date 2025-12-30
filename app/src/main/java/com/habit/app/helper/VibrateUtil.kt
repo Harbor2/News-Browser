@@ -5,6 +5,8 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.util.Log
+import com.habit.app.data.TAG
 
 /**
  * 手机振动工具类
@@ -20,6 +22,7 @@ object VibrateUtil {
         val vibrator = getVibrateService(context)
         // 设备不支持振动
         if (!vibrator.hasVibrator()) {
+            Log.d(TAG, "设备不支持震动")
             return
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

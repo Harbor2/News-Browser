@@ -184,4 +184,6 @@
     <string name="text_are_you_sure_to_download_xxx">Are you sure to download %s?</string>
     <string name="text_download_failed">%s download failed!</string>
     <string name="text_download_completed">%s download completed!</string>
+    <string name="text_copy">Copy</string>
+    <string name="text_jump">Jump</string>
 </resources>

@@ -72,7 +72,7 @@ class MediaPlayerController(val context: Context) {
         try {
             with(player) {
                 setAudioAttributes(
-                    AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE).build()
+                    AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).build()
                 )
                 setVolume(1.0f, 1.0f)
                 // raw资源

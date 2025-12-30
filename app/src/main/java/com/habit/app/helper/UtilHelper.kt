@@ -1,6 +1,8 @@
 package com.habit.app.helper
 
 import android.Manifest
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -383,5 +385,18 @@ object UtilHelper {
         val matrix = Matrix()
         matrix.postRotate(degrees)
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    }
+
+    /**
+     * 复制内容到剪切板
+     */
+    fun copyToClipboard(context: Context, text: String) {
+        try {
+            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("label", text)
+            clipboard.setPrimaryClip(clip)
+        } catch (e: Exception) {
+            Log.e(TAG, "复制内容到剪切板失败: ${e.message}")
+        }
     }
 }

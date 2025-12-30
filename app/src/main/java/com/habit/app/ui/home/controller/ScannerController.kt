@@ -18,7 +18,6 @@ import com.google.zxing.Result
 import com.google.zxing.common.HybridBinarizer
 import com.google.zxing.qrcode.QRCodeReader
 import com.habit.app.data.TAG
-import com.habit.app.data.model.RealTimePicData
 import com.habit.app.databinding.ActivityCameraScanBinding
 import com.habit.app.helper.UtilHelper
 import kotlinx.coroutines.CoroutineScope
@@ -173,23 +172,18 @@ class ScannerController(
                 val width = size.width
                 val height = size.height
                 decodeJob = mScope.launch(Dispatchers.IO) {
-                    var dataCopy: ByteArray? = null
                     var newData: ByteArray? = null
-                    var isRotate = false
                     try {
                         var decodeResult = decodeQRCode(data, width, height)
                         if (decodeResult == null) {
                             // 旋转图片（条形码解码需要确保方向正确）
-                            isRotate = true
                             newData = rotateYUV420Degree90(data, width, height)
                             decodeResult = decodeQRCode(newData, width, height)
                         }
                         decodeResult?.let { result ->
                             // 扫描成功，返回二维码数据
                             withContext(Dispatchers.Main) {
-                                dataCopy = if (isRotate) newData?.copyOf() else data?.copyOf()
-                                val obj = RealTimePicData(false, null, dataCopy, if (isRotate) height else width, if (isRotate) width else height, isRotate)
-                                mCallback?.onScanResult(result, obj)
+                                mCallback?.onScanResult(result)
                                 Log.d(TAG, "发现二维码内容：${result.text}")
                             }
                         } ?: run {
@@ -197,7 +191,6 @@ class ScannerController(
                         }
                     } finally {
                         data.fill(0)
-                        newData = null
                     }
                 }
             }
@@ -286,8 +279,7 @@ class ScannerController(
                     mCallback?.onScanLocalPicFailed()
                 } else {
                     Log.d(TAG, "解析本地图片：${result.text}")
-                    val obj = RealTimePicData(true, bitmap, null, 0, 0, isRotate)
-                    mCallback?.onScanResult(result, obj)
+                    mCallback?.onScanResult(result)
                 }
             }
         }
@@ -373,7 +365,7 @@ class ScannerController(
     }
 
     interface ScannerCallback {
-        fun onScanResult(result: Result, obj: RealTimePicData?)
+        fun onScanResult(result: Result)
 
         fun onScanLocalPicFailed()
     }
