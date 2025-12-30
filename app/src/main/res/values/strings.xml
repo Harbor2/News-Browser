@@ -134,6 +134,7 @@
     <string name="text_public">Public</string>
     <string name="text_no_tags">No Tags</string>
     <string name="text_no_bookmarks">No Bookmarks</string>
+    <string name="text_no_download">No Download</string>
     <string name="text_no_history">No Histories</string>
     <string name="text_you_have_entered_private_mode">You have entered private mode</string>
     <string name="text_you_have_entered_private_mode_desc">Private mode will NOT record any of your browsing history, but it will save your downloads and bookmarks.</string>

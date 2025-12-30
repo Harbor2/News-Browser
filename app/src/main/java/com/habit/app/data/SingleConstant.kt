@@ -3,6 +3,13 @@ package com.habit.app.data
 const val TAG = "NEWS_BROWSER"
 const val TAG_TEST = "NEWS_BROWSER_TEST"
 
+val imageTypes = arrayOf("jpg", "jpeg", "png", "raw", "bmp", "gif", "tif", "svg", "ico", "webp")
+val videoTypes = arrayOf("mp4", "avi", "wmv", "flv", "rmvb", "rm", "mov", "3gp", "mpeg")
+val audioTypes = arrayOf("mp3","ogg","wav","wma","ape","flac","aac","midi", "m4a")
+val docTypes = arrayOf("doc","docx", "dotm", "dotx", "pptx", "ppt", "xls","xlsx", "xlsm", "xltm", "pdf", "txt")
+val zipTypes = arrayOf("rar", "7z", "zip", "gz", "tar", "bz")
+val apkTypes = arrayOf("apk")
+
 /**
  * 最大web snap 数量
  */

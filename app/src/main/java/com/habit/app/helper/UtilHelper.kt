@@ -17,7 +17,14 @@ import androidx.core.content.ContextCompat
 import com.google.gson.reflect.TypeToken
 import com.habit.app.R
 import com.habit.app.data.TAG
+import com.habit.app.data.apkTypes
+import com.habit.app.data.audioTypes
+import com.habit.app.data.docTypes
+import com.habit.app.data.imageTypes
 import com.habit.app.data.model.AccessSingleData
+import com.habit.app.data.model.DownloadFileData
+import com.habit.app.data.videoTypes
+import com.habit.app.data.zipTypes
 import com.wyz.emlibrary.util.EMUtil
 import java.io.File
 import java.net.URLDecoder
@@ -301,5 +308,21 @@ object UtilHelper {
             Log.e(TAG, "url解码失败: ${e.message}")
         }
         return url
+    }
+
+    fun getFileTypeByName(name: String): String {
+        val fileExtension = name.substringAfterLast('.', "").lowercase()
+        if (fileExtension.isEmpty()) {
+            return DownloadFileData.TYPE_UNKNOWN
+        }
+        return when {
+            imageTypes.contains(fileExtension) -> DownloadFileData.TYPE_PIC
+            videoTypes.contains(fileExtension) -> DownloadFileData.TYPE_VIDEO
+            audioTypes.contains(fileExtension) -> DownloadFileData.TYPE_AUDIO
+            docTypes.contains(fileExtension) -> DownloadFileData.TYPE_DOC
+            zipTypes.contains(fileExtension) -> DownloadFileData.TYPE_ZIP
+            apkTypes.contains(fileExtension) -> DownloadFileData.TYPE_APK
+            else -> DownloadFileData.TYPE_UNKNOWN
+        }
     }
 }
