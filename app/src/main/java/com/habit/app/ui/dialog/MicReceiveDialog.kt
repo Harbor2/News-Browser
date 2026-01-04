@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -22,6 +24,7 @@ import com.habit.app.data.TAG
 import com.habit.app.databinding.LayoutDialogMicReceiveBinding
 import com.wyz.emlibrary.em.EMManager
 import com.habit.app.helper.ThemeManager
+import com.habit.app.helper.UtilHelper
 import com.wyz.emlibrary.util.EMUtil
 
 /**
@@ -48,14 +51,13 @@ class MicReceiveDialog : DialogFragment() {
     private val recognitionListener = object : RecognitionListener {
         override fun onReadyForSpeech(params: Bundle?) {
             Log.d(TAG, "准备接收语音")
+            binding.editInput.setHint(getString(R.string.hint_say_something))
             binding.editInput.text?.clear()
             binding.tvTitle.text = getString(R.string.text_in_speech_recognition)
             binding.ivVoicePlay.isVisible = false
             binding.lottieVoice.playAnimation()
             binding.lottieVoice.isVisible = true
             binding.ivVoicePause.isVisible = false
-            binding.btnCancel.isVisible = true
-            binding.btnConfirm.isVisible = false
         }
 
         override fun onError(error: Int) {
@@ -136,6 +138,16 @@ class MicReceiveDialog : DialogFragment() {
             }
             true
         }
+        binding.editInput.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val hasText = s?.isNotEmpty() ?: false
+                binding.btnConfirm.isVisible = hasText
+                binding.btnCancel.isVisible = !hasText
+            }
+        })
+
         binding.ivVoicePause.setOnClickListener {
             startListen()
         }
@@ -144,19 +156,17 @@ class MicReceiveDialog : DialogFragment() {
             dismiss()
         }
         binding.btnConfirm.setOnClickListener {
-
             dismiss()
         }
     }
 
     private fun showNoMatchesUi() {
+        binding.editInput.setHint(getString(R.string.hint_click_to_entry))
         binding.tvTitle.text = getString(R.string.text_no_voice_detected_try_again)
         binding.ivVoicePlay.isVisible = false
         binding.lottieVoice.cancelAnimation()
         binding.lottieVoice.isVisible = false
         binding.ivVoicePause.isVisible = true
-        binding.btnCancel.isVisible = true
-        binding.btnConfirm.isVisible = false
     }
 
     private fun showFirstMatchesUi(firstMatch: String) {
@@ -168,8 +178,6 @@ class MicReceiveDialog : DialogFragment() {
         binding.lottieVoice.cancelAnimation()
         binding.lottieVoice.isVisible = false
         binding.ivVoicePause.isVisible = false
-        binding.btnCancel.isVisible = false
-        binding.btnConfirm.isVisible = true
     }
 
     /**
@@ -181,6 +189,8 @@ class MicReceiveDialog : DialogFragment() {
                 Log.d(TAG, "录音intent执行")
                 if (!SpeechRecognizer.isRecognitionAvailable(requireActivity())) {
                     Log.d(TAG, "语音识别不可用")
+                    binding.tvTitle.text = ""
+                    UtilHelper.showToast(requireContext(), getString(R.string.toast_your_phone_not_support_mic_input))
                     return@postDelayed
                 }
                 speechRecognizer.startListening(micIntent)

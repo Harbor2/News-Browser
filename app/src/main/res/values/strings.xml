@@ -28,6 +28,7 @@
     <string name="toast_bookmark_exist">Bookmark already exist</string>
     <string name="toast_snap_max_count">The number of public windows has reached the limit of 20</string>
     <string name="toast_you_must_select_one">You must select at least one item</string>
+    <string name="toast_your_phone_not_support_mic_input">Your phone not support mic input</string>
 
     <string name="text_get_started_big">GET STARTED</string>
     <string name="text_home">Home</string>
@@ -186,6 +187,7 @@
     <string name="text_download_completed">%s download completed!</string>
     <string name="text_copy">Copy</string>
     <string name="text_jump">Jump</string>
+    <string name="hint_click_to_entry">Click to Entry</string>
     <string name="hint_say_something">Say Something?</string>
     <string name="text_audio_recognizing">Audio Recognizing…</string>
     <string name="text_in_speech_recognition">In Speech Recognition…</string>
