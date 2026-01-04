@@ -186,4 +186,8 @@
     <string name="text_download_completed">%s download completed!</string>
     <string name="text_copy">Copy</string>
     <string name="text_jump">Jump</string>
+    <string name="hint_say_something">Say Something?</string>
+    <string name="text_audio_recognizing">Audio Recognizing…</string>
+    <string name="text_in_speech_recognition">In Speech Recognition…</string>
+    <string name="text_no_voice_detected_try_again">No Voice Detected, Please Try Again.</string>
 </resources>

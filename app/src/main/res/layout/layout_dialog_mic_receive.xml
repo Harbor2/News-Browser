@@ -29,19 +29,81 @@
                 android:layout_gravity="center_horizontal"/>
         </FrameLayout>
 
-
-        <androidx.appcompat.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/iv_mic_confirm"
-            android:layout_gravity="center_horizontal"/>
+            android:text="@string/text_audio_recognizing"
+            android:textColor="@color/text_main_color_70"
+            android:textSize="14sp"
+            android:fontFamily="@font/gotham_r"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"/>
 
+        <FrameLayout
+            android:layout_width="134dp"
+            android:layout_height="134dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_voice_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/iv_mic_confirm"
+                android:layout_gravity="center"/>
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_voice"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:lottie_fileName="mic_lottie.json"
+                app:lottie_loop="true"
+                app:lottie_autoPlay="false"
+                android:visibility="gone"
+                android:layout_gravity="center"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_voice_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/iv_mic_cancel"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="29dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="60dp">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edit_input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:gravity="center"
+                android:lines="1"
+                android:textSize="16sp"
+                android:hint="@string/hint_say_something"
+                android:textColor="@color/text_main_color"
+                android:textColorHint="@color/text_main_color_30"
+                android:fontFamily="@font/gotham_r"/>
+
+            <View
+                android:id="@+id/edit_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="bottom"
+                android:background="@color/text_main_color_10"/>
+        </FrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:orientation="horizontal"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:layout_marginHorizontal="30dp">
 

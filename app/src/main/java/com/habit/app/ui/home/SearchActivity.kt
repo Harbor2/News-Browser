@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
@@ -27,6 +28,7 @@ import com.habit.app.data.repority.ThinkWordRepository
 import com.habit.app.databinding.ActivitySearchBinding
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
+import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.custom.SearchThinkWordItem
 import com.habit.app.ui.dialog.MicReceiveDialog
@@ -44,6 +46,15 @@ import kotlin.getValue
 class SearchActivity : BaseActivity() {
     private lateinit var binding: ActivitySearchBinding
     private var micDialog: MicReceiveDialog? = null
+
+    /**
+     * 麦克风权限
+     */
+    private val micPermLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
+        if (result) {
+            showMicDialog()
+        }
+    }
 
     private val viewModel: SearchActivityModel by viewModels {
         SearchActivityModelFactory(ThinkWordRepository())
@@ -94,6 +105,13 @@ class SearchActivity : BaseActivity() {
     private fun initListener() {
         softKeyboardHelper.addKeyboardListener(this, keyboardListener)
 
+        binding.ivSearchSound.setOnClickListener {
+            if (!UtilHelper.hasMicPerm(this)) {
+                micPermLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+                return@setOnClickListener
+            }
+            showMicDialog()
+        }
         binding.tvSearchCancel.setOnClickListener {
             if (viewModel.cancelObserver.value!!) {
                 finish()
@@ -245,10 +263,15 @@ class SearchActivity : BaseActivity() {
      * 麦克风dialog
      */
     private fun showMicDialog() {
-        micDialog = MicReceiveDialog.tryShowDialog(this)?.apply {
-            setOnDismissListener {
-                micDialog = null
+        micDialog = MicReceiveDialog.show(this) { searchStr ->
+            // close
+            micDialog = null
+            if (!searchStr.isNullOrEmpty()) {
+                binding.editInput.setText(searchStr)
+                binding.editInput.setSelection(searchStr.length)
+                processSearch()
             }
+        }?.apply {
         }
     }
 
