@@ -3,10 +3,13 @@ package com.habit.app.data.db
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import androidx.core.database.getStringOrNull
+import com.habit.app.data.DOWNLOADING_NAME_PREFIX
 import com.habit.app.data.model.BookmarkData
 import com.habit.app.data.model.FolderData
 import com.habit.app.data.model.HistoryData
 import com.habit.app.data.TAG
+import com.habit.app.data.model.DownloadTaskData
 import com.habit.app.data.model.WebViewData
 
 /**
@@ -747,6 +750,70 @@ class DBDao(private val dbHelper: DBHelper) {
             db.execSQL(sql)
         } catch (e: Exception) {
             Log.d(TAG, "清空search失败")
+        }
+    }
+
+    /*
+     * ************************  download 相关 *******************************
+     */
+
+    /**
+     * 插入单个文件
+     */
+    fun insertDownloadTaskData(data: DownloadTaskData) {
+        val db: SQLiteDatabase = dbHelper.writableDatabase
+        try {
+            val value = ContentValues()
+            value.put(DBConstant.DOWNLOAD_URL, data.downloadUrl)
+            if (!data.downloadFileName.isNullOrEmpty()) {
+                value.put(DBConstant.DOWNLOAD_FILE_NAME, data.downloadFileName)
+            }
+            value.put(DBConstant.DOWNLOAD_FILE_SIZE, data.downloadFileSize)
+            db.insert(DBConstant.TABLE_DOWNLOAD, null, value)
+            Log.d(TAG, "插入download:${data.downloadUrl}")
+        } catch (e: Exception) {
+            Log.e(TAG, "插入插入download异常：${e.message}")
+        }
+    }
+
+    /**
+     * 查询单个download任务
+     */
+    fun getDownloadTaskData(name: String): DownloadTaskData? {
+        val db: SQLiteDatabase = dbHelper.writableDatabase
+        try {
+            val sql = "select * from ${DBConstant.TABLE_DOWNLOAD} where ${DBConstant.DOWNLOAD_FILE_NAME} = '$name'"
+            val cursor = db.rawQuery(sql, null)
+            while (cursor.moveToNext()) {
+                val idIndex = cursor.getColumnIndex(DBConstant.DOWNLOAD_ID)
+                val urlIndex = cursor.getColumnIndex(DBConstant.DOWNLOAD_URL)
+                val fileNameIndex = cursor.getColumnIndex(DBConstant.DOWNLOAD_FILE_NAME)
+                val fileSizeIndex = cursor.getColumnIndex(DBConstant.DOWNLOAD_FILE_SIZE)
+                if (idIndex < 0 || urlIndex < 0 || fileNameIndex < 0 || fileSizeIndex < 0) {
+                    continue
+                }
+                val id = cursor.getInt(idIndex)
+                val url = cursor.getStringOrNull(urlIndex) ?: ""
+                val fileName = cursor.getStringOrNull(fileNameIndex)
+                val fileSize = cursor.getLong(fileSizeIndex)
+                return DownloadTaskData(id, url, fileName, fileSize)
+            }
+            cursor.close()
+            return null
+        } catch (e: Exception) {
+            Log.e(TAG, "查询download异常：${e.message}")
+            return null
+        }
+    }
+
+    fun deleteDownloadTaskData(name: String) {
+        val db: SQLiteDatabase = dbHelper.writableDatabase
+        try {
+            val newName = if (name.startsWith(DOWNLOADING_NAME_PREFIX)) name else DOWNLOADING_NAME_PREFIX.plus(name)
+            val sql = "DELETE FROM ${DBConstant.TABLE_DOWNLOAD} WHERE ${DBConstant.DOWNLOAD_FILE_NAME} = '$newName'"
+            db.execSQL(sql)
+        } catch (e: Exception) {
+            Log.d(TAG, "删除download失败")
         }
     }
 }

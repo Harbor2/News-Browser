@@ -76,4 +76,15 @@ object DBConstant {
     const val CREATE_BOOKMARK_TABLE =
         "CREATE TABLE $TABLE_BOOKMARK ($BOOKMARK_ID INTEGER PRIMARY KEY, $BOOKMARK_SIGN TEXT UNIQUE, $BOOKMARK_NAME TEXT, $BOOKMARK_URL TEXT, $BOOKMARK_FOLDER_ID INTEGER, $BOOKMARK_ICON_BITMAP TEXT)"
 
+
+    /**
+     * 下载表
+     */
+    const val TABLE_DOWNLOAD = "download_table"
+    const val DOWNLOAD_ID = "download_id"
+    const val DOWNLOAD_URL = "download_url"
+    const val DOWNLOAD_FILE_NAME = "download_file_name"
+    const val DOWNLOAD_FILE_SIZE = "download_file_size"
+    const val CREATE_DOWNLOAD_TABLE=
+        "CREATE TABLE $TABLE_DOWNLOAD ($DOWNLOAD_ID INTEGER PRIMARY KEY, $DOWNLOAD_URL TEXT, $DOWNLOAD_FILE_NAME TEXT, $DOWNLOAD_FILE_SIZE INTEGER)"
 }

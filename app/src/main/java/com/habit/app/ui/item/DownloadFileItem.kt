@@ -53,7 +53,7 @@ class DownloadFileItem(
      */
     private fun updateDownloadInfo(holder: ViewHolder, data: DownloadItemPayload) {
         holder.binding.progressView.progress = data.percent
-        holder.binding.tvProgress.text = "${fileData.downloadProgress}%"
+        holder.binding.tvProgress.text = "${data.percent}%"
     }
 
     private fun initFileDownloadedItem(holder: ViewHolder) {

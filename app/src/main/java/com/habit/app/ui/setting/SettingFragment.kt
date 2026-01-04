@@ -143,13 +143,17 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
                         if (parentFile.exists()) {
                             parentFile.deleteRecursively()
                         }
+                        val downloadDir = File(context.cacheDir, "downloads")
+                        if (downloadDir.exists()) {
+                            downloadDir.deleteRecursively()
+                        }
                     }
                     if (list.contains(DataDeleteDialog.TABS)) {
                         KeyValueManager.saveBooleanValue(KeyValueManager.KEY_REOPEN_LAST_TAB, false)
                         DBManager.getDao().clearWebSnaps()
                     }
                     if (list.contains(DataDeleteDialog.HISTORY_RECORDS)) {
-
+                        DBManager.getDao().clearSearchRecords()
                     }
 
                     withContext(Dispatchers.Main) {

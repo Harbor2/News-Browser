@@ -137,25 +137,25 @@ class MainController(
     /**
      * 下载进度回调
      */
-    private val progressCallback: (taskSign: Long, String, Long, Long, Int, Long, Double, String?, String?, String) -> Unit = {taskSign: Long, url: String, downloaded: Long, total: Long, percent: Int, eta: Long, speed: Double, contentDisposition: String?, mimeType: String?, filePath: String ->
-        Log.d(TAG, "onProgress 进度: $percent% (${EMUtil.formatBytesSize(downloaded)} / ${EMUtil.formatBytesSize(total)}), 预计剩余时间：$eta 秒")
+    private val progressCallback: (url: String, downloaded: Long, total: Long, percent: Int, fileName: String) -> Unit = {url: String, downloaded: Long, total: Long, percent: Int, fileName: String ->
+        Log.d(TAG, "onProgress 下载进度, fileName: $fileName, 进度: $percent% (${EMUtil.formatBytesSize(downloaded)} / ${EMUtil.formatBytesSize(total)})")
     }
 
     /**
      * 下载完成回调
      */
-    private val completeCallback: (taskSign: Long, String, Long, String?, String?, String) -> Unit = {taskSign: Long, url: String, total: Long, contentDisposition: String?, mimeType: String?, filePath: String ->
-        Log.d(TAG, "onCompleted 下载完成：$url")
-        val fileName = UtilHelper.decodeUrlCode(URLUtil.guessFileName(url, contentDisposition, mimeType))
+    private val completeCallback: (url: String, total: Long, fileName: String) -> Unit = {url: String, total: Long, fileName: String ->
+        Log.d(TAG, "onCompleted 下载完成, fileName: $fileName, url: $url")
         UtilHelper.showToast(activity, activity.getString(R.string.text_download_completed, fileName))
+        DBManager.getDao().deleteDownloadTaskData(fileName)
     }
 
     /**
      * 下载失败回调
      */
-    private var errorCallback: (taskSign: Long, String, String?, String?, String, String) -> Unit = {taskSign: Long, url: String, contentDisposition: String?, mimeType: String?, filePath: String, msg: String ->
-        Log.d(TAG, "onError 下载失败：$msg")
-        showFileErrorDialog(url, contentDisposition, mimeType)
+    private var errorCallback: (url: String, fileName: String, filePath: String, msg: String) -> Unit = {url: String, fileName: String, filePath: String, msg: String ->
+        Log.d(TAG, "onError 下载失败, fileName: $fileName, filePath: $filePath, msg: $msg")
+        showFileErrorDialog(fileName, filePath)
     }
 
     /**
@@ -457,12 +457,13 @@ class MainController(
                     val downloadDir = File(activity.cacheDir, "downloads")
                     if (!downloadDir.exists()) downloadDir.mkdirs()
                     var destFile = File(downloadDir, fileName)
-                    if (destFile.exists()) {
+                    val downloadDestFile = File(downloadDir, DOWNLOADING_NAME_PREFIX.plus(fileName))
+                    if (destFile.exists() || downloadDestFile.exists()) {
                         destFile = File(downloadDir, "${System.currentTimeMillis()}_$fileName")
                     }
                     // 文件重命名为下载中状态
                     val downloadFile = File(downloadDir, DOWNLOADING_NAME_PREFIX.plus(destFile.name))
-                    DownloadManager.createAndStartDownloadTask(url, downloadFile, contentDisposition, mimeType, contentLength, progressCallback, completeCallback, errorCallback)
+                    DownloadManager.createAndStartDownloadTask(url, downloadFile, contentLength, progressCallback, completeCallback, errorCallback)
                 }
             }
             setOnDismissListener {
@@ -471,8 +472,7 @@ class MainController(
         }
     }
 
-    private fun showFileErrorDialog(url: String, contentDisposition: String?, mimeType: String?) {
-        val fileName = UtilHelper.decodeUrlCode(URLUtil.guessFileName(url, contentDisposition, mimeType))
+    private fun showFileErrorDialog(fileName: String, filePath: String) {
         mDownloadFailedDialog = DeleteConfirmDialog.tryShowDialog(activity)?.apply {
             this.initData(
                 R.drawable.iv_download_failed_icon,
@@ -481,6 +481,13 @@ class MainController(
                 activity.getString(R.string.text_ok))
             setOnDismissListener {
                 mDownloadFailedDialog = null
+                this@MainController.activity.lifecycleScope.launch(Dispatchers.IO) {
+                    DBManager.getDao().deleteDownloadTaskData(fileName)
+                    // 删除原文件
+                    if (File(filePath).exists()) {
+                        File(filePath).delete()
+                    }
+                }
             }
         }
     }

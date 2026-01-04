@@ -20,28 +20,20 @@ class DownloadTask(
     private val client: OkHttpClient,
     private val url: String,
     val file: File,
-    val contentDisposition: String?,
-    val mimeType: String?,
-    val totalSize: Long = 0L
 ) {
-    var taskSign = System.currentTimeMillis()
-        private set
     var curDownloadedPercent: Int = 0
-        private set
-    var curDownloadSpeed: Double = 0.0
-        private set
-    var curDownloadEta: Long = 0L
         private set
     private var scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
 
     // 使用 MutableList 存储多个监听器
-    private val onProgressListeners = mutableListOf<(taskSign: Long, url: String, downloaded: Long, total: Long, percent: Int, etaSeconds: Long, speed: Double, contentDisposition: String?, mimeType: String?, filePath: String) -> Unit>()
-    private val onCompletedListeners = mutableListOf<(taskSign: Long, url: String, total: Long, contentDisposition: String?, mimeType: String?, filePath: String) -> Unit>()
-    private val onErrorListeners = mutableListOf<(taskSign: Long, url: String, contentDisposition: String?, mimeType: String?, filePath: String, msg: String) -> Unit>()
+    private val onProgressListeners = mutableListOf<(url: String, downloaded: Long, total: Long, percent: Int, fileName: String) -> Unit>()
+    private val onCompletedListeners = mutableListOf<(url: String, total: Long, fileName: String) -> Unit>()
+    private val onErrorListeners = mutableListOf<(url: String, fileName: String, filePath: String, msg: String) -> Unit>()
     var taskReleaseCallback: (() -> Unit)? = null
 
     private var call: Call? = null
-    private var isPaused = false
+    var isPaused = true
+        private set
     private var isCanceled = false
     private var downloadedBytes: Long = 0L
 
@@ -124,13 +116,11 @@ class DownloadTask(
                         curDownloadedPercent = (current * 100 / totalBytes).toInt()
                         val elapsed = System.currentTimeMillis() - startTime
                         val speed = current.toDouble() / (elapsed / 1000.0 + 1)
-                        curDownloadEta = ((totalBytes - current) / speed).toLong()
 
                         if (curDownloadedPercent != lastPercent) {
                             lastPercent = curDownloadedPercent
-                            curDownloadSpeed = speed + (100..314572).random()
                             scope.launch {
-                                notifyProgress(current, totalBytes, curDownloadedPercent, curDownloadEta, curDownloadSpeed)
+                                notifyProgress(current, totalBytes, curDownloadedPercent)
                             }
                         }
                     }
@@ -143,11 +133,9 @@ class DownloadTask(
                             file
                         }
                         scope.launch {
-                            notifyCompleted(totalBytes, resultFile.path)
+                            notifyCompleted(totalBytes, resultFile.name)
                         }
                         curDownloadedPercent = 100
-                        curDownloadSpeed = 0.0
-                        curDownloadEta = 0
                     }
                 } catch (e: Exception) {
                     if (!isPaused && !isCanceled) {
@@ -181,36 +169,36 @@ class DownloadTask(
     }
 
     // 添加监听器的方法
-    fun addOnProgressListener(listener: (taskSign: Long, url: String, downloaded: Long, total: Long, percent: Int, etaSeconds: Long, speed: Double, contentDisposition: String?, mimeType: String?, filePath: String) -> Unit) {
+    fun addOnProgressListener(listener: (url: String, downloaded: Long, total: Long, percent: Int, fileName: String) -> Unit) {
         onProgressListeners.add(listener)
     }
 
-    fun addOnCompletedListener(listener: (taskSign: Long, url: String, total: Long, contentDisposition: String?, mimeType: String?, filePath: String) -> Unit) {
+    fun addOnCompletedListener(listener: (url: String, total: Long, fileName: String) -> Unit) {
         onCompletedListeners.add(listener)
     }
 
-    fun addOnErrorListener(listener: (taskSign: Long, url: String, contentDisposition: String?, mimeType: String?, filePath: String, msg: String) -> Unit) {
+    fun addOnErrorListener(listener: (url: String, fileName: String, filePath: String, msg: String) -> Unit) {
         onErrorListeners.add(listener)
     }
 
     // 移除监听器的方法
-    fun removeOnProgressListener(listener: (taskSign: Long, url: String, downloaded: Long, total: Long, percent: Int, etaSeconds: Long, speed: Double, contentDisposition: String?, mimeType: String?, filePath: String) -> Unit) {
+    fun removeOnProgressListener(listener: (url: String, downloaded: Long, total: Long, percent: Int, filePath: String) -> Unit) {
         onProgressListeners.remove(listener)
     }
 
-    fun removeOnCompletedListener(listener: (taskSign: Long, url: String, total: Long, contentDisposition: String?, mimeType: String?, filePath: String) -> Unit) {
+    fun removeOnCompletedListener(listener: (url: String, total: Long, filePath: String) -> Unit) {
         onCompletedListeners.remove(listener)
     }
 
-    fun removeOnErrorListener(listener: (taskSign: Long, url: String, contentDisposition: String?, mimeType: String?, filePath: String, msg: String) -> Unit) {
+    fun removeOnErrorListener(listener: (url: String, fileName: String, filePath: String, msg: String) -> Unit) {
         onErrorListeners.remove(listener)
     }
 
     // 通知进度更新
-    private fun notifyProgress(downloaded: Long, total: Long, percent: Int, eta: Long, speed: Double) {
+    private fun notifyProgress(downloaded: Long, total: Long, percent: Int) {
         onProgressListeners.forEach { listener ->
             try {
-                listener(taskSign, url, downloaded, total, percent, eta, speed, contentDisposition, mimeType, file.path)
+                listener(url, downloaded, total, percent, file.name)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -218,10 +206,10 @@ class DownloadTask(
     }
 
     // 通知下载完成
-    private fun notifyCompleted(total: Long, filePath: String) {
+    private fun notifyCompleted(total: Long, fileName: String) {
         onCompletedListeners.forEach { listener ->
             try {
-                listener(taskSign, url, total, contentDisposition, mimeType, filePath)
+                listener(url, total, fileName)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -233,7 +221,7 @@ class DownloadTask(
     private fun notifyError(message: String) {
         onErrorListeners.forEach { listener ->
             try {
-                listener(taskSign, url, contentDisposition, mimeType, file.path, message)
+                listener(url, file.name, file.path, message)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

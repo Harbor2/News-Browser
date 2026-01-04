@@ -3,18 +3,15 @@ package com.habit.app.data.model
 import androidx.annotation.StringDef
 
 data class DownloadFileData(
-    val fileName: String = "",
+    var fileName: String = "",
 ) {
     var isDownloaded: Boolean = false
     var filePath: String = ""
     var fileModifyTime: Long = 0
     var fileSize: Long = 0
 
-    var fileDownloadSize: Long = 0
     var downloadUrl: String = ""
     var downloadProgress: Int = 0
-    var downloadEtaSeconds: Long = 0
-    var downloadSpeed: Double = 0.0
     var fileType: String = ""
 
     var isPause: Boolean = false

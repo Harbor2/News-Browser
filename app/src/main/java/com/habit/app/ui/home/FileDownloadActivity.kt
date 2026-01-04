@@ -5,20 +5,23 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.webkit.URLUtil
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.habit.app.R
 import com.habit.app.data.DOWNLOADING_NAME_PREFIX
 import com.habit.app.data.TAG
+import com.habit.app.data.db.DBManager
 import com.habit.app.data.model.DownloadFileData
 import com.habit.app.data.model.DownloadItemPayload
 import com.habit.app.databinding.ActivityFileDownloadBinding
 import com.habit.app.helper.DownloadManager
+import com.habit.app.helper.DownloadManager.releaseDownloadTask
 import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.base.BaseActivity
+import com.habit.app.ui.dialog.DeleteConfirmDialog
 import com.habit.app.ui.item.DownloadFileItem
 import com.habit.app.viewmodel.home.FileDownloadViewModel
 import com.wyz.emlibrary.em.EMManager
@@ -27,6 +30,8 @@ import com.wyz.emlibrary.util.EMUtil
 import com.wyz.emlibrary.util.immersiveWindow
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 
 
@@ -35,12 +40,22 @@ class FileDownloadActivity : BaseActivity() {
     private val mAdapter = FlexibleAdapter<AbstractFlexibleItem<*>>(null)
     private val viewModel: FileDownloadViewModel by viewModels()
 
+    private var mDownloadFailedDialog: DeleteConfirmDialog? = null
+
     /**
      * item 回调
      */
     private val fileItemCallback = object : DownloadFileItem.FileItemCallback {
         override fun onDownloadPause(fileData: DownloadFileData) {
-
+            Log.d(TAG, "下载暂停、继续: ${fileData.isPause}")
+            val task = DownloadManager.getExistTaskByFileName(fileData.fileName)
+            task?.let {
+                if (fileData.isPause) {
+                    it.pause()
+                } else {
+                    it.resume()
+                }
+            }
         }
         override fun onDownloadCancel(fileData: DownloadFileData) {
 
@@ -53,28 +68,19 @@ class FileDownloadActivity : BaseActivity() {
         }
     }
 
-    private val progressCallback: (taskSign: Long, String, Long, Long, Int, Long, Double, String?, String?, String) -> Unit = { taskSign: Long, url: String, downloaded: Long, total: Long, percent: Int, eta: Long, speed: Double, _: String?, _: String?, filePath: String ->
-        Log.d(TAG, "DownloadActivity onProgress 进度: $percent% (${EMUtil.formatBytesSize(downloaded)} / ${EMUtil.formatBytesSize(total)}), 预计剩余时间：$eta 秒")
-        updateDownloadInfo(taskSign, url, percent, eta, speed, downloaded, filePath)
+    private val progressCallback: (String, Long, Long, Int, String) -> Unit = {url: String, downloaded: Long, total: Long, percent: Int, fileName: String ->
+        Log.d(TAG, "DownloadActivity onProgress 下载进度, fileName: $fileName, 进度: $percent% (${EMUtil.formatBytesSize(downloaded)} / ${EMUtil.formatBytesSize(total)})")
+        updateDownloadInfo(percent, fileName)
     }
 
-    private val completeCallback: (taskSign: Long, String, Long, String?, String?, String) -> Unit = { taskSign: Long, url: String, _: Long, _: String?, _: String?, filePath: String ->
-        Log.d(TAG, "DownloadActivity onCompleted 下载完成：$url")
-        completeFileDownloading(taskSign, url, filePath)
+    private val completeCallback: (String, Long, String) -> Unit = {url: String, total: Long, fileName: String ->
+        Log.d(TAG, "DownloadActivity onCompleted 下载完成, fileName: $fileName")
+        completeFileDownloading(fileName, total)
     }
 
-    private var errorCallback: (taskSign: Long, String, String?, String?, String, String) -> Unit = {taskSign: Long, url: String, contentDisposition: String?, mimeType: String?, filePath: String, msg: String ->
-        Log.d(TAG, "DownloadActivity onError 下载失败：$msg")
-//        // 删除原文件
-//        mScope.launch(Dispatchers.IO) {
-//            if (File(filePath).exists()) {
-//                File(filePath).delete()
-//            }
-//            withContext(Dispatchers.Main) {
-//                updateDownloadNum(getDownloadingItemsCount(), getDownloadedItems().size)
-//            }
-//        }
-//        showFileErrorDialog(taskSign, url, contentDisposition, mimeType)
+    private var errorCallback: (String, String, String, String) -> Unit = {url: String, fileName: String, filePath: String, msg: String ->
+        Log.d(TAG, "DownloadActivity onError 下载失败, fileName: $fileName, filePath: $filePath, msg: $msg")
+        showFileErrorDialog(fileName, filePath)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -151,45 +157,60 @@ class FileDownloadActivity : BaseActivity() {
     }
 
     private fun getDownloadingItems(): ArrayList<AbstractFlexibleItem<*>> {
-        val items = ArrayList<AbstractFlexibleItem<*>>()
-        val allTasks = DownloadManager.getAllTasks()
-        allTasks.forEach { (url, downloadTask) ->
-            val fileName = URLUtil.guessFileName(url, downloadTask.contentDisposition, downloadTask.mimeType)
-            DownloadFileData(fileName).apply {
-                isDownloaded = false
-                fileSize = downloadTask.totalSize
-                downloadUrl = url
-                downloadProgress = downloadTask.curDownloadedPercent
-                downloadEtaSeconds = downloadTask.curDownloadEta
-                downloadSpeed = downloadTask.curDownloadSpeed
-                fileType = UtilHelper.getFileTypeByName(fileName)
-                fileModifyTime = downloadTask.taskSign
-                items.add(DownloadFileItem(this@FileDownloadActivity, this, fileItemCallback))
+        val items2 = ArrayList<AbstractFlexibleItem<*>>()
+        val downloadingFileList = EMFileUtil.getDirFilesList(File(cacheDir, "downloads"),
+            containerSubFile = false,
+            containDir = false,
+            containerHiddenFile = false
+        ).sortedByDescending { it.lastModified() }
+        downloadingFileList.filter { it.name.startsWith(DOWNLOADING_NAME_PREFIX) }.forEach { file ->
+            if (!file.exists()) return@forEach
+            val dbFileData = DBManager.getDao().getDownloadTaskData(file.name) ?: return@forEach
+            Log.d(TAG, "获取正在下载的文件：${file.path}")
+            var existTask = DownloadManager.getExistTaskByFileName(file.name)
+            if (existTask == null) {
+                // 不存在，则为断点续传任务
+                existTask = DownloadManager.resumeDownloadTask(file, dbFileData)
+                if (existTask == null) {
+                    // 任务初始化失败，删除对应文件
+                    file.delete()
+                    return@forEach
+                }
             }
-            // 设置监听
-            downloadTask.removeOnProgressListener(progressCallback)
-            downloadTask.removeOnCompletedListener(completeCallback)
-            downloadTask.removeOnErrorListener(errorCallback)
-            downloadTask.addOnProgressListener(progressCallback)
-            downloadTask.addOnCompletedListener(completeCallback)
-            downloadTask.addOnErrorListener(errorCallback)
+            existTask.apply {
+                addOnProgressListener(progressCallback)
+                addOnCompletedListener(completeCallback)
+                addOnErrorListener(errorCallback)
+                this.taskReleaseCallback = {
+                    releaseDownloadTask(file.name)
+                }
+            }
+
+            DownloadFileData(file.name).apply {
+                isDownloaded = false
+                filePath = file.path
+                fileModifyTime = file.lastModified()
+                fileSize = dbFileData.downloadFileSize
+                fileType = UtilHelper.getFileTypeByName(file.name)
+                downloadProgress = (file.length() * 100 / dbFileData.downloadFileSize).toInt()
+                isPause = existTask.isPaused
+
+                items2.add(DownloadFileItem(this@FileDownloadActivity, this, fileItemCallback))
+            }
         }
-        return items
+        return items2
     }
 
     /**
      * 下载进度更新
      */
-    private fun updateDownloadInfo(taskSign: Long, url: String, percent: Int, eta: Long, speed: Double, downloadSize: Long, downloadFilePath: String) {
+    private fun updateDownloadInfo(percent: Int, fileName: String) {
         mAdapter.currentItems.filterIsInstance<DownloadFileItem>().forEach { item ->
             run {
                 if (!item.fileData.isDownloaded
-                    && item.fileData.fileModifyTime == taskSign
-                    && item.fileData.downloadUrl == url) {
-
+                    && item.fileData.fileName == fileName) {
                     // 更新DownloadFileData信息
-                    item.fileData.filePath = downloadFilePath
-                    item.fileData.fileDownloadSize = downloadSize
+                    item.fileData.downloadProgress = percent
 
                     mAdapter.updateItem(item, DownloadItemPayload(percent))
                     return@run
@@ -201,14 +222,41 @@ class FileDownloadActivity : BaseActivity() {
     /**
      * 结束下载
      */
-    private fun completeFileDownloading(taskSign: Long, url: String, filePath: String) {
+    private fun completeFileDownloading(fileName: String, total: Long) {
         run {
             for ((index, item) in mAdapter.currentItems.withIndex()) {
-                if (item is DownloadFileItem && item.fileData.fileModifyTime == taskSign && item.fileData.downloadUrl == url) {
+                if (item is DownloadFileItem
+                    && (item.fileData.fileName == fileName || item.fileData.fileName == DOWNLOADING_NAME_PREFIX.plus(fileName))) {
                     item.fileData.isDownloaded = true
+                    item.fileData.fileName = if (item.fileData.fileName.startsWith(DOWNLOADING_NAME_PREFIX)) {
+                        item.fileData.fileName.replace(DOWNLOADING_NAME_PREFIX, "")
+                    } else {
+                        item.fileData.fileName
+                    }
+                    item.fileData.fileSize = total
                     mAdapter.updateItem(item)
-                    Log.d(TAG, "结束下载, item更新")
                     return@run
+                }
+            }
+        }
+        DBManager.getDao().deleteDownloadTaskData(fileName)
+    }
+
+    private fun showFileErrorDialog(fileName: String, filePath: String) {
+        mDownloadFailedDialog = DeleteConfirmDialog.tryShowDialog(this)?.apply {
+            this.initData(
+                R.drawable.iv_download_failed_icon,
+                getString(R.string.text_download_failed, fileName),
+                getString(R.string.text_cancel),
+                getString(R.string.text_ok))
+            setOnDismissListener {
+                mDownloadFailedDialog = null
+                this@FileDownloadActivity.lifecycleScope.launch(Dispatchers.IO) {
+                    DBManager.getDao().deleteDownloadTaskData(fileName)
+                    // 删除原文件
+                    if (File(filePath).exists()) {
+                        File(filePath).delete()
+                    }
                 }
             }
         }
@@ -222,6 +270,7 @@ class FileDownloadActivity : BaseActivity() {
         mAdapter.currentItems.forEach { item ->
             mAdapter.updateItem(item, "update")
         }
+        mDownloadFailedDialog?.updateThemeUI()
     }
 
     override fun onThemeChanged(theme: String) {

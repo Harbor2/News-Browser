@@ -28,6 +28,7 @@ import com.habit.app.data.db.DBManager
 import com.habit.app.databinding.ActivityMainBinding
 import com.habit.app.event.HomeTabsClearedEvent
 import com.habit.app.event.HomeTabsCountUpdateEvent
+import com.habit.app.helper.DownloadManager
 import com.habit.app.helper.FeedbackUtils
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.ThemeManager
@@ -115,8 +116,8 @@ class MainActivity : BaseActivity() {
             viewModel.setSearchObserver(true)
             // todo
             // url 下载测试
-//            val searchStr2 = "https://a.app.qq.com/o/simple.jsp?pkgname=com.tencent.mobileqq&channel=0002160650432d595942"
-            mController.processWebSearch(searchStr, true)
+            val searchStr2 = "https://a.app.qq.com/o/simple.jsp?pkgname=com.tencent.mobileqq&channel=0002160650432d595942"
+            mController.processWebSearch(searchStr2, true)
         }
     }
 
@@ -558,6 +559,7 @@ class MainActivity : BaseActivity() {
 
     override fun onDestroy() {
         DBManager.close()
+        DownloadManager.releaseNetResource()
         super.onDestroy()
     }
 
