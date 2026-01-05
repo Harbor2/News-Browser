@@ -32,6 +32,7 @@
     <string name="toast_enter_new_name">Please enter new name</string>
     <string name="toast_file_not_exist">File not exist</string>
     <string name="toast_file_already_exist">File already exist</string>
+    <string name="toast_can_not_open_file">No application found to open this file</string>
 
     <string name="text_get_started_big">GET STARTED</string>
     <string name="text_home">Home</string>

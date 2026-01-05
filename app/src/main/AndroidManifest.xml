@@ -16,6 +16,9 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <!-- 允许应用程序修改设备的音频设置 无需动态申请 -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <!-- apk安装 -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"
+        tools:ignore="RequestInstallPackagesPolicy" />
 
     <application
         android:name=".MyApplication"

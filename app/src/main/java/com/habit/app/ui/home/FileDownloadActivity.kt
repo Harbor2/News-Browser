@@ -21,6 +21,7 @@ import com.habit.app.data.model.DownloadFileData
 import com.habit.app.data.model.DownloadItemPayload
 import com.habit.app.databinding.ActivityFileDownloadBinding
 import com.habit.app.helper.DownloadManager
+import com.habit.app.helper.FileOpenUtil
 import com.habit.app.helper.ShareUtils
 import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
@@ -178,21 +179,21 @@ class FileDownloadActivity : BaseActivity() {
     private fun processMenuOption(option: String, data: DownloadFileData) {
         when (option) {
             MENU_SHARE -> {
-                Log.d(TAG, "share")
                 shareFile(data)
             }
             MENU_DELETE -> {
-                Log.d(TAG, "delete")
                 deleteFiles(data)
             }
             MENU_RENAME -> {
-                Log.d(TAG, "rename")
                 renameFile(data)
             }
             MENU_SELECT -> {
-                Log.d(TAG, "select")
                 viewModel.setEditObserver(true)
                 changeSelectMode(true, data)
+                val curSelectAll = checkSelectAll()
+                if (viewModel.selectAllObserver.value!! != curSelectAll) {
+                    viewModel.setSelectAll(curSelectAll)
+                }
             }
         }
     }
@@ -205,6 +206,7 @@ class FileDownloadActivity : BaseActivity() {
             // 排序
             val sortedList = dataList.sortedByDescending { it.fileModifyTime }
             withContext(Dispatchers.Main) {
+                viewModel.loadingObserver.value = false
                 val allItems = ArrayList<AbstractFlexibleItem<*>>()
                 if (sortedList.isEmpty()) {
                     mAdapter.clear()
@@ -331,6 +333,7 @@ class FileDownloadActivity : BaseActivity() {
                     } else {
                         item.fileData.fileName
                     }
+                    item.fileData.filePath = item.fileData.filePath.replace(DOWNLOADING_NAME_PREFIX, "")
                     item.fileData.fileSize = total
                     mAdapter.updateItem(item)
                     return@run
@@ -422,7 +425,7 @@ class FileDownloadActivity : BaseActivity() {
     }
 
     private fun openFile(data: DownloadFileData) {
-
+        FileOpenUtil.openFile(this, File(data.filePath))
     }
 
     private fun shareFile(data: DownloadFileData) {
@@ -440,6 +443,39 @@ class FileDownloadActivity : BaseActivity() {
             return
         }
 
+        viewModel.loadingObserver.value = true
+        lifecycleScope.launch(Dispatchers.IO) {
+            val downloadingData = selectData.filter { !it.isDownloaded }
+            val downloadedData = selectData.filter { it.isDownloaded }
+
+            downloadedData.forEach {
+                val targetFile = File(it.filePath)
+                if (targetFile.exists()) {
+                    targetFile.delete()
+                }
+            }
+            downloadingData.forEach {
+                val targetFile = File(it.filePath)
+                if (targetFile.exists()) {
+                    targetFile.delete()
+                    DBManager.getDao().deleteDownloadTaskData(it.fileName)
+                    DownloadManager.releaseDownloadTask(it.fileName)
+                } else {
+                    // 可能下载完成
+                    val backstopFile = File(it.filePath.replace(DOWNLOADING_NAME_PREFIX, ""))
+                    if (backstopFile.exists()) {
+                        Log.d(TAG, "下载过程中进入，删除时下载完成，兜底删除文件：${it.filePath}")
+                        backstopFile.delete()
+                    }
+                }
+            }
+
+            withContext(Dispatchers.Main) {
+                updateDownloadList()
+                viewModel.setEditObserver(false)
+                viewModel.setSelectAll(false)
+            }
+        }
     }
 
     private fun renameFile(data: DownloadFileData) {
@@ -451,7 +487,6 @@ class FileDownloadActivity : BaseActivity() {
                         if (item.fileData.fileName == data.fileName) {
                             item.fileData = newData
                             mAdapter.updateItem(item)
-//                            mAdapter.notifyItemChanged(mAdapter.currentItems.indexOf(item))
                             return@run
                         }
                     }
