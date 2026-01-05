@@ -769,6 +769,7 @@ class DBDao(private val dbHelper: DBHelper) {
                 value.put(DBConstant.DOWNLOAD_FILE_NAME, data.downloadFileName)
             }
             value.put(DBConstant.DOWNLOAD_FILE_SIZE, data.downloadFileSize)
+            value.put(DBConstant.DOWNLOAD_STAMP, data.downloadStamp)
             db.insert(DBConstant.TABLE_DOWNLOAD, null, value)
             Log.d(TAG, "插入download:${data.downloadUrl}")
         } catch (e: Exception) {
@@ -789,20 +790,57 @@ class DBDao(private val dbHelper: DBHelper) {
                 val urlIndex = cursor.getColumnIndex(DBConstant.DOWNLOAD_URL)
                 val fileNameIndex = cursor.getColumnIndex(DBConstant.DOWNLOAD_FILE_NAME)
                 val fileSizeIndex = cursor.getColumnIndex(DBConstant.DOWNLOAD_FILE_SIZE)
-                if (idIndex < 0 || urlIndex < 0 || fileNameIndex < 0 || fileSizeIndex < 0) {
+                val stampIndex = cursor.getColumnIndex(DBConstant.DOWNLOAD_STAMP)
+                if (idIndex < 0 || urlIndex < 0 || fileNameIndex < 0 || fileSizeIndex < 0 || stampIndex < 0) {
                     continue
                 }
                 val id = cursor.getInt(idIndex)
                 val url = cursor.getStringOrNull(urlIndex) ?: ""
                 val fileName = cursor.getStringOrNull(fileNameIndex)
                 val fileSize = cursor.getLong(fileSizeIndex)
-                return DownloadTaskData(id, url, fileName, fileSize)
+                val stamp = cursor.getLong(stampIndex)
+                return DownloadTaskData(id, url, fileName, fileSize, stamp)
             }
             cursor.close()
             return null
         } catch (e: Exception) {
             Log.e(TAG, "查询download异常：${e.message}")
             return null
+        }
+    }
+
+    /**
+     * 查询单个download任务
+     */
+    fun getAllDownloadTaskData(): ArrayList<DownloadTaskData> {
+        val db: SQLiteDatabase = dbHelper.writableDatabase
+        try {
+            val sql = "select * from ${DBConstant.TABLE_DOWNLOAD} order by ${DBConstant.DOWNLOAD_ID} desc"
+            val cursor = db.rawQuery(sql, null)
+            val resultList: ArrayList<DownloadTaskData> = arrayListOf()
+            while (cursor.moveToNext()) {
+                val idIndex = cursor.getColumnIndex(DBConstant.DOWNLOAD_ID)
+                val urlIndex = cursor.getColumnIndex(DBConstant.DOWNLOAD_URL)
+                val fileNameIndex = cursor.getColumnIndex(DBConstant.DOWNLOAD_FILE_NAME)
+                val fileSizeIndex = cursor.getColumnIndex(DBConstant.DOWNLOAD_FILE_SIZE)
+                val stampIndex = cursor.getColumnIndex(DBConstant.DOWNLOAD_STAMP)
+                if (idIndex < 0 || urlIndex < 0 || fileNameIndex < 0 || fileSizeIndex < 0 || stampIndex < 0) {
+                    continue
+                }
+                val id = cursor.getInt(idIndex)
+                val url = cursor.getStringOrNull(urlIndex) ?: ""
+                val fileName = cursor.getStringOrNull(fileNameIndex)
+                val fileSize = cursor.getLong(fileSizeIndex)
+                val stamp = cursor.getLong(stampIndex)
+                resultList.add(
+                    DownloadTaskData(id, url, fileName, fileSize, stamp)
+                )
+            }
+            cursor.close()
+            return resultList
+        } catch (e: Exception) {
+            Log.e(TAG, "查询download异常：${e.message}")
+            return arrayListOf()
         }
     }
 

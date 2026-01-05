@@ -22,6 +22,7 @@ import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.dialog.DeleteConfirmDialog
+import com.habit.app.ui.item.BookmarkHistoryTitleItem
 import com.habit.app.ui.item.DownloadFileItem
 import com.habit.app.viewmodel.home.FileDownloadViewModel
 import com.wyz.emlibrary.em.EMManager
@@ -32,6 +33,7 @@ import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 
@@ -123,19 +125,31 @@ class FileDownloadActivity : BaseActivity() {
     }
 
     private fun updateDownloadList() {
-        val allItems = ArrayList<AbstractFlexibleItem<*>>()
-        val downloadItems = getDownloadedItems()
-        val downloadingItems = getDownloadingItems()
-        allItems.addAll(downloadingItems)
-        allItems.addAll(downloadItems)
-        mAdapter.updateDataSet(allItems)
+        lifecycleScope.launch(Dispatchers.IO) {
+            val dataList = ArrayList<DownloadFileData>()
+            dataList.addAll(getDownloadedItems())
+            dataList.addAll(getDownloadingItems())
+            // 排序
+            val sortedList = dataList.sortedByDescending { it.fileModifyTime }
+            withContext(Dispatchers.Main) {
+                val allItems = ArrayList<AbstractFlexibleItem<*>>()
+                sortedList.forEach { data ->
+                    val timeItem = BookmarkHistoryTitleItem(EMUtil.formatDateFromTimestamp("dd/MM/yyyy", data.fileModifyTime))
+                    if (!allItems.contains(timeItem)) {
+                        allItems.add(timeItem)
+                    }
+                    allItems.add(DownloadFileItem(this@FileDownloadActivity, data, fileItemCallback))
+                }
+                mAdapter.updateDataSet(allItems)
+            }
+        }
     }
 
     /**
      * 获取已下载的file
      */
-    private fun getDownloadedItems(): ArrayList<AbstractFlexibleItem<*>> {
-        val items = ArrayList<AbstractFlexibleItem<*>>()
+    private fun getDownloadedItems(): ArrayList<DownloadFileData> {
+        val dataList = ArrayList<DownloadFileData>()
         val downloadFileList = EMFileUtil.getDirFilesList(File(cacheDir, "downloads"),
             containerSubFile = false,
             containDir = false,
@@ -150,19 +164,19 @@ class FileDownloadActivity : BaseActivity() {
                 fileSize = file.length()
                 fileType = UtilHelper.getFileTypeByName(file.name)
 
-                items.add(DownloadFileItem(this@FileDownloadActivity, this, fileItemCallback))
+                dataList.add(this)
             }
         }
-        return items
+        return dataList
     }
 
-    private fun getDownloadingItems(): ArrayList<AbstractFlexibleItem<*>> {
-        val items2 = ArrayList<AbstractFlexibleItem<*>>()
+    private fun getDownloadingItems(): ArrayList<DownloadFileData> {
+        val dataList = ArrayList<DownloadFileData>()
         val downloadingFileList = EMFileUtil.getDirFilesList(File(cacheDir, "downloads"),
             containerSubFile = false,
             containDir = false,
             containerHiddenFile = false
-        ).sortedByDescending { it.lastModified() }
+        )
         downloadingFileList.filter { it.name.startsWith(DOWNLOADING_NAME_PREFIX) }.forEach { file ->
             if (!file.exists()) return@forEach
             val dbFileData = DBManager.getDao().getDownloadTaskData(file.name) ?: return@forEach
@@ -189,16 +203,16 @@ class FileDownloadActivity : BaseActivity() {
             DownloadFileData(file.name).apply {
                 isDownloaded = false
                 filePath = file.path
-                fileModifyTime = file.lastModified()
+                fileModifyTime = dbFileData.downloadStamp
                 fileSize = dbFileData.downloadFileSize
                 fileType = UtilHelper.getFileTypeByName(file.name)
                 downloadProgress = (file.length() * 100 / dbFileData.downloadFileSize).toInt()
                 isPause = existTask.isPaused
 
-                items2.add(DownloadFileItem(this@FileDownloadActivity, this, fileItemCallback))
+                dataList.add(this)
             }
         }
-        return items2
+        return dataList
     }
 
     /**
