@@ -21,6 +21,7 @@ import com.habit.app.data.model.DownloadFileData
 import com.habit.app.data.model.DownloadItemPayload
 import com.habit.app.databinding.ActivityFileDownloadBinding
 import com.habit.app.helper.DownloadManager
+import com.habit.app.helper.ShareUtils
 import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.base.BaseActivity
@@ -425,7 +426,7 @@ class FileDownloadActivity : BaseActivity() {
     }
 
     private fun shareFile(data: DownloadFileData) {
-
+        ShareUtils.shareSingleFile(this, File(data.filePath))
     }
 
     private fun deleteFiles(fileData: DownloadFileData? = null) {
