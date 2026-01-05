@@ -1,11 +1,9 @@
 package com.habit.app.ui
 
 import android.annotation.SuppressLint
-import android.app.ComponentCaller
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableString
@@ -20,8 +18,6 @@ import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import androidx.webkit.WebSettingsCompat
-import androidx.webkit.WebViewFeature
 import com.habit.app.R
 import com.habit.app.data.TAG
 import com.habit.app.data.db.DBManager
@@ -396,7 +392,7 @@ class MainActivity : BaseActivity() {
                 else -> return
             }
             transaction.add(R.id.fragment_container, newFragment, tag)
-            (newFragment as? BaseFragment<*>)?.updateFragmentSelect(true)
+            newFragment.updateFragmentSelect(true)
         } else {
             // Fragment 已存在，直接显示
             transaction.show(currentFragment)
