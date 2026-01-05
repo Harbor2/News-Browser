@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 
 class FileDownloadViewModel() : ViewModel() {
 
+     var loadingObserver: MutableLiveData<Boolean> = MutableLiveData(false)
+
     var editObserver = MutableLiveData(false)
     fun setEditObserver(edit: Boolean) {
         editObserver.value = edit

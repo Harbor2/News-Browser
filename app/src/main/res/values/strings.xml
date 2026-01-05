@@ -29,6 +29,9 @@
     <string name="toast_snap_max_count">The number of public windows has reached the limit of 20</string>
     <string name="toast_you_must_select_one">You must select at least one item</string>
     <string name="toast_your_phone_not_support_mic_input">Your phone not support mic input</string>
+    <string name="toast_enter_new_name">Please enter new name</string>
+    <string name="toast_file_not_exist">File not exist</string>
+    <string name="toast_file_already_exist">File already exist</string>
 
     <string name="text_get_started_big">GET STARTED</string>
     <string name="text_home">Home</string>
@@ -194,4 +197,5 @@
     <string name="text_in_speech_recognition">In Speech Recognition…</string>
     <string name="text_no_voice_detected_try_again">No Voice Detected, Please Try Again.</string>
     <string name="text_rename">Rename</string>
+    <string name="text_file_rename">Rename File</string>
 </resources>

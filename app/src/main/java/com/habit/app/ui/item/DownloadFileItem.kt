@@ -21,7 +21,7 @@ import kotlin.jvm.javaClass
 
 class DownloadFileItem(
     val context: Context,
-    val fileData: DownloadFileData,
+    var fileData: DownloadFileData,
     val mCallback: FileItemCallback
 ) : AbstractFlexibleItem<DownloadFileItem.ViewHolder>() {
 

@@ -26,6 +26,7 @@ import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.dialog.DeleteConfirmDialog
 import com.habit.app.ui.dialog.DownloadMenuFloat
+import com.habit.app.ui.dialog.FileRenameDialog
 import com.habit.app.ui.item.BookmarkHistoryTitleItem
 import com.habit.app.ui.item.DownloadFileItem
 import com.habit.app.viewmodel.home.FileDownloadViewModel
@@ -47,6 +48,7 @@ class FileDownloadActivity : BaseActivity() {
     private val viewModel: FileDownloadViewModel by viewModels()
 
     private var mDownloadFailedDialog: DeleteConfirmDialog? = null
+    private var mRenameDialog: FileRenameDialog? = null
 
     /**
      * item 回调
@@ -133,6 +135,9 @@ class FileDownloadActivity : BaseActivity() {
     }
 
     private fun setupObserver() {
+        viewModel.loadingObserver.observe(this) { value ->
+            binding.loadingView.isVisible = value
+        }
         viewModel.editObserver.observe(this) { value ->
             binding.ivNaviClose.isVisible = value
             binding.ivNaviSelectAll.isVisible = value
@@ -437,7 +442,24 @@ class FileDownloadActivity : BaseActivity() {
     }
 
     private fun renameFile(data: DownloadFileData) {
-
+        mRenameDialog = FileRenameDialog.tryShowDialog(this)?.apply {
+            setData(data)
+            this.mCallback = { newData ->
+                run {
+                    mAdapter.currentItems.filterIsInstance<DownloadFileItem>().forEach { item ->
+                        if (item.fileData.fileName == data.fileName) {
+                            item.fileData = newData
+                            mAdapter.updateItem(item)
+//                            mAdapter.notifyItemChanged(mAdapter.currentItems.indexOf(item))
+                            return@run
+                        }
+                    }
+                }
+            }
+            setOnDismissListener {
+                mRenameDialog = null
+            }
+        }
     }
 
     private fun showMenu(anchorView: View, payload: DownloadFileData) {
@@ -461,7 +483,9 @@ class FileDownloadActivity : BaseActivity() {
         mAdapter.currentItems.forEach { item ->
             mAdapter.updateItem(item)
         }
+        binding.cardLoading.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
         mDownloadFailedDialog?.updateThemeUI()
+        mRenameDialog?.updateThemeUI()
     }
 
     override fun onThemeChanged(theme: String) {
