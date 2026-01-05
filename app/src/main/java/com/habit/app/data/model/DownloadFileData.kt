@@ -1,6 +1,7 @@
 package com.habit.app.data.model
 
 import androidx.annotation.StringDef
+import com.wyz.emlibrary.util.EMUtil
 
 data class DownloadFileData(
     var fileName: String = "",
@@ -16,6 +17,9 @@ data class DownloadFileData(
 
     var isPause: Boolean = false
 
+    fun getFormatData(): String {
+        return EMUtil.formatDateFromTimestamp("dd/MM/yyyy", fileModifyTime)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

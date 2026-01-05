@@ -17,7 +17,6 @@ import com.habit.app.data.model.DownloadFileData
 import com.habit.app.data.model.DownloadItemPayload
 import com.habit.app.databinding.ActivityFileDownloadBinding
 import com.habit.app.helper.DownloadManager
-import com.habit.app.helper.DownloadManager.releaseDownloadTask
 import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.base.BaseActivity
@@ -60,7 +59,7 @@ class FileDownloadActivity : BaseActivity() {
             }
         }
         override fun onDownloadCancel(fileData: DownloadFileData) {
-
+            processDownloadCancel(fileData)
         }
         override fun onFileOpen(fileData: DownloadFileData) {
 
@@ -134,7 +133,7 @@ class FileDownloadActivity : BaseActivity() {
             withContext(Dispatchers.Main) {
                 val allItems = ArrayList<AbstractFlexibleItem<*>>()
                 sortedList.forEach { data ->
-                    val timeItem = BookmarkHistoryTitleItem(EMUtil.formatDateFromTimestamp("dd/MM/yyyy", data.fileModifyTime))
+                    val timeItem = BookmarkHistoryTitleItem(data.getFormatData())
                     if (!allItems.contains(timeItem)) {
                         allItems.add(timeItem)
                     }
@@ -196,7 +195,7 @@ class FileDownloadActivity : BaseActivity() {
                 addOnCompletedListener(completeCallback)
                 addOnErrorListener(errorCallback)
                 this.taskReleaseCallback = {
-                    releaseDownloadTask(file.name)
+                    DownloadManager.releaseDownloadTask(file.name)
                 }
             }
 
@@ -271,6 +270,42 @@ class FileDownloadActivity : BaseActivity() {
                     if (File(filePath).exists()) {
                         File(filePath).delete()
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * 处理用户取消下载
+     */
+    private fun processDownloadCancel(fileData: DownloadFileData) {
+        DownloadManager.releaseDownloadTask(fileData.fileName)
+        run {
+            for ((index, item) in mAdapter.currentItems.withIndex()) {
+                if (item is DownloadFileItem
+                    && item.fileData.fileName == fileData.fileName) {
+                    mAdapter.removeItem(index)
+                    if (!fileData.isDownloaded) {
+                        // 删除数据库download
+                        DBManager.getDao().deleteDownloadTaskData(fileData.fileName)
+                    }
+                    return@run
+                }
+            }
+        }
+
+        // 判断删除title
+        val deleteData = fileData.getFormatData()
+        run {
+            mAdapter.currentItems.filterIsInstance<DownloadFileItem>().forEach { item ->
+                if (item.fileData.getFormatData() == deleteData) {
+                    return@run
+                }
+            }
+            mAdapter.currentItems.filterIsInstance<BookmarkHistoryTitleItem>().forEach { titleItem ->
+                if (titleItem.timeStr == deleteData) {
+                    mAdapter.removeItem(mAdapter.currentItems.indexOf(titleItem))
+                    return@run
                 }
             }
         }
