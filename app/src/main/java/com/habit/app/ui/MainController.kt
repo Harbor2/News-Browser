@@ -454,7 +454,7 @@ class MainController(
             this.setData(fileName)
             this.mCallback = { beginDownload: Boolean ->
                 if (beginDownload) {
-                    val downloadDir = File(activity.cacheDir, "downloads")
+                    val downloadDir = UtilHelper.getExternalFilesDownloadDir()
                     if (!downloadDir.exists()) downloadDir.mkdirs()
                     var destFile = File(downloadDir, fileName)
                     val downloadDestFile = File(downloadDir, DOWNLOADING_NAME_PREFIX.plus(fileName))

@@ -143,7 +143,7 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
                         if (parentFile.exists()) {
                             parentFile.deleteRecursively()
                         }
-                        val downloadDir = File(context.cacheDir, "downloads")
+                        val downloadDir = UtilHelper.getExternalFilesDownloadDir(false)
                         if (downloadDir.exists()) {
                             downloadDir.deleteRecursively()
                         }

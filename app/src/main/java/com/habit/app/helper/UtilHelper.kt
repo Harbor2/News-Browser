@@ -20,6 +20,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.gson.reflect.TypeToken
+import com.habit.app.MyApplication
 import com.habit.app.R
 import com.habit.app.data.TAG
 import com.habit.app.data.apkTypes
@@ -402,5 +403,16 @@ object UtilHelper {
         } catch (e: Exception) {
             Log.e(TAG, "复制内容到剪切板失败: ${e.message}")
         }
+    }
+
+    /**
+     * 获取下载目录
+     */
+    fun getExternalFilesDownloadDir(create: Boolean = true): File {
+        val downloadDir = File(MyApplication.mContext.getExternalFilesDir(null), "downloads")
+        if (!downloadDir.exists() && create) {
+            downloadDir.mkdirs()
+        }
+        return downloadDir
     }
 }

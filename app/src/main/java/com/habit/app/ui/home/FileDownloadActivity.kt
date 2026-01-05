@@ -149,7 +149,7 @@ class FileDownloadActivity : BaseActivity() {
      */
     private fun getDownloadedItems(): ArrayList<DownloadFileData> {
         val dataList = ArrayList<DownloadFileData>()
-        val downloadFileList = EMFileUtil.getDirFilesList(File(cacheDir, "downloads"),
+        val downloadFileList = EMFileUtil.getDirFilesList(UtilHelper.getExternalFilesDownloadDir(),
             containerSubFile = false,
             containDir = false,
             containerHiddenFile = false
@@ -171,7 +171,7 @@ class FileDownloadActivity : BaseActivity() {
 
     private fun getDownloadingItems(): ArrayList<DownloadFileData> {
         val dataList = ArrayList<DownloadFileData>()
-        val downloadingFileList = EMFileUtil.getDirFilesList(File(cacheDir, "downloads"),
+        val downloadingFileList = EMFileUtil.getDirFilesList(UtilHelper.getExternalFilesDownloadDir(),
             containerSubFile = false,
             containDir = false,
             containerHiddenFile = false
@@ -307,6 +307,14 @@ class FileDownloadActivity : BaseActivity() {
                     mAdapter.removeItem(mAdapter.currentItems.indexOf(titleItem))
                     return@run
                 }
+            }
+        }
+
+        // 删除目标文件
+        lifecycleScope.launch(Dispatchers.IO) {
+            val targetFile = File(fileData.filePath)
+            if (targetFile.exists()) {
+                targetFile.delete()
             }
         }
     }
