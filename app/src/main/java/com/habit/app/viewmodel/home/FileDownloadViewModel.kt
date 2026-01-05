@@ -5,10 +5,13 @@ import androidx.lifecycle.ViewModel
 
 class FileDownloadViewModel() : ViewModel() {
 
-    private val _emptyObserver = MutableLiveData<Boolean>()
-    val emptyObserver: MutableLiveData<Boolean>
-        get() = _emptyObserver
-    fun setEmptyObserver(isEmpty: Boolean) {
-        _emptyObserver.value = isEmpty
+    var editObserver = MutableLiveData(false)
+    fun setEditObserver(edit: Boolean) {
+        editObserver.value = edit
+    }
+
+    var selectAllObserver = MutableLiveData(false)
+    fun setSelectAll(all: Boolean) {
+        selectAllObserver.value = all
     }
 }

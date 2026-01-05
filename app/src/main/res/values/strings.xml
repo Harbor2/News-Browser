@@ -136,6 +136,7 @@
     <string name="text_no_tags">No Tags</string>
     <string name="text_no_bookmarks">No Bookmarks</string>
     <string name="text_no_download">No Download</string>
+    <string name="text_no_files">No Files</string>
     <string name="text_no_history">No Histories</string>
     <string name="text_you_have_entered_private_mode">You have entered private mode</string>
     <string name="text_you_have_entered_private_mode_desc">Private mode will NOT record any of your browsing history, but it will save your downloads and bookmarks.</string>
@@ -192,4 +193,5 @@
     <string name="text_audio_recognizing">Audio Recognizing…</string>
     <string name="text_in_speech_recognition">In Speech Recognition…</string>
     <string name="text_no_voice_detected_try_again">No Voice Detected, Please Try Again.</string>
+    <string name="text_rename">Rename</string>
 </resources>

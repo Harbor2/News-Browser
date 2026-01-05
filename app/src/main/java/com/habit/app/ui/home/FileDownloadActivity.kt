@@ -11,6 +11,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.habit.app.R
 import com.habit.app.data.DOWNLOADING_NAME_PREFIX
+import com.habit.app.data.MENU_DELETE
+import com.habit.app.data.MENU_RENAME
+import com.habit.app.data.MENU_SELECT
+import com.habit.app.data.MENU_SHARE
 import com.habit.app.data.TAG
 import com.habit.app.data.db.DBManager
 import com.habit.app.data.model.DownloadFileData
@@ -21,6 +25,7 @@ import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.dialog.DeleteConfirmDialog
+import com.habit.app.ui.dialog.DownloadMenuFloat
 import com.habit.app.ui.item.BookmarkHistoryTitleItem
 import com.habit.app.ui.item.DownloadFileItem
 import com.habit.app.viewmodel.home.FileDownloadViewModel
@@ -62,12 +67,29 @@ class FileDownloadActivity : BaseActivity() {
             processDownloadCancel(fileData)
         }
         override fun onFileOpen(fileData: DownloadFileData) {
+            openFile(fileData)
+        }
 
+        override fun onFileSelect(fileData: DownloadFileData) {
+            val curSelectAll = checkSelectAll()
+            if (viewModel.selectAllObserver.value!! != curSelectAll) {
+                viewModel.setSelectAll(curSelectAll)
+            }
         }
         override fun onFileMenuClick(fileData: DownloadFileData, targetView: View) {
-
+            showMenu(targetView, fileData)
         }
     }
+
+    /**
+     * menu回调
+     */
+    private val downloadMenuCallback = object : DownloadMenuFloat.DownloadMenuCallback {
+        override fun onOptionSelect(option: String, data: DownloadFileData) {
+            processMenuOption(option, data)
+        }
+    }
+
 
     private val progressCallback: (String, Long, Long, Int, String) -> Unit = {url: String, downloaded: Long, total: Long, percent: Int, fileName: String ->
         Log.d(TAG, "DownloadActivity onProgress 下载进度, fileName: $fileName, 进度: $percent% (${EMUtil.formatBytesSize(downloaded)} / ${EMUtil.formatBytesSize(total)})")
@@ -111,8 +133,15 @@ class FileDownloadActivity : BaseActivity() {
     }
 
     private fun setupObserver() {
-        viewModel.emptyObserver.observe(this) { value ->
-            binding.tvEmpty.isVisible = value
+        viewModel.editObserver.observe(this) { value ->
+            binding.ivNaviClose.isVisible = value
+            binding.ivNaviSelectAll.isVisible = value
+            binding.ivNaviBack.isVisible = !value
+            binding.tvTitle.isVisible = !value
+            binding.containerBottomOption.isVisible = value
+        }
+        viewModel.selectAllObserver.observe(this) { value ->
+            binding.ivNaviSelectAll.setImageResource(ThemeManager.getSkinImageResId(if (value) R.drawable.iv_checkbox_select else R.drawable.iv_checkbox_unselect))
         }
     }
 
@@ -120,7 +149,46 @@ class FileDownloadActivity : BaseActivity() {
         binding.ivNaviBack.setOnClickListener {
             finish()
         }
+        binding.ivNaviClose.setOnClickListener {
+            viewModel.setEditObserver(false)
+            changeSelectMode(false)
+        }
+        binding.ivNaviSelectAll.setOnClickListener {
+            viewModel.setSelectAll(!viewModel.selectAllObserver.value!!)
+            processSelectAllOrNot(viewModel.selectAllObserver.value!!)
+        }
 
+        binding.btnCancel.setOnClickListener {
+            binding.ivNaviClose.performClick()
+        }
+        binding.btnDelete.setOnClickListener {
+            deleteFiles()
+        }
+    }
+
+    /**
+     * 处理menu回调
+     */
+    private fun processMenuOption(option: String, data: DownloadFileData) {
+        when (option) {
+            MENU_SHARE -> {
+                Log.d(TAG, "share")
+                shareFile(data)
+            }
+            MENU_DELETE -> {
+                Log.d(TAG, "delete")
+                deleteFiles(data)
+            }
+            MENU_RENAME -> {
+                Log.d(TAG, "rename")
+                renameFile(data)
+            }
+            MENU_SELECT -> {
+                Log.d(TAG, "select")
+                viewModel.setEditObserver(true)
+                changeSelectMode(true, data)
+            }
+        }
     }
 
     private fun updateDownloadList() {
@@ -132,6 +200,17 @@ class FileDownloadActivity : BaseActivity() {
             val sortedList = dataList.sortedByDescending { it.fileModifyTime }
             withContext(Dispatchers.Main) {
                 val allItems = ArrayList<AbstractFlexibleItem<*>>()
+                if (sortedList.isEmpty()) {
+                    mAdapter.clear()
+                    binding.recList.post {
+                        binding.recList.isVisible = false
+                        binding.tvEmpty.isVisible = true
+                    }
+                    return@withContext
+                }
+
+                binding.recList.isVisible = true
+                binding.tvEmpty.isVisible = false
                 sortedList.forEach { data ->
                     val timeItem = BookmarkHistoryTitleItem(data.getFormatData())
                     if (!allItems.contains(timeItem)) {
@@ -233,7 +312,7 @@ class FileDownloadActivity : BaseActivity() {
     }
 
     /**
-     * 结束下载
+     * 完成下载
      */
     private fun completeFileDownloading(fileName: String, total: Long) {
         run {
@@ -276,40 +355,55 @@ class FileDownloadActivity : BaseActivity() {
     }
 
     /**
+     * 进入 退出选择模式
+     */
+    private fun changeSelectMode(enter: Boolean, data: DownloadFileData? = null) {
+        mAdapter.currentItems.filterIsInstance<DownloadFileItem>().forEach { item ->
+            item.fileData.isSelect = if (enter) {
+                item.fileData == data
+            } else {
+                null
+            }
+        }
+        mAdapter.updateDataSet(mAdapter.currentItems)
+    }
+
+    /**
+     * 检查是否全选
+     */
+    private fun checkSelectAll(): Boolean {
+        mAdapter.currentItems.filterIsInstance<DownloadFileItem>().forEach { item ->
+            if (item.fileData.isSelect != true) {
+                return false
+            }
+        }
+        return true
+    }
+
+    /**
+     * 处理全选 或 取消全选
+     */
+    private fun processSelectAllOrNot(selectAll: Boolean) {
+        mAdapter.currentItems.filterIsInstance<DownloadFileItem>().forEach { item ->
+            item.fileData.isSelect = selectAll
+        }
+        mAdapter.updateDataSet(mAdapter.currentItems)
+    }
+
+    /**
+     * 获取选中的数据
+     */
+    private fun getSelectedData(): List<DownloadFileData> {
+        return mAdapter.currentItems.filterIsInstance<DownloadFileItem>().filter { it.fileData.isSelect == true }.map { it.fileData }
+    }
+
+    /**
      * 处理用户取消下载
      */
     private fun processDownloadCancel(fileData: DownloadFileData) {
         DownloadManager.releaseDownloadTask(fileData.fileName)
-        run {
-            for ((index, item) in mAdapter.currentItems.withIndex()) {
-                if (item is DownloadFileItem
-                    && item.fileData.fileName == fileData.fileName) {
-                    mAdapter.removeItem(index)
-                    if (!fileData.isDownloaded) {
-                        // 删除数据库download
-                        DBManager.getDao().deleteDownloadTaskData(fileData.fileName)
-                    }
-                    return@run
-                }
-            }
-        }
-
-        // 判断删除title
-        val deleteData = fileData.getFormatData()
-        run {
-            mAdapter.currentItems.filterIsInstance<DownloadFileItem>().forEach { item ->
-                if (item.fileData.getFormatData() == deleteData) {
-                    return@run
-                }
-            }
-            mAdapter.currentItems.filterIsInstance<BookmarkHistoryTitleItem>().forEach { titleItem ->
-                if (titleItem.timeStr == deleteData) {
-                    mAdapter.removeItem(mAdapter.currentItems.indexOf(titleItem))
-                    return@run
-                }
-            }
-        }
-
+        // 删除数据库download
+        DBManager.getDao().deleteDownloadTaskData(fileData.fileName)
         // 删除目标文件
         lifecycleScope.launch(Dispatchers.IO) {
             val targetFile = File(fileData.filePath)
@@ -317,6 +411,37 @@ class FileDownloadActivity : BaseActivity() {
                 targetFile.delete()
             }
         }
+        // 重新加载列表
+        updateDownloadList()
+    }
+
+    private fun openFile(data: DownloadFileData) {
+
+    }
+
+    private fun shareFile(data: DownloadFileData) {
+
+    }
+
+    private fun deleteFiles(fileData: DownloadFileData? = null) {
+        val selectData = if (fileData != null) {
+            listOf(fileData)
+        } else {
+            getSelectedData()
+        }
+        if (selectData.isEmpty()) {
+            UtilHelper.showToast(this, getString(R.string.toast_you_must_select_one))
+            return
+        }
+
+    }
+
+    private fun renameFile(data: DownloadFileData) {
+
+    }
+
+    private fun showMenu(anchorView: View, payload: DownloadFileData) {
+        DownloadMenuFloat(this).setData(payload).setCallback(downloadMenuCallback).show(anchorView)
     }
 
     private fun updateUiConfig() {
@@ -324,8 +449,17 @@ class FileDownloadActivity : BaseActivity() {
             .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.page_main_color))
         binding.tvTitle.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.ivNaviBack.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_navi_back))
+        binding.ivNaviClose.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_navi_close))
+        binding.ivNaviSelectAll.setImageResource(ThemeManager.getSkinImageResId(if (viewModel.selectAllObserver.value!!) R.drawable.iv_checkbox_select else R.drawable.iv_checkbox_unselect))
+        EMManager.from(binding.btnCancel)
+            .setCorner(12f)
+            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.create_folder_cancel_color))
+        EMManager.from(binding.btnDelete)
+            .setCorner(12f)
+            .setBackGroundColor("#FF1B0B")
+        binding.btnCancel.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_60))
         mAdapter.currentItems.forEach { item ->
-            mAdapter.updateItem(item, "update")
+            mAdapter.updateItem(item)
         }
         mDownloadFailedDialog?.updateThemeUI()
     }

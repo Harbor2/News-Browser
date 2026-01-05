@@ -61,6 +61,14 @@ const val OPTION_ADD_TO_BOOKMARK = "option_add_to_bookmark"
 const val OPTION_SELECT = "option_select"
 
 /**
+ * download file menu
+ */
+const val MENU_SHARE = "option_share"
+const val MENU_DELETE = "option_delete"
+const val MENU_RENAME = "option_rename"
+const val MENU_SELECT = "option_select"
+
+/**
  * 最大同时下载任务数
  */
 const val MAX_COUNT_DOWNLOAD_TASKS = 5

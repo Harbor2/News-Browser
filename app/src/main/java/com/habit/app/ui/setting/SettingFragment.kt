@@ -29,6 +29,7 @@ import com.habit.app.ui.dialog.DataDeleteDialog
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.habit.app.ui.dialog.ThemeSelectDialog
 import com.habit.app.ui.home.BookmarkHistoryActivity
+import com.habit.app.ui.home.FileDownloadActivity
 import com.habit.app.viewmodel.MainActivityModel
 import com.wyz.emlibrary.em.Direction
 import com.wyz.emlibrary.em.EMManager
@@ -104,7 +105,7 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
         }
 
         binding.itemDownload.setOnClickListener {
-
+            FileDownloadActivity.startActivity(requireContext())
         }
         binding.itemBookmark.setOnClickListener {
             BookmarkHistoryActivity.startActivity(requireContext(), viewModel.privacyObserver.value!!, true)

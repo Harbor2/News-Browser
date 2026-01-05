@@ -17,6 +17,8 @@ data class DownloadFileData(
 
     var isPause: Boolean = false
 
+    var isSelect: Boolean? = null
+
     fun getFormatData(): String {
         return EMUtil.formatDateFromTimestamp("dd/MM/yyyy", fileModifyTime)
     }

@@ -64,14 +64,28 @@ class DownloadFileItem(
         holder.binding.tvName.text = UtilHelper.decodeUrlCode(fileData.fileName)
         holder.binding.tvDesc.text = EMUtil.formatBytesSize(fileData.fileSize)
         holder.binding.containerProgress.isVisible = false
-        holder.binding.ivClose.isVisible = false
-        holder.binding.ivMenu.isVisible = true
+        if (fileData.isSelect == null) {
+            holder.binding.ivClose.isVisible = false
+            holder.binding.ivMenu.isVisible = true
+            holder.binding.ivCheckbox.isVisible = false
+        } else {
+            holder.binding.ivClose.isVisible = false
+            holder.binding.ivMenu.isVisible = false
+            holder.binding.ivCheckbox.isVisible = true
+            holder.binding.ivCheckbox.setImageResource(ThemeManager.getSkinImageResId(if (fileData.isSelect!!) R.drawable.iv_checkbox_select else R.drawable.iv_checkbox_unselect))
+        }
 
         holder.binding.ivMenu.setOnClickListener {
-            mCallback.onFileMenuClick(fileData, holder.binding.ivMenu)
+            mCallback.onFileMenuClick(fileData, holder.binding.root)
         }
         holder.binding.root.setOnClickListener {
-            mCallback.onFileOpen(fileData)
+            if (fileData.isSelect == null) {
+                mCallback.onFileOpen(fileData)
+            } else {
+                fileData.isSelect = !fileData.isSelect!!
+                holder.binding.ivCheckbox.setImageResource(ThemeManager.getSkinImageResId(if (fileData.isSelect!!) R.drawable.iv_checkbox_select else R.drawable.iv_checkbox_unselect))
+                mCallback.onFileSelect(fileData)
+            }
         }
     }
 
@@ -86,13 +100,22 @@ class DownloadFileItem(
             .setBorderColor(R.color.indication_color)
         holder.binding.tvName.text = UtilHelper.decodeUrlCode(fileData.fileName)
         holder.binding.tvDesc.text = EMUtil.formatBytesSize(fileData.fileSize)
-        holder.binding.containerProgress.isVisible = true
-        holder.binding.ivMenu.isVisible = false
-        holder.binding.ivClose.isVisible = true
         holder.binding.tvProgress.text = "${fileData.downloadProgress}%"
         holder.binding.progressView.progress = fileData.downloadProgress
         holder.binding.tvProgress.isVisible = !fileData.isPause
         holder.binding.ivDownloadResume.isVisible = fileData.isPause
+        if (fileData.isSelect == null) {
+            holder.binding.containerProgress.isVisible = true
+            holder.binding.ivMenu.isVisible = false
+            holder.binding.ivClose.isVisible = true
+            holder.binding.ivCheckbox.isVisible = false
+        } else {
+            holder.binding.containerProgress.isVisible = false
+            holder.binding.ivMenu.isVisible = false
+            holder.binding.ivClose.isVisible = false
+            holder.binding.ivCheckbox.isVisible = true
+            holder.binding.ivCheckbox.setImageResource(ThemeManager.getSkinImageResId(if (fileData.isSelect!!) R.drawable.iv_checkbox_select else R.drawable.iv_checkbox_unselect))
+        }
 
         holder.binding.containerProgress.setOnClickListener {
             fileData.isPause = !fileData.isPause
@@ -107,6 +130,13 @@ class DownloadFileItem(
         }
         holder.binding.ivClose.setOnClickListener {
             mCallback.onDownloadCancel(fileData)
+        }
+        holder.binding.root.setOnClickListener {
+            if (fileData.isSelect != null) {
+                fileData.isSelect = !fileData.isSelect!!
+                holder.binding.ivCheckbox.setImageResource(ThemeManager.getSkinImageResId(if (fileData.isSelect!!) R.drawable.iv_checkbox_select else R.drawable.iv_checkbox_unselect))
+                mCallback.onFileSelect(fileData)
+            }
         }
     }
 
@@ -165,6 +195,8 @@ class DownloadFileItem(
 
     interface FileItemCallback {
         fun onFileOpen(fileData: DownloadFileData)
+
+        fun onFileSelect(fileData: DownloadFileData)
 
         fun onDownloadPause(fileData: DownloadFileData)
 
