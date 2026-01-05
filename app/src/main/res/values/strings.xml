@@ -199,4 +199,7 @@
     <string name="text_no_voice_detected_try_again">No Voice Detected, Please Try Again.</string>
     <string name="text_rename">Rename</string>
     <string name="text_file_rename">Rename File</string>
+    <string name="text_cancel_download_title">Do You Want To Cancel Download This File?</string>
+    <string name="text_delete_file_title">Do You Want To Delete This File?</string>
+    <string name="text_sure">Sure</string>
 </resources>

@@ -44,6 +44,7 @@
             android:textColor="@color/text_main_color"
             android:fontFamily="@font/gotham_m"
             android:layout_marginTop="32dp"
+            android:gravity="center_horizontal"
             android:layout_marginHorizontal="30dp"/>
 
         <LinearLayout

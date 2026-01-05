@@ -51,6 +51,8 @@ class FileDownloadActivity : BaseActivity() {
 
     private var mDownloadFailedDialog: DeleteConfirmDialog? = null
     private var mRenameDialog: FileRenameDialog? = null
+    private var mCancelDownloadDialog: DeleteConfirmDialog? = null
+    private var mDeleteFileDialog: DeleteConfirmDialog? = null
 
     /**
      * item 回调
@@ -68,7 +70,7 @@ class FileDownloadActivity : BaseActivity() {
             }
         }
         override fun onDownloadCancel(fileData: DownloadFileData) {
-            processDownloadCancel(fileData)
+            showCancelDownloadDialog(fileData)
         }
         override fun onFileOpen(fileData: DownloadFileData) {
             openFile(fileData)
@@ -169,7 +171,7 @@ class FileDownloadActivity : BaseActivity() {
             binding.ivNaviClose.performClick()
         }
         binding.btnDelete.setOnClickListener {
-            deleteFiles()
+             showDeleteFileDialog()
         }
     }
 
@@ -182,7 +184,7 @@ class FileDownloadActivity : BaseActivity() {
                 shareFile(data)
             }
             MENU_DELETE -> {
-                deleteFiles(data)
+                showDeleteFileDialog(data)
             }
             MENU_RENAME -> {
                 renameFile(data)
@@ -498,6 +500,44 @@ class FileDownloadActivity : BaseActivity() {
         }
     }
 
+    private fun showCancelDownloadDialog(fileData: DownloadFileData) {
+        mCancelDownloadDialog = DeleteConfirmDialog.tryShowDialog(this)?.apply {
+            this.initData(
+                R.drawable.iv_dialog_delete_icon,
+                getString(R.string.text_cancel_download_title),
+                getString(R.string.text_cancel),
+                getString(R.string.text_sure)
+            )
+            setOnDismissListener {
+                mCancelDownloadDialog = null
+            }
+            this.mCallback = { result ->
+                if (result) {
+                    processDownloadCancel(fileData)
+                }
+            }
+        }
+    }
+
+    private fun showDeleteFileDialog(data: DownloadFileData? = null) {
+        mDeleteFileDialog = DeleteConfirmDialog.tryShowDialog(this)?.apply {
+            this.initData(
+                R.drawable.iv_dialog_delete_icon,
+                getString(R.string.text_delete_file_title),
+                getString(R.string.text_cancel),
+                getString(R.string.text_delete)
+            )
+            setOnDismissListener {
+                mDeleteFileDialog = null
+            }
+            this.mCallback = { result ->
+                if (result) {
+                    deleteFiles(data)
+                }
+            }
+        }
+    }
+
     private fun showMenu(anchorView: View, payload: DownloadFileData) {
         DownloadMenuFloat(this).setData(payload).setCallback(downloadMenuCallback).show(anchorView)
     }
@@ -522,6 +562,8 @@ class FileDownloadActivity : BaseActivity() {
         binding.cardLoading.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
         mDownloadFailedDialog?.updateThemeUI()
         mRenameDialog?.updateThemeUI()
+        mCancelDownloadDialog?.updateThemeUI()
+        mDeleteFileDialog?.updateThemeUI()
     }
 
     override fun onThemeChanged(theme: String) {
