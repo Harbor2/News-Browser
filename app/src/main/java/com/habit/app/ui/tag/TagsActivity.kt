@@ -76,6 +76,7 @@ class TagsActivity : BaseActivity() {
         binding.tabPublic.setOnClickListener {
             binding.tabPublic.updateSelect(true)
             binding.tabPrivacy.updateSelect(false)
+            UtilHelper.changeLightDarkStatus(window, ThemeManager.isNightTheme())
 
             switchFragment(publicFragmentTag)
             updateUiConfig()
@@ -83,6 +84,7 @@ class TagsActivity : BaseActivity() {
         binding.tabPrivacy.setOnClickListener {
             binding.tabPrivacy.updateSelect(true)
             binding.tabPublic.updateSelect(false)
+            UtilHelper.changeLightDarkStatus(window, true)
 
             switchFragment(privacyFragmentTag)
             updateUiConfig()
@@ -208,6 +210,7 @@ class TagsActivity : BaseActivity() {
             binding.ivPre.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_tag_tab_pre))
             binding.ivAdd.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_tag_tab_add))
             binding.ivClean.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_tag_tab_clean))
+            UtilHelper.changeLightDarkStatus(window, ThemeManager.isNightTheme())
         } else {
             EMManager.from(binding.root)
                 .setBackGroundColor(R.color.t_night_page_main_color)
@@ -217,11 +220,11 @@ class TagsActivity : BaseActivity() {
             binding.ivPre.setImageResource(R.drawable.t_night_iv_tag_tab_pre)
             binding.ivAdd.setImageResource(R.drawable.t_night_iv_tag_tab_add)
             binding.ivClean.setImageResource(R.drawable.t_night_iv_tag_tab_clean)
+            UtilHelper.changeLightDarkStatus(window, true)
         }
     }
 
     override fun onThemeChanged(theme: String) {
-        super.onThemeChanged(theme)
         updateUiConfig()
     }
 

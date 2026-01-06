@@ -17,6 +17,7 @@ import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.view.Window
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.gson.reflect.TypeToken
@@ -430,5 +431,14 @@ object UtilHelper {
             PackageManager.MATCH_DEFAULT_ONLY
         )
         return resolveInfo?.activityInfo?.packageName == context.packageName
+    }
+
+    fun changeLightDarkStatus(window: Window, dark: Boolean) {
+        // 调整状态栏字体颜色
+        window.decorView.systemUiVisibility = if (dark) {
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        } else {
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        }
     }
 }

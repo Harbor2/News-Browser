@@ -5,6 +5,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.habit.app.event.BaseEvent
 import com.habit.app.helper.ThemeManager
+import com.habit.app.helper.UtilHelper
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
@@ -26,11 +27,7 @@ open class BaseActivity : AppCompatActivity() {
 
     open fun onThemeChanged(theme: String) {
         // 调整状态栏字体颜色
-        window.decorView.systemUiVisibility = if (ThemeManager.isNightTheme()) {
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        } else {
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        }
+        UtilHelper.changeLightDarkStatus(window, ThemeManager.isNightTheme())
     }
 
     override fun onDestroy() {
