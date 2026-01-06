@@ -589,6 +589,7 @@ class MainActivity : BaseActivity() {
 
     @SuppressLint("RequiresFeature")
     private fun updateUIConfig() {
+        binding.root.setBackgroundColor(ThemeManager.getSkinColor(R.color.page_main_color))
         // main
         binding.tabsMainBottom.setBackgroundColor(ThemeManager.getSkinColor(R.color.page_main_color))
         binding.tabHome.background = ThemeManager.getSkinDrawable(R.drawable.selector_tab_background)
