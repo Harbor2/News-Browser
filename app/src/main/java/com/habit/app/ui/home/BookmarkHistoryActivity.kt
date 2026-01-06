@@ -35,7 +35,7 @@ class BookmarkHistoryActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityBookmarkHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        immersiveWindow(binding.root, false, binding.containerNavi)
+        immersiveWindow(binding.root, ThemeManager.isNightTheme(), binding.containerNavi)
 
         initView()
         setUpObservers()

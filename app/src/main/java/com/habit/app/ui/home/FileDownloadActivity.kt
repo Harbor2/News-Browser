@@ -116,7 +116,7 @@ class FileDownloadActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityFileDownloadBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        immersiveWindow(binding.root, false, binding.containerNavi)
+        immersiveWindow(binding.root, ThemeManager.isNightTheme(), binding.containerNavi)
 
         initView()
         setupObserver()

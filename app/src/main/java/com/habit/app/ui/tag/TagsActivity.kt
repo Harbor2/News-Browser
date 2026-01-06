@@ -42,7 +42,7 @@ class TagsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTagsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        immersiveWindow(binding.root, false, binding.containerNavi)
+        immersiveWindow(binding.root, ThemeManager.isNightTheme(), binding.containerNavi)
 
         initView()
         setUpObservers()

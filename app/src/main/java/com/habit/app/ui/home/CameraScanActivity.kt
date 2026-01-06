@@ -15,6 +15,7 @@ import com.google.zxing.Result
 import com.habit.app.R
 import com.habit.app.data.TAG
 import com.habit.app.databinding.ActivityCameraScanBinding
+import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.helper.VibrateUtil
 import com.habit.app.ui.MainActivity
@@ -83,7 +84,7 @@ class CameraScanActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCameraScanBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        immersiveWindow(binding.root, false, binding.containerNavi)
+        immersiveWindow(binding.root, ThemeManager.isNightTheme(), binding.containerNavi)
         scannerController = ScannerController(lifecycleScope, this, binding).apply {
             this.mCallback = scannerCallback
         }

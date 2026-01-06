@@ -76,7 +76,7 @@ class SearchActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        immersiveWindow(binding.root, false, binding.containerNavi)
+        immersiveWindow(binding.root, ThemeManager.isNightTheme(), binding.containerNavi)
         softKeyboardHelper = SoftKeyboardHelper()
 
         initView()

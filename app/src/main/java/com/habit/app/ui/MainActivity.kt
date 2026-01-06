@@ -182,7 +182,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        immersiveWindow(binding.root, false, binding.containerSearchNavi)
+        immersiveWindow(binding.root, ThemeManager.isNightTheme(), binding.containerSearchNavi)
         KeyValueManager.saveBooleanValue(KeyValueManager.KEY_ENTERED_HOME, true)
         mController = MainController(this, viewModel, binding)
         softKeyboardHelper = SoftKeyboardHelper()

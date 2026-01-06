@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.habit.app.ui.base.BaseActivity
 import com.habit.app.R
 import com.habit.app.databinding.ActivityWebBinding
+import com.habit.app.helper.ThemeManager
 import com.wyz.emlibrary.util.immersiveWindow
 
 class BrowseActivity : BaseActivity() {
@@ -15,7 +16,7 @@ class BrowseActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityWebBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        immersiveWindow(binding.root, false, binding.containerNavi)
+        immersiveWindow(binding.root, ThemeManager.isNightTheme(), binding.containerNavi)
 
         binding.webView.setBackgroundColor(getColor(R.color.page_main_color))
         val title = intent?.getStringExtra(EXTRA_KEY_TITLE) ?: ""
