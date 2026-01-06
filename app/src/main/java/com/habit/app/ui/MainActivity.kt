@@ -37,6 +37,7 @@ import com.habit.app.ui.home.BookmarkHistoryActivity
 import com.habit.app.ui.home.FileDownloadActivity
 import com.habit.app.ui.home.fragment.HomeFragment
 import com.habit.app.ui.news.NewsFragment
+import com.habit.app.ui.setting.SearchWidgetProvider
 import com.habit.app.ui.setting.SettingFragment
 import com.habit.app.ui.tag.TagsActivity
 import com.habit.app.viewmodel.MainActivityModel
@@ -564,6 +565,8 @@ class MainActivity : BaseActivity() {
     override fun onThemeChanged(theme: String) {
         super.onThemeChanged(theme)
         updateUIConfig()
+        // 小组件ui更新
+        SearchWidgetProvider.updateWidgetTheme()
     }
 
     @Subscribe
