@@ -1,11 +1,17 @@
 package com.habit.app.ui.setting
 
+import android.app.role.RoleManager
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.forEach
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
@@ -53,6 +59,8 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
     private var themeSelectDialog: ThemeSelectDialog? = null
     private var dataDeleteDialog: DataDeleteDialog? = null
 
+    private val defaultBrowserLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result -> }
+
     override fun onCreateViewBinding(
         inflater: LayoutInflater,
         parent: ViewGroup?
@@ -66,6 +74,14 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
         initView()
         initData()
         initListener()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val isDefaultBrowser = UtilHelper.isDefaultBrowser(requireContext())
+        Log.d(TAG, "settingFragment isDefaultBrowser: $isDefaultBrowser")
+        binding.itemDefaultBrowser.updateSwitch(isDefaultBrowser)
+        binding.itemDefaultBrowser.isVisible = !isDefaultBrowser
     }
 
     private fun initView() {
@@ -95,7 +111,12 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
             }
         }
         binding.itemDefaultBrowser.setOnClickListener {
-
+            val isDefault = UtilHelper.isDefaultBrowser(requireContext())
+            if (isDefault) {
+                UtilHelper.showToast(requireContext(), getString(R.string.toast_default_browser))
+                return@setOnClickListener
+            }
+            chooseDefaultBrowser()
         }
         binding.itemTheme.setOnClickListener {
             processThemeSelect()
@@ -217,6 +238,22 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
         searchEngineDialog?.updateThemeUI()
         themeSelectDialog?.updateThemeUI()
         dataDeleteDialog?.updateThemeUI()
+    }
+
+    /**
+     * 选择默认浏览器
+     */
+    private fun chooseDefaultBrowser() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val roleManager = requireActivity().getSystemService(RoleManager::class.java)
+            if (roleManager.isRoleAvailable(RoleManager.ROLE_BROWSER) && !roleManager.isRoleHeld(RoleManager.ROLE_BROWSER)) {
+                defaultBrowserLauncher.launch(roleManager.createRequestRoleIntent(RoleManager.ROLE_BROWSER))
+            }
+        } else {
+            startActivity(
+                Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS)
+            )
+        }
     }
 
     override fun onThemeChanged(theme: String) {

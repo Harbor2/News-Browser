@@ -39,6 +39,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Calendar
 import kotlin.random.Random
+import androidx.core.net.toUri
 
 object UtilHelper {
 
@@ -414,5 +415,20 @@ object UtilHelper {
             downloadDir.mkdirs()
         }
         return downloadDir
+    }
+
+    /**
+     * 判断当前应用是否是默认浏览器
+     */
+    fun isDefaultBrowser(context: Context): Boolean {
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            "https://www.google.com".toUri()
+        )
+        val resolveInfo = context.packageManager.resolveActivity(
+            intent,
+            PackageManager.MATCH_DEFAULT_ONLY
+        )
+        return resolveInfo?.activityInfo?.packageName == context.packageName
     }
 }
