@@ -1,8 +1,12 @@
 package com.habit.app.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 class MainActivityModel : ViewModel() {
     private val _loadObserver = MutableLiveData(false)
@@ -29,5 +33,15 @@ class MainActivityModel : ViewModel() {
     val privacyObserver: LiveData<Boolean> = _privacyObserver
     fun setPrivacyObserver(privacy: Boolean) {
         _privacyObserver.value = privacy
+    }
+
+    private val _searchUrlObserver = MutableSharedFlow<String>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val searchUrlObserver = _searchUrlObserver.asSharedFlow()
+    fun setSearchUrl(url: String) {
+        _searchUrlObserver.tryEmit(url)
     }
 }

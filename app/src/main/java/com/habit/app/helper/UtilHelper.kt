@@ -116,10 +116,10 @@ object UtilHelper {
 
     fun getDefaultHomeAccessList(context: Context): ArrayList<AccessSingleData> {
         return arrayListOf(
-            AccessSingleData("iv_access_single_file", context.getString(R.string.text_file), "file").apply {
+            AccessSingleData("iv_access_single_file", context.getString(R.string.text_download), "file").apply {
                 sortIndex = 0
                 isSpecial = true },
-            AccessSingleData("iv_access_single_game", context.getString(R.string.text_game), "game").apply {
+            AccessSingleData("iv_access_single_game", context.getString(R.string.text_history), "game").apply {
                 sortIndex = 1
                 isSpecial = true },
             AccessSingleData("iv_access_single_bookmark", context.getString(R.string.text_bookmark), "bookmark").apply {

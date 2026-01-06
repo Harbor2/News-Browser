@@ -18,6 +18,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.habit.app.R
 import com.habit.app.data.TAG
 import com.habit.app.data.db.DBManager
@@ -43,6 +44,7 @@ import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
 import com.wyz.emlibrary.util.SoftKeyboardHelper
 import com.wyz.emlibrary.util.immersiveWindow
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.Subscribe
 
 class MainActivity : BaseActivity() {
@@ -275,6 +277,19 @@ class MainActivity : BaseActivity() {
 
         viewModel.phoneModeObserver.observe(this) { value ->
             mController.onPhoneModeChange(value)
+        }
+        lifecycleScope.launch {
+            viewModel.searchUrlObserver.collect { url ->
+                Log.w(TAG, "access 点击url跳转: $url")
+                if (url.isEmpty()) {
+                    return@collect
+                }
+                // search
+                if (!viewModel.searchObserver.value!!) {
+                    viewModel.setSearchObserver(true)
+                }
+                mController.processWebSearch(url)
+            }
         }
     }
 

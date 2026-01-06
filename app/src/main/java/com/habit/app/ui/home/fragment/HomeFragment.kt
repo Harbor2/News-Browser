@@ -29,7 +29,9 @@ import com.habit.app.event.HomeAccessUpdateEvent
 import com.habit.app.ui.home.AccessSelectActivity
 import com.habit.app.ui.home.SearchActivity
 import com.habit.app.ui.dialog.SearchEngineDialog
+import com.habit.app.ui.home.BookmarkHistoryActivity
 import com.habit.app.ui.home.CameraScanActivity
+import com.habit.app.ui.home.FileDownloadActivity
 import com.habit.app.ui.item.HomeAccessItem
 import com.habit.app.ui.item.HomeNewsCardItem
 import com.habit.app.ui.item.HomeNewsHeadItem
@@ -327,15 +329,24 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
     private fun processAccessClick(data: AccessSingleData) {
         if (data.isSpecial) {
             when (data.iconResName) {
-                "iv_access_single_file" -> {}
-                "iv_access_single_game" -> {}
-                "iv_access_single_bookmark" -> {}
+                "iv_access_single_file" -> {
+                    // download
+                    FileDownloadActivity.startActivity(requireContext())
+                }
+                "iv_access_single_game" -> {
+                    // history
+                    BookmarkHistoryActivity.startActivity(requireContext(), viewModel.privacyObserver.value!!, false)
+                }
+                "iv_access_single_bookmark" -> {
+                    BookmarkHistoryActivity.startActivity(requireContext(), viewModel.privacyObserver.value!!, true)
+                }
                 "iv_access_single_add" -> {
                     accessAddLauncher.launch(Intent(requireContext(), AccessSelectActivity::class.java))
                 }
             }
         } else {
             // 打开webview
+            viewModel.setSearchUrl(data.linkUrl)
         }
     }
 
