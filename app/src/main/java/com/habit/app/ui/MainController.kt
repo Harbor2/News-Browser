@@ -159,30 +159,6 @@ class MainController(
     }
 
     /**
-     * 初始化时，获取最新的tab数据并使用
-     */
-    fun getDBLastSnapAndNewTab() {
-        val lastWebData = DBManager.getDao().getWebSnapsFromTable().firstOrNull()
-        if (lastWebData == null) {
-            createNewWebTabAndInsertDB()
-            return
-        }
-        // 有历史tab
-        mCurWebSign = lastWebData.sign
-        mCurWebView = null
-        viewModel.setPhoneModeObserver(lastWebData.isPhoneMode ?: true)
-        viewModel.setPrivacyObserver(lastWebData.isPrivacyMode ?: false)
-
-        // 判断是否重新打开
-        val isReopenLastTab = KeyValueManager.getBooleanValue(KeyValueManager.KEY_REOPEN_LAST_TAB, true)
-        if (isReopenLastTab) {
-            Log.d(TAG, "重新打开上次tab ${lastWebData.url}")
-            updateWebView(lastWebData)
-            viewModel.setSearchObserver(true)
-        }
-    }
-
-    /**
      * 初始化时，创建新tab
      */
     fun createNewWebTabAndInsertDB(privacyMode: Boolean? = null) {

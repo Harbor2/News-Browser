@@ -34,6 +34,7 @@ import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.dialog.BrowserMenuDialog
 import com.habit.app.ui.home.BookmarkHistoryActivity
+import com.habit.app.ui.home.CameraScanActivity
 import com.habit.app.ui.home.FileDownloadActivity
 import com.habit.app.ui.home.fragment.HomeFragment
 import com.habit.app.ui.news.NewsFragment
@@ -71,6 +72,15 @@ class MainActivity : BaseActivity() {
     private var mBrowserMenuDialog: BrowserMenuDialog? = null
 
     private lateinit var softKeyboardHelper: SoftKeyboardHelper
+
+    /**
+     * 相机权限
+     */
+    private val cameraPermLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
+        if (result) {
+            checkAndJumpScanActivity()
+        }
+    }
 
     private val tagsLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
@@ -196,43 +206,34 @@ class MainActivity : BaseActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        // 外部小组件
+        val extraInfo = intent.getStringExtra(SearchWidgetProvider.WIDGET_EXTRA)
+        if (!extraInfo.isNullOrEmpty()) {
+            handleWidget(extraInfo)
+            return
+        }
+
+        // 外部url
+        val outUrl = intent.data?.toString()
+        if (!outUrl.isNullOrEmpty()) {
+            handleOutUrl(outUrl)
+            return
+        }
+
+        // 内部uri
         val postUrl =  intent.getStringExtra("post_url")
         if (!postUrl.isNullOrEmpty()) {
-            Log.d(TAG, "App内部跳转url：$postUrl")
+            Log.d(TAG, "首页响应App内部跳转url：$postUrl")
             // search
-            if (!viewModel.searchObserver.value!!) {
-                viewModel.setSearchObserver(true)
-            }
+            checkAndSelectSearchPage(true)
             // home
-            if (currentFragmentTag != homeFragmentTag) {
-                binding.containerTabHome.performClick()
-            }
+            checkAndSelectFragmentHome()
             binding.containerWeb.post {
                 mController.openNewSnapAndSearch(postUrl)
             }
-        } else {
-            // 处理外部url
-            handleDeepLink(intent)
         }
     }
 
-    /**
-     * 处理App外部跳转url
-     */
-    private fun handleDeepLink(intent: Intent) {
-        intent.data?.let { uri ->
-            Log.d(TAG, "App外部跳转url：$uri")
-            // search
-            if (!viewModel.searchObserver.value!!) {
-                viewModel.setSearchObserver(true)
-            }
-            // home
-            if (currentFragmentTag != homeFragmentTag) {
-                binding.containerTabHome.performClick()
-            }
-            mController.processWebSearch(uri.toString())
-        }
-    }
 
     private fun initView() {
         updateUIConfig()
@@ -245,17 +246,46 @@ class MainActivity : BaseActivity() {
         binding.tabHome.isChecked = true
         switchFragment(currentFragmentTag)
 
-        // 获取webSign
-        mController.getDBLastSnapAndNewTab()
-
-        // 外部跳转url处理
-        handleDeepLink(intent)
-
         // 下划线
         val checkNetText = getString(R.string.text_check_the_network)
         val checkNetSpan = SpannableString(checkNetText)
         checkNetSpan.setSpan(UnderlineSpan(), 0, checkNetText.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
         binding.tvCheckNet.text = checkNetSpan
+
+        // 新建WebView 或打开上次webView
+        val lastWebData = DBManager.getDao().getWebSnapsFromTable().firstOrNull()
+        if (lastWebData == null) {
+            mController.createNewWebTabAndInsertDB()
+            return
+        }
+
+        // 有历史tab
+        mController.mCurWebSign = lastWebData.sign
+        mController.mCurWebView = null
+        viewModel.setPhoneModeObserver(lastWebData.isPhoneMode ?: true)
+        viewModel.setPrivacyObserver(lastWebData.isPrivacyMode ?: false)
+
+        // 外部小组件
+        val extraInfo = intent.getStringExtra(SearchWidgetProvider.WIDGET_EXTRA)
+        if (!extraInfo.isNullOrEmpty()) {
+            handleWidget(extraInfo)
+            return
+        }
+
+        // 外部url
+        val outUrl = intent.data?.toString()
+        if (!outUrl.isNullOrEmpty()) {
+            handleOutUrl(outUrl)
+            return
+        }
+
+        // 判断是否重新打开上次webview
+        val isReopenLastTab = KeyValueManager.getBooleanValue(KeyValueManager.KEY_REOPEN_LAST_TAB, true)
+        if (isReopenLastTab) {
+            Log.d(TAG, "首页重新打开上次tab ${lastWebData.url}")
+            mController.updateWebView(lastWebData)
+            viewModel.setSearchObserver(true)
+        }
     }
 
     private fun setupObserver() {
@@ -448,6 +478,54 @@ class MainActivity : BaseActivity() {
         transaction.commit()
     }
 
+    /**
+     * 处理外部小组件事件
+     */
+    private fun handleWidget(event: String) {
+        Log.d(TAG, "首页响应小组件事件：$event")
+        when (event) {
+            SearchWidgetProvider.EXTRA_SEARCH -> {
+                // search
+                checkAndSelectSearchPage(false)
+                // home
+                checkAndSelectFragmentHome()
+            }
+            SearchWidgetProvider.EXTRA_NEWS -> {
+                // search
+                checkAndSelectSearchPage(false)
+                // news
+                checkAndSelectFragmentNews()
+            }
+            SearchWidgetProvider.EXTRA_SCAN -> {
+                // search
+                checkAndSelectSearchPage(false)
+                // home
+                checkAndSelectFragmentHome()
+                checkAndJumpScanActivity()
+            }
+        }
+    }
+
+    /**
+     * 处理App外部跳转url
+     */
+    private fun handleOutUrl(outUrl: String) {
+        Log.d(TAG, "首页响应App外部跳转url：$outUrl")
+        // search
+        checkAndSelectSearchPage(true)
+        // home
+        checkAndSelectFragmentHome()
+        mController.processWebSearch(outUrl)
+    }
+
+    private fun checkAndJumpScanActivity() {
+        if (!UtilHelper.hasCameraPermission(this)) {
+            cameraPermLauncher.launch(android.Manifest.permission.CAMERA)
+            return
+        }
+        CameraScanActivity.startActivity(this)
+    }
+
     private fun showMenuDialog() {
         mController.mCurWebView?.let { webView ->
             mBrowserMenuDialog = BrowserMenuDialog.tryShowDialog(this)?.apply {
@@ -477,6 +555,39 @@ class MainActivity : BaseActivity() {
         (binding.containerContentSearch.layoutParams as? ViewGroup.MarginLayoutParams)?.apply {
             bottomMargin = if (height > bottomTabHeight) height - bottomTabHeight else height
             binding.containerContentSearch.layoutParams = this
+        }
+    }
+
+    /**
+     * 检查并切换搜索页面
+     */
+    private fun checkAndSelectSearchPage(select: Boolean) {
+        if (select) {
+            if (!viewModel.searchObserver.value!!) {
+                viewModel.setSearchObserver(true)
+            }
+        } else {
+            if (viewModel.searchObserver.value!!) {
+                viewModel.setSearchObserver(false)
+            }
+        }
+    }
+
+    /**
+     * 检查并切换首页Fragment
+     */
+    private fun checkAndSelectFragmentHome() {
+        if (currentFragmentTag != homeFragmentTag) {
+            binding.containerTabHome.performClick()
+        }
+    }
+
+    /**
+     * 检查并切换新闻Fragment
+     */
+    private fun checkAndSelectFragmentNews() {
+        if (currentFragmentTag != newsFragmentTag) {
+            binding.containerTabNews.performClick()
         }
     }
 
