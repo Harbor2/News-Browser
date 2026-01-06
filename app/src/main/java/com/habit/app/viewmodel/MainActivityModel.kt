@@ -44,4 +44,14 @@ class MainActivityModel : ViewModel() {
     fun setSearchUrl(url: String) {
         _searchUrlObserver.tryEmit(url)
     }
+
+    private val _keyWorkSearchObserver = MutableSharedFlow<String>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val keyWorkSearchObserver = _keyWorkSearchObserver.asSharedFlow()
+    fun setKeyWorkSearch(keyWork: String) {
+        _keyWorkSearchObserver.tryEmit(keyWork)
+    }
 }

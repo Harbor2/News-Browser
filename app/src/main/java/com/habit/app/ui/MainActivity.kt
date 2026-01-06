@@ -116,17 +116,6 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    /**
-     * homepage回调
-     */
-    private val homePageCallback = object : HomeFragment.HomeFragmentCallback {
-        override fun onSearch(searchStr: String) {
-            Log.d(TAG, "search input: $searchStr")
-            viewModel.setSearchObserver(true)
-            mController.processWebSearch(searchStr, true)
-        }
-    }
-
     private val menuCallback = object : BrowserMenuDialog.BrowserMenuCallback {
         override fun onPrivateChanged(enter: Boolean) {
             viewModel.setPrivacyObserver(enter)
@@ -310,8 +299,15 @@ class MainActivity : BaseActivity() {
             mController.onPhoneModeChange(value)
         }
         lifecycleScope.launch {
+            viewModel.keyWorkSearchObserver.collect { searchStr ->
+                Log.d(TAG, "search input: $searchStr")
+                viewModel.setSearchObserver(true)
+                mController.processWebSearch(searchStr, true)
+            }
+        }
+        lifecycleScope.launch {
             viewModel.searchUrlObserver.collect { url ->
-                Log.w(TAG, "access 点击url跳转: $url")
+                Log.d(TAG, "access 点击url跳转: $url")
                 if (url.isEmpty()) {
                     return@collect
                 }
@@ -456,7 +452,7 @@ class MainActivity : BaseActivity() {
         if (currentFragment == null) {
             // Fragment 不存在，创建新的实例
             val newFragment = when (tag) {
-                homeFragmentTag -> HomeFragment(homePageCallback)
+                homeFragmentTag -> HomeFragment()
                 newsFragmentTag -> NewsFragment()
                 settingFragmentTag -> SettingFragment()
                 else -> return

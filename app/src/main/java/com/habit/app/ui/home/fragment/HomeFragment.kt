@@ -50,7 +50,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.Subscribe
 
-class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<FragmentHomeBinding>() {
+class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     private val mScope = MainScope()
     private val loadingObserver = MutableLiveData(false)
@@ -88,7 +88,7 @@ class HomeFragment(private val callback: HomeFragmentCallback) : BaseFragment<Fr
         if (result.resultCode == Activity.RESULT_OK) {
             val searchStr = result.data?.getStringExtra("searchStr")
             if (!searchStr.isNullOrEmpty()) {
-                callback.onSearch(searchStr)
+                viewModel.setKeyWorkSearch(searchStr)
             }
         }
     }
