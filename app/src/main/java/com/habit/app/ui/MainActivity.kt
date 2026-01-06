@@ -194,8 +194,8 @@ class MainActivity : BaseActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         val postUrl =  intent.getStringExtra("post_url")
-        Log.d(TAG, "获取准备打开的url：$postUrl")
         if (!postUrl.isNullOrEmpty()) {
+            Log.d(TAG, "App内部跳转url：$postUrl")
             // search
             if (!viewModel.searchObserver.value!!) {
                 viewModel.setSearchObserver(true)
@@ -207,6 +207,27 @@ class MainActivity : BaseActivity() {
             binding.containerWeb.post {
                 mController.openNewSnapAndSearch(postUrl)
             }
+        } else {
+            // 处理外部url
+            handleDeepLink(intent)
+        }
+    }
+
+    /**
+     * 处理App外部跳转url
+     */
+    private fun handleDeepLink(intent: Intent) {
+        intent.data?.let { uri ->
+            Log.d(TAG, "App外部跳转url：$uri")
+            // search
+            if (!viewModel.searchObserver.value!!) {
+                viewModel.setSearchObserver(true)
+            }
+            // home
+            if (currentFragmentTag != homeFragmentTag) {
+                binding.containerTabHome.performClick()
+            }
+            mController.processWebSearch(uri.toString())
         }
     }
 
@@ -223,6 +244,9 @@ class MainActivity : BaseActivity() {
 
         // 获取webSign
         mController.getDBLastSnapAndNewTab()
+
+        // 外部跳转url处理
+        handleDeepLink(intent)
 
         // 下划线
         val checkNetText = getString(R.string.text_check_the_network)
