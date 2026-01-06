@@ -46,7 +46,7 @@ class ThemeSelectDialog(activity: Activity) : BottomSheetDialog(activity) {
     }
 
     private fun initData() {
-        mSelectMode = KeyValueManager.getValueByKey(KeyValueManager.KEY_DARK_MODE)?.toInt() ?: DayNightUtil.NIGHT_MODE_FOLLOW_SYSTEM
+        mSelectMode = KeyValueManager.getValueByKey(KeyValueManager.KEY_DARK_MODE)?.toInt() ?: DayNightUtil.NIGHT_MODE_DAY
         updateThemeSelect()
     }
 
