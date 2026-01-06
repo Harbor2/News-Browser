@@ -31,6 +31,7 @@ import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.BrowseActivity
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.custom.SettingItem
+import com.habit.app.ui.dialog.AddComponentsDialog
 import com.habit.app.ui.dialog.DataDeleteDialog
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.habit.app.ui.dialog.ThemeSelectDialog
@@ -58,7 +59,7 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
     private var searchEngineDialog: SearchEngineDialog? = null
     private var themeSelectDialog: ThemeSelectDialog? = null
     private var dataDeleteDialog: DataDeleteDialog? = null
-
+    private var addComponentsDialog: AddComponentsDialog? = null
     private val defaultBrowserLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result -> }
 
     override fun onCreateViewBinding(
@@ -122,7 +123,7 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
             processThemeSelect()
         }
         binding.itemAddComponents.setOnClickListener {
-
+            processAddComponents()
         }
 
         binding.itemDownload.setOnClickListener {
@@ -216,6 +217,17 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
         }
     }
 
+    private fun processAddComponents() {
+        addComponentsDialog = AddComponentsDialog.tryShowDialog(requireActivity())?.apply {
+            this.mCallback = { isAdd ->
+
+            }
+            setOnDismissListener {
+                addComponentsDialog = null
+            }
+        }
+    }
+
     private fun updateUIConfig() {
         EMManager.from(binding.root)
             .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.page_main_color))
@@ -238,6 +250,7 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
         searchEngineDialog?.updateThemeUI()
         themeSelectDialog?.updateThemeUI()
         dataDeleteDialog?.updateThemeUI()
+        addComponentsDialog?.updateThemeUI()
     }
 
     /**

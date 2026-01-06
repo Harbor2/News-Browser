@@ -203,4 +203,6 @@
     <string name="text_cancel_download_title">Do You Want To Cancel Download This File?</string>
     <string name="text_delete_file_title">Do You Want To Delete This File?</string>
     <string name="text_sure">Sure</string>
+    <string name="text_add_components_desc">Tap And Hold To Place Manually</string>
+    <string name="text_4_1">4*1</string>
 </resources>
