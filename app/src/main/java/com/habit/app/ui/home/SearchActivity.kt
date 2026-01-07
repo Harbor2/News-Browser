@@ -256,7 +256,11 @@ class SearchActivity : BaseActivity() {
         }
     }
     private fun showEngineSelectDialog() {
-        SearchEngineDialog.Companion.tryShowDialog(this)
+        SearchEngineDialog.Companion.tryShowDialog(this)?.apply {
+            this.mCallback = { engine->
+                updateEngineIcon()
+            }
+        }
     }
 
     /**

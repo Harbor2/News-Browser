@@ -264,7 +264,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/top_progress"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toTopOf="@id/container_bottom"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_no_net"

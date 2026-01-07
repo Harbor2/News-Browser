@@ -643,28 +643,6 @@ class MainActivity : BaseActivity() {
         binding.tvSearchNum2.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_50))
         binding.editContentInput.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.editContentInput.setHintTextColor(ThemeManager.getSkinColor(R.color.text_main_color_50))
-
-        mController.mCurWebView?.let {
-//            if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
-//                // Android 13+ 推荐
-//                WebSettingsCompat.setAlgorithmicDarkeningAllowed(it.settings, ThemeManager.isNightTheme())
-//            } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
-//                WebSettingsCompat.setForceDark(
-//                    it.settings,
-//                    if (ThemeManager.isNightTheme())
-//                        WebSettingsCompat.FORCE_DARK_ON
-//                    else
-//                        WebSettingsCompat.FORCE_DARK_OFF
-//                )
-//
-//                WebSettingsCompat.setForceDarkStrategy(
-//                    it.settings,
-//                    WebSettingsCompat.DARK_STRATEGY_PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING
-//                )
-//            }
-//            it.setBackgroundColor(Color.TRANSPARENT)
-        }
-
         // Dialog
         mBrowserMenuDialog?.updateThemeUI()
         mController.updateUIConfig()

@@ -73,9 +73,9 @@ class SearchEngineDialog(activity: Activity) : BottomSheetDialog(activity) {
     private fun initListener() {
         binding.btnConfirm.setOnClickListener {
             if (mSelectEngine.isNotEmpty()) {
-                mCallback?.invoke(mSelectEngine)
                 KeyValueManager.saveValueWithKey(KeyValueManager.KEY_ENGINE_SELECT, mSelectEngine)
                 EventBus.getDefault().post(EngineChangedEvent())
+                mCallback?.invoke(mSelectEngine)
             }
             dismiss()
         }
