@@ -32,16 +32,20 @@ class TagSnapItem(
         position: Int,
         payloads: List<Any?>?
     ) {
+        holder.binding.containerCard.setBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+
         Glide.with(context)
             .load(snapData.getWebIconBitmap(context))
             .error(ThemeManager.getSkinImageResId(R.drawable.iv_web_icon_default))
             .into(holder.binding.ivWebIcon)
 
         holder.binding.tvWebTitle.text = snapData.name.ifEmpty { snapData.url }
+        holder.binding.tvWebTitle.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
+        holder.binding.btnClose.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_web_snap_close))
 
         Glide.with(context)
             .load(snapData.getCoverBitmap(context))
-            .error(ThemeManager.getSkinColor(R.color.view_bg_color))
+            .error(ThemeManager.getSkinImageResId(R.drawable.iv_snap_icon_default))
             .into(holder.binding.ivWebCover)
 
         holder.binding.root.setOnClickListener {

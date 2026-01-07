@@ -54,7 +54,8 @@
     <color name="save_border_color">#4D0051FF</color>
     <color name="save_text_color">#0051FF</color>
     <color name="save_text_color_60">#990051FF</color>
-    <color name="tag_top_bg_color">#F2F4F8</color>
+    <color name="tag_top_bg_color1">#F2F4F8</color>
+    <color name="tag_top_bg_color2">#33FFFFFF</color>
     <color name="create_folder_cancel_color">#F2F4F8</color>
     <color name="indication_color">#AFC8FF</color>
 

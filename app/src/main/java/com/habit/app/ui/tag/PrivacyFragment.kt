@@ -124,6 +124,11 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
         tagsModel.setPrivacyTagCount(items.size)
     }
 
+    override fun onThemeChanged(theme: String) {
+        super.onThemeChanged(theme)
+        mAdapter.updateDataSet(mAdapter.currentItems)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
     }

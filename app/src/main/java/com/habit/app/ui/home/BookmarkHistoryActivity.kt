@@ -167,7 +167,7 @@ class BookmarkHistoryActivity : BaseActivity() {
             .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.page_main_color))
         EMManager.from(binding.containerTopTab)
             .setCorner(22f)
-            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.tag_top_bg_color))
+            .setBackGroundRealColor(ThemeManager.getSkinColor( R.color.tag_top_bg_color1))
         binding.ivNaviBack.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_navi_back))
         binding.ivNaviCreateFolder.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_bh_navi_create_folder))
         binding.ivNaviClearHistory.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_bh_navi_clean_history))

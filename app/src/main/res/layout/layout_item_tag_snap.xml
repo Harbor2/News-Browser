@@ -62,6 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="476dp"
                 app:riCornerRadius="16dp"
+                android:scaleType="centerCrop"
                 android:layout_marginTop="56dp"
                 android:layout_marginBottom="16dp"
                 android:layout_marginHorizontal="16dp"

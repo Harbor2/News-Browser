@@ -76,6 +76,7 @@ class TagsActivity : BaseActivity() {
         binding.tabPublic.setOnClickListener {
             binding.tabPublic.updateSelect(true)
             binding.tabPrivacy.updateSelect(false)
+            updateTopTabBg()
             UtilHelper.changeLightDarkStatus(window, ThemeManager.isNightTheme())
 
             switchFragment(publicFragmentTag)
@@ -84,6 +85,7 @@ class TagsActivity : BaseActivity() {
         binding.tabPrivacy.setOnClickListener {
             binding.tabPrivacy.updateSelect(true)
             binding.tabPublic.updateSelect(false)
+            updateTopTabBg()
             UtilHelper.changeLightDarkStatus(window, true)
 
             switchFragment(privacyFragmentTag)
@@ -204,24 +206,30 @@ class TagsActivity : BaseActivity() {
         if (currentFragmentTag == publicFragmentTag) {
             EMManager.from(binding.root)
                 .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.page_main_color))
-            EMManager.from(binding.containerTopTab)
-                .setCorner(22f)
-                .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.tag_top_bg_color))
+            updateTopTabBg()
             binding.ivPre.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_tag_tab_pre))
             binding.ivAdd.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_tag_tab_add))
             binding.ivClean.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_tag_tab_clean))
             UtilHelper.changeLightDarkStatus(window, ThemeManager.isNightTheme())
+            binding.tabPublic.updateSelect(true)
+            binding.tabPrivacy.updateSelect(false)
         } else {
             EMManager.from(binding.root)
                 .setBackGroundColor(R.color.t_night_page_main_color)
-            EMManager.from(binding.containerTopTab)
-                .setCorner(22f)
-                .setBackGroundColor(R.color.t_night_tag_top_bg_color)
+            updateTopTabBg()
             binding.ivPre.setImageResource(R.drawable.t_night_iv_tag_tab_pre)
             binding.ivAdd.setImageResource(R.drawable.t_night_iv_tag_tab_add)
             binding.ivClean.setImageResource(R.drawable.t_night_iv_tag_tab_clean)
             UtilHelper.changeLightDarkStatus(window, true)
+            binding.tabPublic.updateSelect(false)
+            binding.tabPrivacy.updateSelect(true)
         }
+    }
+
+    private fun updateTopTabBg() {
+        EMManager.from(binding.containerTopTab)
+            .setCorner(22f)
+            .setBackGroundRealColor(ThemeManager.getSkinColor(if (currentFragmentTag == publicFragmentTag) R.color.tag_top_bg_color1 else R.color.tag_top_bg_color2))
     }
 
     override fun onThemeChanged(theme: String) {

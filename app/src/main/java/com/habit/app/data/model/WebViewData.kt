@@ -30,7 +30,7 @@ data class WebViewData(
             coverBitmap = this
             return this
         }
-        return BitmapFactory.decodeResource(context.resources, ThemeManager.getSkinImageResId(R.drawable.iv_pic_test))
+        return BitmapFactory.decodeResource(context.resources, ThemeManager.getSkinImageResId(R.drawable.iv_snap_icon_default))
     }
 
     fun setWebIconBitmap(bitmap: Bitmap?) {

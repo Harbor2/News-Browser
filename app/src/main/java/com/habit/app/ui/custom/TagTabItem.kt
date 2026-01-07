@@ -52,14 +52,14 @@ class TagTabItem @JvmOverloads constructor(
     fun updateSelect(isSelect: Boolean) {
         mSelect = isSelect
         binding.tvCount.isVisible = isSelect && mCount > 0
-        if (!isSelect) {
-            binding.tvTitle.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_70))
+        if (isSelect) {
+            binding.tvTitle.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         } else {
-            binding.tvTitle.setTextColor(EMUtil.getColor(R.color.text_main_color))
+            binding.tvTitle.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_70))
         }
 
         EMManager.from(binding.root)
             .setCorner(16f)
-            .setBackGroundRealColor(if (isSelect) Color.WHITE else Color.TRANSPARENT)
+            .setBackGroundRealColor(if (isSelect) ThemeManager.getSkinColor(R.color.page_main_color) else Color.TRANSPARENT)
     }
 }
