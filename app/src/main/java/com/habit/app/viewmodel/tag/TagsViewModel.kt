@@ -1,4 +1,4 @@
-package com.habit.app.ui.tag
+package com.habit.app.viewmodel.tag
 
 import androidx.lifecycle.ViewModel
 import com.habit.app.data.model.WebViewData
