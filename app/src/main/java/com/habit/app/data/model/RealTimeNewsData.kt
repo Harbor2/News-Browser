@@ -18,7 +18,8 @@ data class RealTimeNewsData(
         const val CATEGORY_SCIENCE = "SCIENCE"
         const val CATEGORY_HEALTH = "HEALTH"
         const val CATEGORY_SPORTS = "SPORTS"
-        const val CATEGORY_TECH = "TECH"
+        const val CATEGORY_TECHNOLOGY = "TECHNOLOGY"
+        const val CATEGORY_BUSINESS = "BUSINESS"
     }
 
     fun isValid(): Boolean {

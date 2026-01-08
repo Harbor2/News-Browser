@@ -77,3 +77,98 @@ const val MAX_COUNT_DOWNLOAD_TASKS = 5
  * 文件下载中名字标识符
  */
 const val DOWNLOADING_NAME_PREFIX = "downloading_"
+
+/**
+ * 新闻分类
+ */
+const val NEWS_CATEGORY_WORLD = "WORLD"
+const val NEWS_CATEGORY_POLITICS = "POLITICS"
+const val NEWS_CATEGORY_SCIENCE = "SCIENCE"
+const val NEWS_CATEGORY_HEALTH = "HEALTH"
+const val NEWS_CATEGORY_SPORTS = "SPORTS"
+const val NEWS_CATEGORY_TECHNOLOGY = "TECHNOLOGY"
+const val NEWS_CATEGORY_BUSINESS = "BUSINESS"
+
+/**
+ * BBC 新闻
+ * 全球：https://feeds.bbci.co.uk/news/world/rss.xml
+ * 政治：https://feeds.bbci.co.uk/news/politics/rss.xml
+ * 科学：https://feeds.bbci.co.uk/news/science_and_environment/rss.xml
+ * 健康：https://feeds.bbci.co.uk/news/health/rss.xml
+ * 体育：https://feeds.bbci.co.uk/sport/rss.xml
+ * 科技：https://feeds.bbci.co.uk/news/technology/rss.xml
+ * 商业：https://feeds.bbci.co.uk/news/business/rss.xml
+ *
+ * FOX 新闻
+ * 全球：
+ * 政治：https://moxie.foxnews.com/google-publisher/politics.xml
+ * 科学：https://moxie.foxnews.com/google-publisher/science.xml
+ * 健康：https://moxie.foxnews.com/google-publisher/health.xml
+ * 体育：https://moxie.foxnews.com/google-publisher/sports.xml
+ * 科技：https://moxie.foxnews.com/google-publisher/tech.xml
+ *
+ * NYTime 新闻 （link为html）
+ * 全球：https://rss.nytimes.com/services/xml/rss/nyt/World.xml
+ * 政治：https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml
+ * 科学：https://rss.nytimes.com/services/xml/rss/nyt/Science.xml
+ * 健康：https://rss.nytimes.com/services/xml/rss/nyt/Health.xml
+ * 体育：https://rss.nytimes.com/services/xml/rss/nyt/Sports.xml
+ * 科技：https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml
+ * 商业：https://rss.nytimes.com/services/xml/rss/nyt/Business.xml
+ *
+ * 卫报：
+ * 全球: https://www.theguardian.com/world/rss
+ * 政治：https://www.theguardian.com/politics/rss
+ * 科学：https://www.theguardian.com/science/rss
+ * 健康：https://www.theguardian.com/society/health/rss
+ * 体育：https://www.theguardian.com/sport/rss
+ * 科技：https://www.theguardian.com/technology/rss
+ * 商业：https://www.theguardian.com/business/rss
+ */
+
+val worldList = arrayListOf(
+    "https://feeds.bbci.co.uk/news/world/rss.xml",
+    "https://moxie.foxnews.com/google-publisher/world.xml",
+    "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+    "https://www.theguardian.com/world/rss",
+)
+
+val politicsList = arrayListOf(
+    "https://feeds.bbci.co.uk/news/politics/rss.xml",
+    "https://moxie.foxnews.com/google-publisher/politics.xml",
+    "https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml",
+    "https://www.theguardian.com/politics/rss",
+)
+
+val scienceList = arrayListOf(
+    "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+    "https://moxie.foxnews.com/google-publisher/science.xml",
+    "https://rss.nytimes.com/services/xml/rss/nyt/Science.xml",
+    "https://www.theguardian.com/science/rss",
+)
+
+val healthList = arrayListOf(
+    "https://feeds.bbci.co.uk/news/health/rss.xml",
+    "https://moxie.foxnews.com/google-publisher/health.xml",
+    "https://rss.nytimes.com/services/xml/rss/nyt/Health.xml",
+    "https://www.theguardian.com/society/health/rss",
+)
+
+val sportsList = arrayListOf(
+    "https://feeds.bbci.co.uk/sport/rss.xml",
+    "https://moxie.foxnews.com/google-publisher/sports.xml",
+    "https://rss.nytimes.com/services/xml/rss/nyt/Sports.xml",
+    "https://www.theguardian.com/sport/rss",
+)
+val techList = arrayListOf(
+    "https://feeds.bbci.co.uk/news/technology/rss.xml",
+    "https://moxie.foxnews.com/google-publisher/tech.xml",
+    "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
+    "https://www.theguardian.com/technology/rss",
+)
+val businessList = arrayListOf(
+    "https://feeds.bbci.co.uk/news/business/rss.xml",
+    "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml",
+    "https://www.theguardian.com/business/rss",
+)
+

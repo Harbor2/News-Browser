@@ -54,13 +54,18 @@ class NewsFragment() : BaseFragment<FragmentNewsBinding>() {
     }
 
     private fun initData() {
-        viewModel.pullFoxNews()
+        loadingObserver.value = true
+        viewModel.pullNews()
     }
 
     private fun setUpObservers() {
         lifecycleScope.launch {
-            viewModel.foxNewsObserver.collect { newsList ->
-                Log.d(TAG, "collect news:共${newsList.size}条， ${newsList}")
+            viewModel.pullNewObserver.collect { newsList ->
+                loadingObserver.value = false
+                if (newsList.isEmpty()) {
+                    return@collect
+                }
+                Log.d(TAG, "collect news:共${newsList.size}条， $newsList")
                 DBManager.getDao().insertNewsToTable(newsList)
             }
         }
