@@ -49,8 +49,6 @@ import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.Subscribe
@@ -58,7 +56,6 @@ import kotlin.getValue
 
 class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
-    private val mScope = MainScope()
     private val loadingObserver = MutableLiveData(false)
     private val viewModel: MainActivityModel by activityViewModels()
     private val pullNewsModel: PullNewsViewModel by viewModels {
@@ -405,7 +402,6 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
     }
 
     override fun onDestroy() {
-        mScope.cancel()
         super.onDestroy()
     }
 
