@@ -3,10 +3,11 @@ package com.habit.app.ui.item
 import android.content.Context
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.habit.app.R
 import com.habit.app.databinding.LayoutItemHomeNewsCardBinding
 import com.habit.app.helper.ThemeManager
-import com.habit.app.data.model.HomeNewsData
+import com.habit.app.data.model.RealTimeNewsData
 import com.wyz.emlibrary.em.EMManager
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
@@ -16,7 +17,7 @@ import kotlin.jvm.javaClass
 
 class HomeNewsCardItem(
     private val context: Context,
-    private val newsData: HomeNewsData
+    private val newsData: RealTimeNewsData
 ) : AbstractFlexibleItem<HomeNewsCardItem.ViewHolder>() {
 
     class ViewHolder(val binding: LayoutItemHomeNewsCardBinding, adapter: FlexibleAdapter<*>) : FlexibleViewHolder(binding.root, adapter)
@@ -31,7 +32,11 @@ class HomeNewsCardItem(
                                 payloads: MutableList<Any>?) {
         EMManager.from(holder.binding.tvTitle)
             .setTextRealColor(ThemeManager.getSkinColor(R.color.text_main_color))
-            .setTextStr(newsData.newsTitle)
+            .setTextStr(newsData.title)
+        Glide.with(context)
+            .load(newsData.thumbUrl)
+            .into(holder.binding.ivIcon)
+        holder.binding.tvGuide.text = newsData.guid
     }
 
     override fun equals(other: Any?): Boolean {

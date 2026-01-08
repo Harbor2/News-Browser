@@ -13,7 +13,7 @@
         android:layout_height="152dp"
         android:src="@drawable/iv_pic_test"
         app:riCornerRadius="16dp"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerInside"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_title"
@@ -26,4 +26,11 @@
         android:textSize="14sp"
         android:text="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxxxx"
         android:fontFamily="@font/gotham_m" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_guide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_marginTop="10dp"/>
 </LinearLayout>

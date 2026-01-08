@@ -896,43 +896,45 @@ class DBDao(private val dbHelper: DBHelper) {
         }
     }
 
-    /**
-     * 分页查询新闻
-     */
-    fun getNewsFromTable(category: String, pageIndex: Int = 1, pageSize: Int = 10): ArrayList<RealTimeNewsData> {
-        val db: SQLiteDatabase = dbHelper.writableDatabase
+    fun getNewsFromTable(
+        category: String,
+        pageIndex: Int = 1,
+        pageSize: Int = 10
+    ): Pair<ArrayList<RealTimeNewsData>, Boolean> {
+        val db = dbHelper.readableDatabase
         val offset = (pageIndex - 1) * pageSize
+        val limit = pageSize + 1
         val sql = """
-        SELECT * 
-        FROM ${DBConstant.TABLE_NEWS} 
-        WHERE ${DBConstant.NEWS_CATEGORY} = ? 
+        SELECT *
+        FROM ${DBConstant.TABLE_NEWS}
+        WHERE ${DBConstant.NEWS_CATEGORY} = ?
         ORDER BY ${DBConstant.NEWS_PUB_DATE} DESC
         LIMIT ? OFFSET ?
     """.trimIndent()
 
-        val dataList: ArrayList<RealTimeNewsData> = arrayListOf()
-        try {
-            val dataList = arrayListOf<RealTimeNewsData>()
-            try {
-                db.rawQuery(sql, arrayOf(category, pageSize.toString(), offset.toString())).use { cursor ->
-                    while (cursor.moveToNext()) {
-                        val newData = RealTimeNewsData(
-                            guid = cursor.getStringOrNull(cursor.getColumnIndex(DBConstant.NEWS_GUID)) ?: "",
-                            title = cursor.getStringOrNull(cursor.getColumnIndex(DBConstant.NEWS_TITLE)) ?: "",
-                            newsUrl = cursor.getStringOrNull(cursor.getColumnIndex(DBConstant.NEWS_URL)) ?: "",
-                            pubTime = cursor.getLongOrNull(cursor.getColumnIndex(DBConstant.NEWS_PUB_DATE)) ?: -1,
-                            thumbUrl = cursor.getStringOrNull(cursor.getColumnIndex(DBConstant.NEWS_THUMB_URL)) ?: ""
-                        )
-                        dataList.add(newData)
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "读取新闻表异常：${e.message}")
+        val list = ArrayList<RealTimeNewsData>()
+        db.rawQuery(
+            sql,
+            arrayOf(category, limit.toString(), offset.toString())
+        ).use { cursor ->
+            while (cursor.moveToNext()) {
+                list.add(
+                    RealTimeNewsData(
+                        guid = cursor.getStringOrNull(cursor.getColumnIndex(DBConstant.NEWS_GUID)) ?: "",
+                        title = cursor.getStringOrNull(cursor.getColumnIndex(DBConstant.NEWS_TITLE)) ?: "",
+                        newsUrl = cursor.getStringOrNull(cursor.getColumnIndex(DBConstant.NEWS_URL)) ?: "",
+                        pubTime = cursor.getLongOrNull(cursor.getColumnIndex(DBConstant.NEWS_PUB_DATE)) ?: -1,
+                        thumbUrl = cursor.getStringOrNull(cursor.getColumnIndex(DBConstant.NEWS_THUMB_URL)) ?: ""
+                    )
+                )
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "读取新闻表异常：${e.message}")
-            return dataList
         }
-        return dataList
+
+        val hasMore = list.size > pageSize
+        if (hasMore) {
+            list.removeLastOrNull()
+        }
+
+        return Pair(list, hasMore)
     }
 }

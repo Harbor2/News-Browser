@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,15 +17,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.reflect.TypeToken
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.R
+import com.habit.app.data.NEWS_CATEGORY_WORLD
 import com.habit.app.databinding.FragmentHomeBinding
 import com.habit.app.event.EngineChangedEvent
 import com.habit.app.helper.GsonUtil
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.data.TAG
+import com.habit.app.data.db.DBManager
 import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.data.model.AccessSingleData
-import com.habit.app.data.model.HomeNewsData
+import com.habit.app.data.model.RealTimeNewsData
+import com.habit.app.data.repority.PullNewsRepository
 import com.habit.app.event.HomeAccessUpdateEvent
 import com.habit.app.ui.home.AccessSelectActivity
 import com.habit.app.ui.home.SearchActivity
@@ -37,34 +41,39 @@ import com.habit.app.ui.item.HomeNewsCardItem
 import com.habit.app.ui.item.HomeNewsHeadItem
 import com.habit.app.ui.item.HomeSearchItem
 import com.habit.app.viewmodel.MainActivityModel
+import com.habit.app.viewmodel.news.PullNewsModelFactory
+import com.habit.app.viewmodel.news.PullNewsViewModel
 import com.wyz.emlibrary.em.Direction
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.Subscribe
+import kotlin.getValue
 
 class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     private val mScope = MainScope()
     private val loadingObserver = MutableLiveData(false)
     private val viewModel: MainActivityModel by activityViewModels()
+    private val pullNewsModel: PullNewsViewModel by viewModels {
+        PullNewsModelFactory(PullNewsRepository())
+    }
     private val mAdapter = FlexibleAdapter<AbstractFlexibleItem<*>>(null)
 
     private var accessList = ArrayList<AccessSingleData>()
-    private var newsList = ArrayList<HomeNewsData>()
+    private var newsList = ArrayList<RealTimeNewsData>()
 
     /**
      * 新闻列表是否正在加载中
      */
     private var isListLoading = false
     private var curPage = 1
+    private var hasMore = false
 
     /**
      * 相机权限
@@ -184,7 +193,11 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     private fun initData() {
         accessList = getAccessList()
-        newsList = getNewsList()
+        loadingObserver.value = true
+        isListLoading = true
+        // 拉取最新闻
+        pullNewsModel.pullNews(NEWS_CATEGORY_WORLD)
+        newsList = getNewsList(curPage)
         updateList()
     }
 
@@ -213,6 +226,24 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
                 binding.btnNaviTrace.setImageResource(
                     ThemeManager.getSkinImageResId(if (value) R.drawable.iv_search_trace else R.drawable.iv_search_untrace)
                 )
+            }
+        }
+        lifecycleScope.launch {
+            pullNewsModel.pullNewObserver.collect { list ->
+                Log.d(TAG, "首页新闻列表返回：$list")
+                if (list.isEmpty()) {
+                    return@collect
+                }
+                // 数据库更新
+                DBManager.getDao().insertNewsToTable(list)
+                // page重置
+                curPage = 1
+                loadingObserver.value = false
+                isListLoading = false
+                binding.swipeRefresh.isRefreshing = false
+                // 拉取新闻
+                newsList = getNewsList(curPage)
+                updateList()
             }
         }
     }
@@ -274,48 +305,35 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
         }
     }
 
-    private fun getNewsList(): ArrayList<HomeNewsData> {
-        return arrayListOf(
-            HomeNewsData(newsTitle = "第1项数据"),
-            HomeNewsData(newsTitle = "第2项数据"),
-            HomeNewsData(newsTitle = "第3项数据"),
-            HomeNewsData(newsTitle = "第4项数据"),
-            HomeNewsData(newsTitle = "第5项数据"),
-            HomeNewsData(newsTitle = "第6项数据"),
-            HomeNewsData(newsTitle = "第7项数据"),
-            HomeNewsData(newsTitle = "第8项数据"),
-            HomeNewsData(newsTitle = "第9项数据"),
-            HomeNewsData(newsTitle = "第10项数据")
-        )
+    /**
+     * 数据库拉取新闻
+     */
+    private fun getNewsList(page: Int): ArrayList<RealTimeNewsData> {
+        val result = DBManager.getDao().getNewsFromTable(NEWS_CATEGORY_WORLD, page, 10)
+        hasMore = result.second
+        return result.first
     }
 
     private fun refreshData() {
         curPage = 1
         isListLoading = true
-        mScope.launch(Dispatchers.IO) {
-            delay(2000)
-            newsList = getNewsList()
-            withContext(Dispatchers.Main) {
-                isListLoading = false
-                binding.swipeRefresh.isRefreshing = false
-                updateList()
-            }
-        }
+        pullNewsModel.pullNews(NEWS_CATEGORY_WORLD)
     }
 
     private fun loadMoreData() {
-        curPage++
-        isListLoading = true
-        loadingObserver.value = true
-        mScope.launch(Dispatchers.IO) {
-            delay(1500)
-            val moreList = getNewsList()
-            newsList.addAll(moreList)
-            withContext(Dispatchers.Main) {
-                loadingObserver.value = false
-                isListLoading = false
-                updateList()
-            }
+        if (!hasMore) {
+            UtilHelper.showToast(requireContext(), getString(R.string.toast_no_more_news))
+            return
+        }
+        lifecycleScope.launch {
+            curPage++
+            isListLoading = true
+            loadingObserver.value = true
+            newsList.addAll(getNewsList(curPage))
+            delay(800)
+            isListLoading = false
+            loadingObserver.value = false
+            updateList()
         }
     }
 
