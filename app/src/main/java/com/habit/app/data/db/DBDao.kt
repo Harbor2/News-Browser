@@ -3,6 +3,7 @@ package com.habit.app.data.db
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
 import com.habit.app.data.DOWNLOADING_NAME_PREFIX
 import com.habit.app.data.model.BookmarkData
@@ -10,6 +11,7 @@ import com.habit.app.data.model.FolderData
 import com.habit.app.data.model.HistoryData
 import com.habit.app.data.TAG
 import com.habit.app.data.model.DownloadTaskData
+import com.habit.app.data.model.RealTimeNewsData
 import com.habit.app.data.model.WebViewData
 
 /**
@@ -853,5 +855,84 @@ class DBDao(private val dbHelper: DBHelper) {
         } catch (e: Exception) {
             Log.d(TAG, "删除download失败")
         }
+    }
+
+    /*
+     * ************************  news 相关 *******************************
+     */
+
+    /**
+     * 插入新闻
+     * 线程安全
+     */
+    fun insertNewsToTable(newsList: ArrayList<RealTimeNewsData>) {
+        synchronized(dbHelper) {
+            val db: SQLiteDatabase = dbHelper.writableDatabase
+            try {
+                db.beginTransaction() // 开启事务
+                newsList.forEach { data ->
+                    val value = ContentValues().apply {
+                        put(DBConstant.NEWS_CATEGORY, data.category)
+                        put(DBConstant.NEWS_GUID, data.guid)
+                        put(DBConstant.NEWS_TITLE, data.title)
+                        put(DBConstant.NEWS_URL, data.newsUrl)
+                        put(DBConstant.NEWS_PUB_DATE, data.pubTime)
+                        put(DBConstant.NEWS_THUMB_URL, data.thumbUrl)
+                    }
+                    db.insertWithOnConflict(
+                        DBConstant.TABLE_NEWS,
+                        null,
+                        value,
+                        SQLiteDatabase.CONFLICT_IGNORE
+                    )
+                }
+                db.setTransactionSuccessful()
+                Log.d(TAG, "插入 ${newsList.size} 条 news 成功")
+            } catch (e: Exception) {
+                Log.e(TAG, "插入 news 异常：${e.message}")
+            } finally {
+                db.endTransaction()
+            }
+        }
+    }
+
+    /**
+     * 分页查询新闻
+     */
+    fun getNewsFromTable(category: String, pageIndex: Int = 1, pageSize: Int = 10): ArrayList<RealTimeNewsData> {
+        val db: SQLiteDatabase = dbHelper.writableDatabase
+        val offset = (pageIndex - 1) * pageSize
+        val sql = """
+        SELECT * 
+        FROM ${DBConstant.TABLE_NEWS} 
+        WHERE ${DBConstant.NEWS_CATEGORY} = ? 
+        ORDER BY ${DBConstant.NEWS_PUB_DATE} DESC
+        LIMIT ? OFFSET ?
+    """.trimIndent()
+
+        val dataList: ArrayList<RealTimeNewsData> = arrayListOf()
+        try {
+            val dataList = arrayListOf<RealTimeNewsData>()
+            try {
+                db.rawQuery(sql, arrayOf(category, pageSize.toString(), offset.toString())).use { cursor ->
+                    while (cursor.moveToNext()) {
+                        val newData = RealTimeNewsData(
+                            guid = cursor.getStringOrNull(cursor.getColumnIndex(DBConstant.NEWS_GUID)) ?: "",
+                            title = cursor.getStringOrNull(cursor.getColumnIndex(DBConstant.NEWS_TITLE)) ?: "",
+                            newsUrl = cursor.getStringOrNull(cursor.getColumnIndex(DBConstant.NEWS_URL)) ?: "",
+                            pubTime = cursor.getLongOrNull(cursor.getColumnIndex(DBConstant.NEWS_PUB_DATE)) ?: -1,
+                            thumbUrl = cursor.getStringOrNull(cursor.getColumnIndex(DBConstant.NEWS_THUMB_URL)) ?: ""
+                        )
+                        dataList.add(newData)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "读取新闻表异常：${e.message}")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "读取新闻表异常：${e.message}")
+            return dataList
+        }
+        return dataList
     }
 }

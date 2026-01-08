@@ -88,4 +88,19 @@ object DBConstant {
     const val DOWNLOAD_STAMP = "download_stamp"
     const val CREATE_DOWNLOAD_TABLE=
         "CREATE TABLE $TABLE_DOWNLOAD ($DOWNLOAD_ID INTEGER PRIMARY KEY, $DOWNLOAD_URL TEXT, $DOWNLOAD_FILE_NAME TEXT, $DOWNLOAD_FILE_SIZE INTEGER, $DOWNLOAD_STAMP INTEGER)"
+
+
+    /**
+     * 新闻数据库
+     */
+    const val TABLE_NEWS = "table_news"
+    const val NEWS_ID = "news_id"
+    const val NEWS_GUID = "news_guid"
+    const val NEWS_CATEGORY = "news_category"
+    const val NEWS_TITLE = "news_title"
+    const val NEWS_URL = "news_url"
+    const val NEWS_PUB_DATE = "news_pub_date"
+    const val NEWS_THUMB_URL = "news_thumb_url"
+    const val CREATE_NEWS_TABLE =
+        "CREATE TABLE $TABLE_NEWS ($NEWS_ID INTEGER PRIMARY KEY, $NEWS_GUID TEXT UNIQUE, $NEWS_CATEGORY TEXT, $NEWS_TITLE TEXT, $NEWS_URL TEXT, $NEWS_PUB_DATE INTEGER, $NEWS_THUMB_URL TEXT)"
 }

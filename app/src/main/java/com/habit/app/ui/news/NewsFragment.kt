@@ -5,19 +5,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import com.habit.app.data.TAG
+import com.habit.app.data.db.DBManager
 import com.habit.app.data.repority.PullNewsRepository
-import com.habit.app.data.repority.ThinkWordRepository
 import com.habit.app.databinding.FragmentNewsBinding
 import com.habit.app.ui.base.BaseFragment
-import com.habit.app.viewmodel.home.SearchActivityModel
-import com.habit.app.viewmodel.home.SearchActivityModelFactory
 import com.habit.app.viewmodel.news.PullNewsModelFactory
 import com.habit.app.viewmodel.news.PullNewsViewModel
-import com.wyz.emlibrary.TAG
 import com.wyz.emlibrary.util.EMUtil
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -62,8 +59,9 @@ class NewsFragment() : BaseFragment<FragmentNewsBinding>() {
 
     private fun setUpObservers() {
         lifecycleScope.launch {
-            viewModel.foxNewsObserver.collect { str ->
-                Log.w(TAG, "collect news:${str}")
+            viewModel.foxNewsObserver.collect { newsList ->
+                Log.d(TAG, "collect news:共${newsList.size}条， ${newsList}")
+                DBManager.getDao().insertNewsToTable(newsList)
             }
         }
     }

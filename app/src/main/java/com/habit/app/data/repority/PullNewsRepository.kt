@@ -47,7 +47,7 @@ class PullNewsRepository {
      * 科技：https://www.theguardian.com/technology/rss
      * 商业：https://www.theguardian.com/business/rss
      */
-    suspend fun getNews(): ResultState<String> {
+    suspend fun getNews(): ResultState<ArrayList<RealTimeNewsData>> {
         try {
             val api = RetrofitClient.instance.create(ApiService::class.java)
             val response = api.getNews()
@@ -81,7 +81,12 @@ class PullNewsRepository {
                                 }
                                 "pubDate" -> {
                                     curNews?.let {
-                                        it.pubTime = parser.nextText()
+                                        curNews.transFormatPubTime(parser.nextText())
+                                    }
+                                }
+                                "guid" -> {
+                                    curNews?.let {
+                                        it.guid = parser.nextText()
                                     }
                                 }
                                 "thumbnail", "content" -> {
@@ -105,14 +110,13 @@ class PullNewsRepository {
                     eventType = parser.next()
                 }
                 inputStream.close()
-                Log.e(TAG, "解析完成的items：${newsItems}")
-                return ResultState.Error()
+                return ResultState.Success(newsItems)
             } else {
-                Log.e(TAG, "用户信息查询失败，${response.message()}")
+                Log.e(TAG, "拉取新闻失败：${response.message()}")
                 return ResultState.Error()
             }
         } catch (e: Exception) {
-            Log.e(TAG, "用户信息查询异常，${e.message}")
+            Log.e(TAG, "拉取新闻异常，${e.message}")
             return ResultState.Error()
         }
     }

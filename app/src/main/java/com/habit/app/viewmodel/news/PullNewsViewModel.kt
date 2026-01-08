@@ -1,25 +1,33 @@
 package com.habit.app.viewmodel.news
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.habit.app.data.ResultState
+import com.habit.app.data.model.RealTimeNewsData
 import com.habit.app.data.repority.PullNewsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PullNewsViewModel(
     private val repository: PullNewsRepository
 ): ViewModel() {
 
-    private val _foxNewsObserver = MutableSharedFlow<ResultState<String>>(replay = 0)
+    private val _foxNewsObserver = MutableSharedFlow<ArrayList<RealTimeNewsData>>(replay = 0)
     val foxNewsObserver = _foxNewsObserver.asSharedFlow()
     fun pullFoxNews() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = repository.getNews()
-            _foxNewsObserver.emit(result)
+            if (result is ResultState.Success) {
+                withContext(Dispatchers.Main) {
+                    _foxNewsObserver.emit(result.data)
+                }
+            }
         }
     }
 }

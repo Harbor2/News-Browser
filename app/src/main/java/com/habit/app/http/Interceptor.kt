@@ -17,13 +17,14 @@ class LoggingInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         Log.w(TAG, "➡️ Sending request: url:${request.url}")
-        Log.w(TAG, "    request header: ${request.headers}")
+//        Log.w(TAG, "    request header: ${request.headers}")
         // 打印请求体参数
-        printRequestParameters(request)
+//        printRequestParameters(request)
         val response = chain.proceed(request)
         val responseBody = response.body
         val responseBodyStr = response.body?.string() ?: ""
-        Log.w(TAG, "⬅️ Received response: url：${request.url}, body:$responseBodyStr")
+//        Log.w(TAG, "⬅️ Received response: url：${request.url}, body:$responseBodyStr")
+        Log.w(TAG, "⬅️ Received response: url：${request.url}")
         return response.newBuilder().body(responseBodyStr.toResponseBody(responseBody?.contentType())).build()
     }
 
