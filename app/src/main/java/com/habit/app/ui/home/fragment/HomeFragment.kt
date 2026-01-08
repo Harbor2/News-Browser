@@ -40,6 +40,7 @@ import com.habit.app.ui.item.HomeAccessItem
 import com.habit.app.ui.item.HomeNewsCardItem
 import com.habit.app.ui.item.HomeNewsHeadItem
 import com.habit.app.ui.item.HomeSearchItem
+import com.habit.app.ui.item.PlaceHolderItem
 import com.habit.app.viewmodel.MainActivityModel
 import com.habit.app.viewmodel.news.PullNewsModelFactory
 import com.habit.app.viewmodel.news.PullNewsViewModel
@@ -74,6 +75,13 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
     private var isListLoading = false
     private var curPage = 1
     private var hasMore = false
+
+    /**
+     * 新闻item点击回调
+     */
+    private val newsItemCallback: (String) -> Unit = { newsUrl ->
+        viewModel.setSearchUrl(newsUrl)
+    }
 
     /**
      * 相机权限
@@ -186,9 +194,7 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
                     ThemeManager.getSkinColor(R.color.home_top_bg_end)
                 ), Direction.TOP
             )
-        mAdapter.currentItems.forEach { item ->
-            mAdapter.updateItem(item, "update")
-        }
+        mAdapter.updateDataSet(mAdapter.currentItems)
     }
 
     private fun initData() {
@@ -278,8 +284,9 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
         items.add(getHomeAccessItem())
 
         items.add(HomeNewsHeadItem())
+        items.add(PlaceHolderItem(12f))
         newsList.forEach { newsData ->
-            items.add(HomeNewsCardItem(requireContext(), newsData))
+            items.add(HomeNewsCardItem(requireContext(), newsData, newsItemCallback))
         }
 
         mAdapter.updateDataSet(items)

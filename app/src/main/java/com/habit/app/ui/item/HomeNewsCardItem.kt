@@ -9,6 +9,7 @@ import com.habit.app.databinding.LayoutItemHomeNewsCardBinding
 import com.habit.app.helper.ThemeManager
 import com.habit.app.data.model.RealTimeNewsData
 import com.wyz.emlibrary.em.EMManager
+import com.wyz.emlibrary.util.EMUtil
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
@@ -17,7 +18,8 @@ import kotlin.jvm.javaClass
 
 class HomeNewsCardItem(
     private val context: Context,
-    private val newsData: RealTimeNewsData
+    private val newsData: RealTimeNewsData,
+    private val newsItemCallback: (String) -> Unit
 ) : AbstractFlexibleItem<HomeNewsCardItem.ViewHolder>() {
 
     class ViewHolder(val binding: LayoutItemHomeNewsCardBinding, adapter: FlexibleAdapter<*>) : FlexibleViewHolder(binding.root, adapter)
@@ -33,10 +35,17 @@ class HomeNewsCardItem(
         EMManager.from(holder.binding.tvTitle)
             .setTextRealColor(ThemeManager.getSkinColor(R.color.text_main_color))
             .setTextStr(newsData.title)
+        EMManager.from(holder.binding.tvTime)
+            .setTextRealColor(ThemeManager.getSkinColor(R.color.text_main_color_80))
+            .setTextStr(EMUtil.formatDateFromTimestamp("dd-MM-yyyy HH:mm", newsData.pubTime))
         Glide.with(context)
             .load(newsData.thumbUrl)
+            .error(ThemeManager.getSkinImageResId(R.drawable.iv_news_default_cover))
             .into(holder.binding.ivIcon)
-        holder.binding.tvGuide.text = newsData.guid
+        holder.binding.lineView.setBackgroundColor(ThemeManager.getSkinColor(R.color.text_main_color_10))
+        holder.binding.root.setOnClickListener {
+            newsItemCallback.invoke(newsData.newsUrl)
+        }
     }
 
     override fun equals(other: Any?): Boolean {
