@@ -643,6 +643,7 @@ class MainActivity : BaseActivity() {
         binding.tvSearchNum2.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_50))
         binding.editContentInput.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.editContentInput.setHintTextColor(ThemeManager.getSkinColor(R.color.text_main_color_50))
+        binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
         // Dialog
         mBrowserMenuDialog?.updateThemeUI()
         mController.updateUIConfig()

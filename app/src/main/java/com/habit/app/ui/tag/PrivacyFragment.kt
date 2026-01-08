@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import com.habit.app.R
 import com.habit.app.data.db.DBManager
 import com.habit.app.databinding.FragmentPrivacyBinding
+import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.WebViewManager
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.item.OverFlyingLayoutManager
@@ -128,6 +130,7 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
     override fun onThemeChanged(theme: String) {
         super.onThemeChanged(theme)
         mAdapter.updateDataSet(mAdapter.currentItems)
+        binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
     }
 
     override fun onDestroy() {

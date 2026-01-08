@@ -577,6 +577,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         mAdapter.currentItems.forEach { item ->
             mAdapter.updateItem(item, "update")
         }
+        binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
     }
 
     override fun onThemeChanged(theme: String) {

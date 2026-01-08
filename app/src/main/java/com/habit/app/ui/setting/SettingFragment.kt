@@ -255,6 +255,7 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
         searchEngineDialog?.updateThemeUI()
         themeSelectDialog?.updateThemeUI()
         dataDeleteDialog?.updateThemeUI()
+        binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
     }
 
     /**

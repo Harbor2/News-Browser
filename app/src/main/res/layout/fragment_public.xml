@@ -24,6 +24,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_view"
             android:layout_width="126dp"
             android:layout_height="126dp"
             app:cardBackgroundColor="@color/view_bg_color"

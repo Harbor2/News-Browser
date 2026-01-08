@@ -255,6 +255,7 @@ class HistoryFragment() : BaseFragment<FragmentBHistoryBinding>() {
         mDeleteDialog?.updateThemeUI()
         naviAddEditDialog?.updateThemeUI()
         mAdapter.updateDataSet(mAdapter.currentItems)
+        binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
     }
 
     override fun onThemeChanged(theme: String) {

@@ -176,7 +176,7 @@ class BookmarkHistoryActivity : BaseActivity() {
         binding.ivNaviClose.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_navi_close))
         binding.ivNaviAll.setImageResource(
             ThemeManager.getSkinImageResId(if (bhActivityModel.bookmarkSelectAllObserver.value!!) R.drawable.iv_checkbox_select else R.drawable.iv_checkbox_unselect))
-
+        binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
     }
 
     override fun onThemeChanged(theme: String) {

@@ -194,6 +194,7 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
                     ThemeManager.getSkinColor(R.color.home_top_bg_end)
                 ), Direction.TOP
             )
+        binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
         mAdapter.updateDataSet(mAdapter.currentItems)
     }
 

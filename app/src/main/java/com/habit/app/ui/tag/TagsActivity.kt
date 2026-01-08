@@ -225,6 +225,7 @@ class TagsActivity : BaseActivity() {
             binding.tabPublic.updateSelect(false)
             binding.tabPrivacy.updateSelect(true)
         }
+        binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
     }
 
     private fun updateTopTabBg() {

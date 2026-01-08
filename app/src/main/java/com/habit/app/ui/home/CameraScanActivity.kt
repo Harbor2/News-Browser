@@ -203,6 +203,7 @@ class CameraScanActivity : BaseActivity() {
 
     override fun onThemeChanged(theme: String) {
         resultDialog?.updateThemeUI()
+        binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
     }
 
     override fun onDestroy() {

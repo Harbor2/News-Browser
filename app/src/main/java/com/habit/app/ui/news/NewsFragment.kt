@@ -8,10 +8,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import com.habit.app.R
 import com.habit.app.data.TAG
 import com.habit.app.data.db.DBManager
 import com.habit.app.data.repority.PullNewsRepository
 import com.habit.app.databinding.FragmentNewsBinding
+import com.habit.app.helper.ThemeManager
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.viewmodel.news.PullNewsModelFactory
 import com.habit.app.viewmodel.news.PullNewsViewModel
@@ -73,6 +75,11 @@ class NewsFragment() : BaseFragment<FragmentNewsBinding>() {
 
     private fun initListener() {
         binding.loadingView.setOnClickListener {}
+    }
+
+    override fun onThemeChanged(theme: String) {
+        super.onThemeChanged(theme)
+        binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
     }
 
     override fun onDestroy() {
