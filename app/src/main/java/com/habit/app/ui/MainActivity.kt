@@ -282,10 +282,6 @@ class MainActivity : BaseActivity() {
             binding.containerNoNet.isVisible = value
         }
 
-        viewModel.loadObserver.observe(this) { value ->
-            binding.loadingView.isVisible = value
-        }
-
         viewModel.searchObserver.observe(this) { value ->
             binding.pageSearch.isVisible = value
             KeyValueManager.saveBooleanValue(KeyValueManager.KEY_REOPEN_LAST_TAB, value)
@@ -670,11 +666,14 @@ class MainActivity : BaseActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             mController.mCurWebView?.let {
-                if (it.canGoBack()) {
-                    it.goBack()
-                    return true
-                }
+                binding.btnBottomBack.performClick()
             }
+        }
+        if (viewModel.searchObserver.value!!) {
+            mController.updateCurWebSnap() {
+                viewModel.setSearchObserver(false)
+            }
+            return true
         }
         return super.onKeyDown(keyCode, event)
     }

@@ -324,6 +324,19 @@ class MainController(
      */
 
     /**
+     * 更新当前snap
+     */
+    fun updateCurWebSnap(callback: () -> Unit) {
+        createWebViewSnapshot { webViewData ->
+            if (webViewData != null) {
+                // 更新封面
+                DBManager.getDao().updateWebSnapItem(webViewData)
+                callback.invoke()
+            }
+        }
+    }
+
+    /**
      * 打开新的标签页并搜素
      */
     fun openNewSnapAndSearch(postUrl: String) {

@@ -9,12 +9,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 class MainActivityModel : ViewModel() {
-    private val _loadObserver = MutableLiveData(false)
-    val loadObserver: LiveData<Boolean> = _loadObserver
-    fun setLoadObserver(load: Boolean) {
-        _loadObserver.value = load
-    }
-
     val noNetObserver = MutableLiveData(false)
 
     private val _searchObserver = MutableLiveData(false)
