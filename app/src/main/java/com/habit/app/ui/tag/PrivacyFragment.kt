@@ -19,6 +19,7 @@ import com.habit.app.viewmodel.tag.TagsViewModel
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.getValue
@@ -59,6 +60,7 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
     }
 
     private fun initView() {
+        updateUIConfig()
         with(binding.recList) {
             itemAnimator = null
             adapter = mAdapter
@@ -94,11 +96,13 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
      * 删除所有的snap
      */
     fun deleteSnapDataAndCheckEmpty() {
+        if (mAdapter.isEmpty) return
         loadingObserver.value = true
         lifecycleScope.launch(Dispatchers.IO) {
             val destroySignData = mAdapter.currentItems.filterIsInstance<TagSnapItem>().map { it.snapData }
             DBManager.getDao().deleteWebSnapsFromTable(destroySignData)
             withContext(Dispatchers.Main) {
+                delay(800)
                 WebViewManager.releaseWebView(destroySignData.map { it.sign })
                 mAdapter.clear()
                 loadingObserver.value = false
@@ -127,10 +131,16 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
         tagsModel.setPrivacyTagCount(items.size)
     }
 
+    private fun updateUIConfig() {
+        binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+        if (!mAdapter.isEmpty) {
+            mAdapter.updateDataSet(mAdapter.currentItems)
+        }
+    }
+
     override fun onThemeChanged(theme: String) {
         super.onThemeChanged(theme)
-        mAdapter.updateDataSet(mAdapter.currentItems)
-        binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+        updateUIConfig()
     }
 
     override fun onDestroy() {

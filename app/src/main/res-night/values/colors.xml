@@ -5,6 +5,7 @@
     <color name="t_night_text_main_color">#FFFFFF</color>
     <color name="t_night_text_main_color_10">#1AFFFFFF</color>
     <color name="t_night_text_main_color_30">#4DFFFFFF</color>
+    <color name="t_night_text_main_color_40">#66FFFFFF</color>
     <color name="t_night_text_main_color_50">#80FFFFFF</color>
     <color name="t_night_text_main_color_60">#99FFFFFF</color>
     <color name="t_night_text_main_color_70">#B3FFFFFF</color>

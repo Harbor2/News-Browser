@@ -388,7 +388,6 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     override fun onThemeChanged(theme: String) {
         super.onThemeChanged(theme)
-        Log.d(TAG, "fragment中 onThemeChanged")
         updateUIConfig()
     }
 

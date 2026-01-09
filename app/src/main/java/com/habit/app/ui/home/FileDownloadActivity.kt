@@ -560,6 +560,7 @@ class FileDownloadActivity : BaseActivity() {
             mAdapter.updateItem(item)
         }
         binding.cardLoading.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+        binding.tvEmpty.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_40))
         mDownloadFailedDialog?.updateThemeUI()
         mRenameDialog?.updateThemeUI()
         mCancelDownloadDialog?.updateThemeUI()

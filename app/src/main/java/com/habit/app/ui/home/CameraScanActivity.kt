@@ -96,6 +96,7 @@ class CameraScanActivity : BaseActivity() {
     }
 
     private fun initView() {
+        updateUIConfig()
         flashObserve.observe(this) { value ->
             binding.ivFlash.setImageResource(if (value) R.drawable.iv_scan_flash_on else R.drawable.iv_scan_flash_off)
             Log.d(TAG, "闪光灯开关：$value")
@@ -201,9 +202,13 @@ class CameraScanActivity : BaseActivity() {
         flashObserve.value = false
     }
 
-    override fun onThemeChanged(theme: String) {
-        resultDialog?.updateThemeUI()
+    private fun updateUIConfig() {
         binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+        resultDialog?.updateThemeUI()
+    }
+
+    override fun onThemeChanged(theme: String) {
+        updateUIConfig()
     }
 
     override fun onDestroy() {
