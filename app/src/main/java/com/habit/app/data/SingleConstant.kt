@@ -81,13 +81,13 @@ const val DOWNLOADING_NAME_PREFIX = "downloading_"
 /**
  * 新闻分类
  */
-const val NEWS_CATEGORY_WORLD = "WORLD"
-const val NEWS_CATEGORY_POLITICS = "POLITICS"
-const val NEWS_CATEGORY_SCIENCE = "SCIENCE"
-const val NEWS_CATEGORY_HEALTH = "HEALTH"
-const val NEWS_CATEGORY_SPORTS = "SPORTS"
-const val NEWS_CATEGORY_TECHNOLOGY = "TECHNOLOGY"
-const val NEWS_CATEGORY_BUSINESS = "BUSINESS"
+const val NEWS_CATEGORY_WORLD = "World"
+const val NEWS_CATEGORY_POLITICS = "Politics"
+const val NEWS_CATEGORY_SCIENCE = "Science"
+const val NEWS_CATEGORY_HEALTH = "Health"
+const val NEWS_CATEGORY_SPORTS = "Sports"
+const val NEWS_CATEGORY_TECHNOLOGY = "Technology"
+const val NEWS_CATEGORY_BUSINESS = "Business"
 
 /**
  * BBC 新闻

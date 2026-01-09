@@ -7,7 +7,6 @@ import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import androidx.core.content.withStyledAttributes
 import com.habit.app.R
 import com.habit.app.databinding.LayoutSearchThinkWordItemBinding
 import com.habit.app.helper.ThemeManager
@@ -24,9 +23,7 @@ class SearchThinkWordItem @JvmOverloads constructor(
     private var mWord: String = ""
     init {
         binding = LayoutSearchThinkWordItemBinding.inflate(LayoutInflater.from(context), this, true)
-        context.withStyledAttributes(attrs, R.styleable.SearchThinkWordItem) {
-            updateThemeUI()
-        }
+        updateThemeUI()
     }
 
     fun updateKeyWord(key: String, word: String) {

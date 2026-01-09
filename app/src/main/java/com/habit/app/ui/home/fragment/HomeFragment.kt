@@ -208,7 +208,9 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
     private fun initListener() {
         binding.loadingView.setOnClickListener {}
         binding.swipeRefresh.setOnRefreshListener {
-            refreshData()
+            if (!isListLoading) {
+                refreshData()
+            }
         }
         binding.recList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

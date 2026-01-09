@@ -34,5 +34,9 @@
         <attr name="ddiSelect" format="boolean"/>
     </declare-styleable>
 
-    <declare-styleable name="SearchThinkWordItem"/>
+    <declare-styleable name="NewsTabItem">
+        <attr name="ntTitle" format="string"/>
+        <attr name="ntSelect" format="boolean"/>
+    </declare-styleable>
+    
 </resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="50dp"
+    android:paddingHorizontal="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_main_color_40"
+        android:textSize="14sp"
+        android:text=""
+        android:fontFamily="@font/gotham_m"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/tv_title_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_main_color_40"
+        android:textSize="16sp"
+        android:text=""
+        android:visibility="invisible"
+        android:fontFamily="@font/gotham_r"
+        android:layout_gravity="center" />
+    
+    <com.wyz.emlibrary.custom.RoundedCornerView
+        android:id="@+id/view_indication"
+        android:layout_width="32dp"
+        android:layout_height="2dp"
+        app:rcCornerRadius="2dp"
+        app:rcViewColor="@color/btn_color"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="8dp"/>
+</FrameLayout>
