@@ -36,6 +36,7 @@ import com.habit.app.ui.dialog.BrowserMenuDialog
 import com.habit.app.ui.home.BookmarkHistoryActivity
 import com.habit.app.ui.home.CameraScanActivity
 import com.habit.app.ui.home.FileDownloadActivity
+import com.habit.app.ui.home.controller.MainController
 import com.habit.app.ui.home.fragment.HomeFragment
 import com.habit.app.ui.news.NewsFragment
 import com.habit.app.ui.setting.SearchWidgetProvider

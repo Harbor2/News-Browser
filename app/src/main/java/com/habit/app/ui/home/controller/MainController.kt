@@ -1,4 +1,4 @@
-package com.habit.app.ui
+package com.habit.app.ui.home.controller
 
 import android.graphics.Bitmap
 import android.util.Log
@@ -45,6 +45,7 @@ import com.habit.app.helper.DownloadManager
 import com.habit.app.helper.KeyValueManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.helper.WebViewManager
+import com.habit.app.ui.MainActivity
 import com.habit.app.ui.custom.CustomWebView
 import com.habit.app.ui.dialog.DeleteConfirmDialog
 import com.habit.app.ui.dialog.FileDownloadDialog
@@ -368,7 +369,7 @@ class MainController(
         val iconBitmap = mCurWebView!!.getTag(R.id.web_small_icon) as? Bitmap
         val iconBitmapPath = if (iconBitmap == null) null else UtilHelper.writeBitmapToCache(activity, iconBitmap, "naviIcon")
 
-        mNaviEditDialog = NavigationEditDialog.tryShowDialog(activity)?.apply {
+        mNaviEditDialog = NavigationEditDialog.Companion.tryShowDialog(activity)?.apply {
             setData(iconBitmapPath, webTitle)
             setOnDismissListener {
                 mNaviEditDialog = null
@@ -451,7 +452,7 @@ class MainController(
     ) {
         val fileName = UtilHelper.decodeUrlCode(URLUtil.guessFileName(url, contentDisposition, mimeType))
         Log.d(TAG, "解析下载的文件名称：$fileName")
-        mPreDownloadDialog = FileDownloadDialog.tryShowDialog(activity)?.apply {
+        mPreDownloadDialog = FileDownloadDialog.Companion.tryShowDialog(activity)?.apply {
             this.setData(fileName)
             this.mCallback = { beginDownload: Boolean ->
                 if (beginDownload) {
@@ -474,7 +475,7 @@ class MainController(
     }
 
     private fun showFileErrorDialog(fileName: String, filePath: String) {
-        mDownloadFailedDialog = DeleteConfirmDialog.tryShowDialog(activity)?.apply {
+        mDownloadFailedDialog = DeleteConfirmDialog.Companion.tryShowDialog(activity)?.apply {
             this.initData(
                 R.drawable.iv_download_failed_icon,
                 activity.getString(R.string.text_download_failed, fileName),
