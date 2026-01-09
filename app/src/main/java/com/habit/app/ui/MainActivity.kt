@@ -669,14 +669,17 @@ class MainActivity : BaseActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             mController.mCurWebView?.let {
-                binding.btnBottomBack.performClick()
+                if (it.canGoBack()) {
+                    it.goBack()
+                    return true
+                }
             }
-        }
-        if (viewModel.searchObserver.value!!) {
-            mController.updateCurWebSnap() {
-                viewModel.setSearchObserver(false)
+            if (viewModel.searchObserver.value!!) {
+                mController.updateCurWebSnap {
+                    viewModel.setSearchObserver(false)
+                }
+                return true
             }
-            return true
         }
         return super.onKeyDown(keyCode, event)
     }
