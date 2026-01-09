@@ -36,6 +36,7 @@ import com.habit.app.ui.dialog.SearchEngineDialog
 import com.habit.app.viewmodel.home.SearchActivityModel
 import com.habit.app.viewmodel.home.SearchActivityModelFactory
 import com.wyz.emlibrary.custom.AutoWrapLayout
+import com.wyz.emlibrary.em.Direction
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
 import com.wyz.emlibrary.util.SoftKeyboardHelper
@@ -301,6 +302,13 @@ class SearchActivity : BaseActivity() {
         binding.editInput.setHintTextColor(ThemeManager.getSkinColor(R.color.text_main_color_30))
         binding.tvSearchCancel.setTextColor(ThemeManager.getSkinColor(if (viewModel.cancelObserver.value!!) R.color.text_main_color_50 else R.color.btn_color))
         updateEngineIcon()
+        EMManager.from(binding.bgTop)
+            .setGradientRealColor(
+                intArrayOf(
+                    ThemeManager.getSkinColor(R.color.home_top_bg_start),
+                    ThemeManager.getSkinColor(R.color.home_top_bg_end)
+                ), Direction.TOP
+            )
         EMManager.from(binding.containerArea)
             .setCorner(21f)
             .setBorderWidth(1f)
@@ -322,7 +330,7 @@ class SearchActivity : BaseActivity() {
             .setBorderRealColor(ThemeManager.getSkinColor(R.color.text_main_color_10))
             .setTextRealColor(ThemeManager.getSkinColor(R.color.text_main_color))
         binding.tvHistory.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_50))
-        binding.ivDelete.setImageResource(ThemeManager.getSkinImageResId(R.drawable.t_night_iv_search_history_delete))
+        binding.ivDelete.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_search_history_delete))
         viewModel.loadHistory()
         binding.containerThink.forEach {
             (it as? SearchThinkWordItem)?.updateThemeUI()
