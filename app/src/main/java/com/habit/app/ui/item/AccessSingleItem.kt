@@ -64,6 +64,10 @@ class AccessSingleItem(
         }
 
         holder.itemView.setOnClickListener {
+            if (data.isEdit) {
+                UtilHelper.showToast(context, context.getString(R.string.toast_exit_edit_mode_first))
+                return@setOnClickListener
+            }
             mCallback?.onItemClick(this)
         }
         // 删除

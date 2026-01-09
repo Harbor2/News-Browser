@@ -38,6 +38,7 @@
     <string name="toast_no_more_news">No more news</string>
     <string name="toast_private_mode_enable">Private mode enabled</string>
     <string name="toast_private_mode_disable">Private mode disabled</string>
+    <string name="toast_exit_edit_mode_first">Please exit edit mode first</string>
 
     <string name="text_get_started_big">GET STARTED</string>
     <string name="text_home">Home</string>
