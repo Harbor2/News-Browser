@@ -193,7 +193,7 @@ class MainController(
         // 保存当前快照
         createWebViewSnapshot { webViewData ->
             if (webViewData != null) {
-                Log.d(TAG, "更新 WebSnapData")
+                Log.d(TAG, "更新 WebSnapData: 保存当前快照并创建新tab")
                 DBManager.getDao().updateWebSnapItem(webViewData)
             }
             // 插入数据库新快照
@@ -203,7 +203,7 @@ class MainController(
                 newTabSign,
                 "",
                 true,
-                false,
+                viewModel.privacyObserver.value!!,
                 "",
                 ""
             )
@@ -330,6 +330,7 @@ class MainController(
         createWebViewSnapshot { webViewData ->
             if (webViewData != null) {
                 // 更新封面
+                Log.d(TAG, "更新 WebSnapData: 仅更新")
                 DBManager.getDao().updateWebSnapItem(webViewData)
                 callback.invoke()
             }
@@ -341,9 +342,9 @@ class MainController(
      */
     fun openNewSnapAndSearch(postUrl: String) {
         createWebViewSnapshot { webViewData ->
-            Log.d(TAG, "更新上一个封面图，新建snap并搜索内容")
             if (webViewData != null) {
                 // 更新封面
+                Log.d(TAG, "更新 WebSnapData: open new tab search")
                 DBManager.getDao().updateWebSnapItem(webViewData)
             }
             // 创建新的webview
@@ -395,6 +396,7 @@ class MainController(
     fun onPrivacyModeChange(value: Boolean) {
         Log.d(TAG, "现在的隐私模式：$value")
         mCurWebSign.isNotEmpty().let {
+            Log.d(TAG, "更新 WebSnapData: 隐私模式变化")
             DBManager.getDao().updateWebSnapItem(WebViewData(sign = mCurWebSign, isPrivacyMode = value))
         }
         binding.ivInputTrace.isVisible = value
@@ -562,6 +564,7 @@ class MainController(
 
     inner class CustomWebViewClient : WebViewClient() {
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+            if (mCurWebView != view) return false
             Log.d(TAG, "shouldOverrideUrlLoading url：${request?.url?.toString()}")
             request?.url?.toString()?.let {
                 if (!binding.editInput.hasFocus()) {
@@ -574,14 +577,16 @@ class MainController(
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
+            if (mCurWebView != view) return
             viewModel.noNetObserver.value = false
             binding.ivNaviPageRefresh.alpha = 0.3f
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
+            if (mCurWebView != view) return
             if (url.isNullOrEmpty()) return
-            Log.d(TAG, "onPageFinished 更新WebSnapData： url ${url}， sign：$mCurWebSign， name：${view?.getTag(R.id.web_title)}")
+            Log.d(TAG, "onPageFinished 更新WebSnapData：onPageFinish")
             if (!binding.editInput.hasFocus()) {
                 binding.editInput.setText(url)
             }
@@ -601,6 +606,7 @@ class MainController(
         }
 
         override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
+            if (mCurWebView != view) return
             if (request?.isForMainFrame == true) {
                 // 无网处理
                 if (!UtilHelper.isNetworkAvailable(activity)) {
