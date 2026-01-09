@@ -222,7 +222,11 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
             }
         })
         binding.btnNaviTrace.setOnClickListener {
-            viewModel.setPrivacyObserver(!viewModel.privacyObserver.value!!)
+            val newMode = !viewModel.privacyObserver.value!!
+            UtilHelper.showToast(requireContext(), getString(
+                if (newMode) R.string.toast_private_mode_enable else R.string.toast_private_mode_disable)
+            )
+            viewModel.setPrivacyObserver(newMode)
         }
     }
 
