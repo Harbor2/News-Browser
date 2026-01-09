@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.forEach
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
@@ -196,7 +197,7 @@ class NewsFragment() : BaseFragment<FragmentNewsBinding>() {
         binding.recList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (!recyclerView.canScrollVertically(1) && !isListLoading) {
+                if (newsList.isNotEmpty() && !recyclerView.canScrollVertically(1) && !isListLoading) {
                     // 划到最底部且不是加载状态
                     loadMoreData()
                 }
@@ -239,6 +240,16 @@ class NewsFragment() : BaseFragment<FragmentNewsBinding>() {
     private fun updateList() {
         val items = ArrayList<AbstractFlexibleItem<*>>()
         items.add(PlaceHolderItem(12f))
+        if (newsList.isEmpty()) {
+            mAdapter.clear()
+            binding.recList.post {
+                binding.recList.isVisible = false
+                binding.tvEmpty.isVisible = true
+            }
+            return
+        }
+        binding.recList.isVisible = true
+        binding.tvEmpty.isVisible = false
         newsList.forEach { newsData ->
             items.add(HomeNewsCardItem(requireContext(), newsData, newsItemCallback))
         }
@@ -254,6 +265,7 @@ class NewsFragment() : BaseFragment<FragmentNewsBinding>() {
                     ThemeManager.getSkinColor(R.color.home_top_bg_end)
                 ), Direction.TOP
             )
+        binding.tvEmpty.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_40))
         binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
         binding.containerTabs.forEach { child ->
             if (child is NewsTabItem) {

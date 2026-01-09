@@ -142,6 +142,7 @@
     <string name="text_public">Public</string>
     <string name="text_no_tags">No Tags</string>
     <string name="text_no_bookmarks">No Bookmarks</string>
+    <string name="text_no_news">No News</string>
     <string name="text_no_download">No Download</string>
     <string name="text_no_files">No Files</string>
     <string name="text_no_history">No Histories</string>
