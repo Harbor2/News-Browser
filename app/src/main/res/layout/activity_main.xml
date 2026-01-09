@@ -241,6 +241,7 @@
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:progress="0"
+            app:trackThickness="2dp"
             app:indicatorColor="@color/btn_color"
             app:trackColor="@color/transparent"
             app:trackCornerRadius="1dp"
