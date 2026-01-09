@@ -419,6 +419,16 @@ class MainController(
         mCurWebView!!.findAllAsync(keyword)
     }
 
+    fun exitWebContentSearch() {
+        if (binding.containerContentSearch.isVisible) {
+            binding.tvSearchNum1.text = "0"
+            binding.tvSearchNum2.text = "/0"
+            binding.editContentInput.text?.clear()
+            mCurWebView?.clearMatches()
+            binding.containerContentSearch.isVisible = false
+        }
+    }
+
     fun processWebContentSearchPreOrNext(isNext: Boolean) {
         if (mCurWebView == null) return
         if (!binding.containerContentSearch.isVisible) return

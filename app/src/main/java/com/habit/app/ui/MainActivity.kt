@@ -87,6 +87,7 @@ class MainActivity : BaseActivity() {
             val transWebSign = result.data?.getStringExtra(TagsActivity.KEY_TRANS_WEB_SIGN) ?: ""
             if (transWebSign.isEmpty()) return@registerForActivityResult
             Log.d(TAG, "主页接收webView sign：$transWebSign")
+            mController.exitWebContentSearch()
             // 数据库读取
             val dbWebViewData = DBManager.getDao().getWebSnapsBySign(transWebSign)
             if (dbWebViewData == null) {
@@ -286,6 +287,9 @@ class MainActivity : BaseActivity() {
         }
 
         viewModel.searchObserver.observe(this) { value ->
+            if (!value) {
+                mController.exitWebContentSearch()
+            }
             binding.pageSearch.isVisible = value
             KeyValueManager.saveBooleanValue(KeyValueManager.KEY_REOPEN_LAST_TAB, if (viewModel.privacyObserver.value!!) false else value)
         }
