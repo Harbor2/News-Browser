@@ -43,7 +43,7 @@ class EngineSelectItem @JvmOverloads constructor(
             .setCorner(12f)
             .setBorderWidth(1f)
             .setBorderColor(if (isSelect) R.color.btn_color else R.color.transparent)
-            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.dialog_top_line_color))
         if (mIcon != -1) {
             binding.ivIcon.setImageResource(ThemeManager.getSkinImageResId(mIcon))
         }
@@ -56,6 +56,6 @@ class EngineSelectItem @JvmOverloads constructor(
             .setCorner(12f)
             .setBorderWidth(1f)
             .setBorderColor(if (isSelect) R.color.btn_color else R.color.transparent)
-            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.dialog_top_line_color))
     }
 }

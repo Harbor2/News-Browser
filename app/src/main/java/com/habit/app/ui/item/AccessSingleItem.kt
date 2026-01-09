@@ -38,7 +38,7 @@ class AccessSingleItem(
                                 payloads: MutableList<Any>?) {
         EMManager.from(holder.binding.ivIconBg)
             .setCorner(24f)
-            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.dialog_top_line_color))
         // 兼容本地资源icon
         if (data.iconResName.startsWith("iv_")) {
             holder.binding.ivIcon.setImageResource(ThemeManager.getSkinImageResId(UtilHelper.getResIdByName(context, data.iconResName)))

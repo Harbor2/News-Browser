@@ -58,11 +58,11 @@ class SearchEngineDialog(activity: Activity) : BottomSheetDialog(activity) {
     fun updateThemeUI() {
         EMManager.from(binding.topLine)
             .setCorner(4f)
-            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.dialog_top_line_color))
         EMManager.from(binding.tvTitle).setTextRealColor(ThemeManager.getSkinColor(R.color.text_main_color))
         EMManager.from(binding.containerContent)
             .setCorner(floatArrayOf(24f, 24f, 0f, 0f))
-            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.page_main_color))
+            .setBackGroundRealColor(ThemeManager.getSkinColor(R.color.dialog_main_color))
         binding.gridLayout.forEach { item ->
             if (item is EngineSelectItem) {
                 item.updateThemeUI()
