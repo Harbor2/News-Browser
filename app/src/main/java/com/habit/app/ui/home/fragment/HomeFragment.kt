@@ -73,6 +73,10 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
     private var curPage = 1
     private var hasMore = false
 
+    private val newsMoreCallback: () -> Unit = {
+        viewModel.setNewsMoreObserver()
+    }
+
     /**
      * 新闻item点击回调
      */
@@ -288,7 +292,7 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
         items.add(getHomeSearchItem())
         items.add(getHomeAccessItem())
 
-        items.add(HomeNewsHeadItem())
+        items.add(HomeNewsHeadItem(newsMoreCallback))
         items.add(PlaceHolderItem(12f))
         newsList.forEach { newsData ->
             items.add(HomeNewsCardItem(requireContext(), newsData, newsItemCallback))

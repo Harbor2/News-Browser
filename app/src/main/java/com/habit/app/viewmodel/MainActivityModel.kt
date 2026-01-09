@@ -48,4 +48,14 @@ class MainActivityModel : ViewModel() {
     fun setKeyWorkSearch(keyWork: String) {
         _keyWorkSearchObserver.tryEmit(keyWork)
     }
+
+    private val _newsMoreObserver = MutableSharedFlow<Boolean>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val newsMoreObserver = _newsMoreObserver.asSharedFlow()
+    fun setNewsMoreObserver() {
+        _newsMoreObserver.tryEmit(true)
+    }
 }

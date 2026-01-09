@@ -1,6 +1,5 @@
 package com.habit.app.ui.item
 
-import android.content.Context
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.R
@@ -13,7 +12,9 @@ import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
 import kotlin.jvm.javaClass
 
-class HomeNewsHeadItem() : AbstractFlexibleItem<HomeNewsHeadItem.ViewHolder>() {
+class HomeNewsHeadItem(
+    val mCallback: () -> Unit
+) : AbstractFlexibleItem<HomeNewsHeadItem.ViewHolder>() {
 
     class ViewHolder(val binding: LayoutItemHomeNewsHeadBinding, adapter: FlexibleAdapter<*>) : FlexibleViewHolder(binding.root, adapter)
 
@@ -27,6 +28,10 @@ class HomeNewsHeadItem() : AbstractFlexibleItem<HomeNewsHeadItem.ViewHolder>() {
                                 payloads: MutableList<Any>?) {
         EMManager.from(holder.binding.tvNews).setTextRealColor(ThemeManager.getSkinColor(R.color.text_main_color))
         EMManager.from(holder.binding.tvNewsMore).setTextRealColor(ThemeManager.getSkinColor(R.color.save_text_color_60))
+
+        holder.binding.tvNewsMore.setOnClickListener {
+            mCallback.invoke()
+        }
     }
 
     override fun equals(other: Any?): Boolean {

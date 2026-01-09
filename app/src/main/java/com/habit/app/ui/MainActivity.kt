@@ -298,6 +298,14 @@ class MainActivity : BaseActivity() {
             mController.onPhoneModeChange(value)
         }
         lifecycleScope.launch {
+            viewModel.newsMoreObserver.collect { result ->
+                if (result) {
+                    // 跳转News
+                    binding.containerTabNews.performClick()
+                }
+            }
+        }
+        lifecycleScope.launch {
             viewModel.keyWorkSearchObserver.collect { searchStr ->
                 Log.d(TAG, "search input: $searchStr")
                 viewModel.setSearchObserver(true)
