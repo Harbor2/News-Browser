@@ -170,6 +170,10 @@ class NewsFragment() : BaseFragment<FragmentNewsBinding>() {
             pullNewsModel.pullNewObserver.collect { list ->
                 Log.d(TAG, "新闻列表返回：$list")
                 newsTabMap[curSelectTab] = false
+                loadingObserver.value = false
+                isListLoading = false
+                binding.swipeRefresh.isRefreshing = false
+
                 if (list.isEmpty()) {
                     return@collect
                 }
@@ -177,9 +181,6 @@ class NewsFragment() : BaseFragment<FragmentNewsBinding>() {
                 DBManager.getDao().insertNewsToTable(list)
                 // page重置
                 curPage = 1
-                loadingObserver.value = false
-                isListLoading = false
-                binding.swipeRefresh.isRefreshing = false
                 // 拉取新闻
                 newsList = getNewsList(curPage)
                 updateList()

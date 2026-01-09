@@ -237,6 +237,10 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
         lifecycleScope.launch {
             pullNewsModel.pullNewObserver.collect { list ->
                 Log.d(TAG, "首页新闻列表返回：$list")
+                loadingObserver.value = false
+                isListLoading = false
+                binding.swipeRefresh.isRefreshing = false
+
                 if (list.isEmpty()) {
                     return@collect
                 }
@@ -244,9 +248,6 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
                 DBManager.getDao().insertNewsToTable(list)
                 // page重置
                 curPage = 1
-                loadingObserver.value = false
-                isListLoading = false
-                binding.swipeRefresh.isRefreshing = false
                 // 拉取新闻
                 newsList = getNewsList(curPage)
                 updateList()
