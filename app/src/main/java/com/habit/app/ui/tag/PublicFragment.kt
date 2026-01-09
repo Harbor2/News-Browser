@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.R
 import com.habit.app.data.db.DBManager
 import com.habit.app.databinding.FragmentPublicBinding
@@ -22,7 +23,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.getValue
 
 class PublicFragment() : BaseFragment<FragmentPublicBinding>() {
 
@@ -79,6 +79,13 @@ class PublicFragment() : BaseFragment<FragmentPublicBinding>() {
     }
 
     private fun initListener() {
+        binding.recList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    overlayLayoutManager.checkSoftReboundIfNeeded()
+                }
+            }
+        })
     }
 
     private fun deleteSnapItem(item: TagSnapItem) {
@@ -87,6 +94,9 @@ class PublicFragment() : BaseFragment<FragmentPublicBinding>() {
         WebViewManager.releaseWebView(item.snapData.sign)
         tagsModel.setPublicTagCount(mAdapter.currentItems.size)
 
+        if (mAdapter.currentItems.size > 1) {
+            overlayLayoutManager.checkSoftReboundIfNeeded()
+        }
         if (mAdapter.currentItems.filterIsInstance<TagSnapItem>().isEmpty()) {
             emptyObserver.value = true
         }

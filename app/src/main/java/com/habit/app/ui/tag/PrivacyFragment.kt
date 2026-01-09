@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.R
 import com.habit.app.data.db.DBManager
 import com.habit.app.databinding.FragmentPrivacyBinding
@@ -79,6 +80,13 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
     }
 
     private fun initListener() {
+        binding.recList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    overlayLayoutManager.checkSoftReboundIfNeeded()
+                }
+            }
+        })
     }
 
     private fun deleteSnapItem(item: TagSnapItem) {
@@ -87,6 +95,9 @@ class PrivacyFragment() : BaseFragment<FragmentPrivacyBinding>() {
         WebViewManager.releaseWebView(item.snapData.sign)
         tagsModel.setPrivacyTagCount(mAdapter.currentItems.size)
 
+        if (mAdapter.currentItems.size > 1) {
+            overlayLayoutManager.checkSoftReboundIfNeeded()
+        }
         if (mAdapter.currentItems.filterIsInstance<TagSnapItem>().isEmpty()) {
             emptyObserver.value = true
         }

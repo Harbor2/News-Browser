@@ -1,8 +1,10 @@
 package com.habit.app.ui.item;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +24,11 @@ public class OverFlyingLayoutManager extends LinearLayoutManager {
      * 当前推进的总偏移（核心状态）
      */
     private int verticalScrollOffset = 0;
+
+    /**
+     * 滚动回弹动画
+     */
+    private ValueAnimator reboundAnimator;
 
     public OverFlyingLayoutManager(Context context) {
         super(context);
@@ -126,6 +133,33 @@ public class OverFlyingLayoutManager extends LinearLayoutManager {
         layoutItems(recycler);
 
         return consumed;
+    }
+
+    /**
+     * 滚动回弹
+     */
+    public void checkSoftReboundIfNeeded() {
+        int softMax = Math.max(0, (getItemCount() - 1) * viewHeight - 500);
+
+        if (verticalScrollOffset <= softMax) return;
+
+        if (reboundAnimator != null && reboundAnimator.isRunning()) {
+            reboundAnimator.cancel();
+        }
+
+        int start = verticalScrollOffset;
+        int end = softMax;
+
+        reboundAnimator = ValueAnimator.ofInt(start, end);
+        reboundAnimator.setDuration(400); // 慢慢回
+        reboundAnimator.setInterpolator(new DecelerateInterpolator());
+
+        reboundAnimator.addUpdateListener(animation -> {
+            verticalScrollOffset = (int) animation.getAnimatedValue();
+            requestLayout();
+        });
+
+        reboundAnimator.start();
     }
 
     public void scrollToPositionWithOffsetInternal(int position, int offset) {
