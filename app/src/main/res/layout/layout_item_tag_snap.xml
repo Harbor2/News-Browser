@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:adv_shadow0_Outer_Blur="4dp"
-        app:adv_shadow0_Outer_Color="#1A000000"
+        app:adv_shadow0_Outer_Color="@color/transparent"
         app:adv_cornerRadius="16dp"
         app:adv_shadow_Outer_Area="5dp"
         app:adv_background_Gradient_Color0="@color/transparent">
