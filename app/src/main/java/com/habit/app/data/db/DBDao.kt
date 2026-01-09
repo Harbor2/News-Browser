@@ -581,17 +581,13 @@ class DBDao(private val dbHelper: DBHelper) {
      * 删除多个文件
      */
     fun deleteWebSnapsFromTableByFilter(privacy: Boolean) {
-        val db: SQLiteDatabase = dbHelper.writableDatabase
         try {
             val db: SQLiteDatabase = dbHelper.writableDatabase
-            val sql = "delete from ${DBConstant.TABLE_TAB} where ${DBConstant.TAB_PRIVACY_TYPE} = if($privacy, 1, 0)"
+            val sql = "delete from ${DBConstant.TABLE_TAB} where ${DBConstant.TAB_PRIVACY_TYPE} = ${if (privacy) 1 else 0}"
             db.execSQL(sql)
             Log.d(TAG, "数据库移除web快照, filter: $privacy")
         } catch (e: Exception) {
             Log.d(TAG, "数据库移除web快照异常：${e.message}")
-        } finally {
-            // 结束事务
-            db.endTransaction()
         }
     }
 

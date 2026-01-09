@@ -241,6 +241,9 @@ class MainActivity : BaseActivity() {
         checkNetSpan.setSpan(UnderlineSpan(), 0, checkNetText.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
         binding.tvCheckNet.text = checkNetSpan
 
+        // 删除privacy数据
+        DBManager.getDao().deleteWebSnapsFromTableByFilter(true)
+
         // 新建WebView 或打开上次webView
         val lastWebData = DBManager.getDao().getWebSnapsFromTable().firstOrNull()
         if (lastWebData == null) {
@@ -284,7 +287,7 @@ class MainActivity : BaseActivity() {
 
         viewModel.searchObserver.observe(this) { value ->
             binding.pageSearch.isVisible = value
-            KeyValueManager.saveBooleanValue(KeyValueManager.KEY_REOPEN_LAST_TAB, value)
+            KeyValueManager.saveBooleanValue(KeyValueManager.KEY_REOPEN_LAST_TAB, if (viewModel.privacyObserver.value!!) false else value)
         }
 
         viewModel.privacyObserver.observe(this) { value ->
