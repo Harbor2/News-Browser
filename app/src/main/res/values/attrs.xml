@@ -23,6 +23,12 @@
         <attr name="ttiSelect" format="boolean"/>
     </declare-styleable>
 
+    <declare-styleable name="TagTabItem2">
+        <attr name="ttiTitle2" format="string"/>
+        <attr name="ttiCount2" format="integer"/>
+        <attr name="ttiSelect2" format="boolean"/>
+    </declare-styleable>
+
     <declare-styleable name="SettingItem">
         <attr name="stiType" format="integer"/>
         <attr name="stiTitle" format="string"/>

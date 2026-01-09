@@ -21,4 +21,10 @@
     <color name="t_night_home_top_bg_start">#1E2C53</color>
     <color name="t_night_home_top_bg_end">#0E0B1F</color>
     <color name="t_night_create_folder_cancel_color">#1E1C2D</color>
+    <color name="t_night_tab_count_border_color">#FFFFFF</color>
+    <color name="t_night_tab_count_border_color_20">#33FFFFFF</color>
+    <color name="t_night_tab_type_select_color1">#FFFFFF</color>
+    <color name="t_night_tab_type_select_color2">#FFFFFF</color>
+    <color name="t_night_tab_type_unselect_color1">#B3FFFFFF</color>
+    <color name="t_night_tab_type_unselect_color2">#B3FFFFFF</color>
 </resources>

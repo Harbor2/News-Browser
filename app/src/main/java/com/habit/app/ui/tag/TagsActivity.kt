@@ -58,8 +58,8 @@ class TagsActivity : BaseActivity() {
 
     private fun initData() {
         lifecycleScope.launch(Dispatchers.IO) {
-            binding.tabPublic.updateSelect(currentFragmentTag == publicFragmentTag)
-            binding.tabPrivacy.updateSelect(currentFragmentTag == privacyFragmentTag)
+            binding.tabPublic.updateSelect(currentFragmentTag == publicFragmentTag, currentFragmentTag == privacyFragmentTag)
+            binding.tabPrivacy.updateSelect(currentFragmentTag == privacyFragmentTag, currentFragmentTag == privacyFragmentTag)
 
             mWebViewData?.let {
                 DBManager.getDao().updateWebSnapItem(it)
@@ -75,8 +75,8 @@ class TagsActivity : BaseActivity() {
 
     private fun initListener() {
         binding.tabPublic.setOnClickListener {
-            binding.tabPublic.updateSelect(true)
-            binding.tabPrivacy.updateSelect(false)
+            binding.tabPublic.updateSelect(true, currentFragmentTag == privacyFragmentTag)
+            binding.tabPrivacy.updateSelect(false, currentFragmentTag == privacyFragmentTag)
             updateTopTabBg()
             UtilHelper.changeLightDarkStatus(window, ThemeManager.isNightTheme())
 
@@ -84,8 +84,8 @@ class TagsActivity : BaseActivity() {
             updateUiConfig()
         }
         binding.tabPrivacy.setOnClickListener {
-            binding.tabPrivacy.updateSelect(true)
-            binding.tabPublic.updateSelect(false)
+            binding.tabPrivacy.updateSelect(true, currentFragmentTag == privacyFragmentTag)
+            binding.tabPublic.updateSelect(false, currentFragmentTag == privacyFragmentTag)
             updateTopTabBg()
             UtilHelper.changeLightDarkStatus(window, true)
 
@@ -212,8 +212,8 @@ class TagsActivity : BaseActivity() {
             binding.ivAdd.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_tag_tab_add))
             binding.ivClean.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_tag_tab_clean))
             UtilHelper.changeLightDarkStatus(window, ThemeManager.isNightTheme())
-            binding.tabPublic.updateSelect(true)
-            binding.tabPrivacy.updateSelect(false)
+            binding.tabPublic.updateSelect(true, currentFragmentTag == privacyFragmentTag)
+            binding.tabPrivacy.updateSelect(false, currentFragmentTag == privacyFragmentTag)
         } else {
             EMManager.from(binding.root)
                 .setBackGroundColor(R.color.t_night_page_main_color)
@@ -222,8 +222,8 @@ class TagsActivity : BaseActivity() {
             binding.ivAdd.setImageResource(R.drawable.t_night_iv_tag_tab_add)
             binding.ivClean.setImageResource(R.drawable.t_night_iv_tag_tab_clean)
             UtilHelper.changeLightDarkStatus(window, true)
-            binding.tabPublic.updateSelect(false)
-            binding.tabPrivacy.updateSelect(true)
+            binding.tabPublic.updateSelect(false, currentFragmentTag == privacyFragmentTag)
+            binding.tabPrivacy.updateSelect(true, currentFragmentTag == privacyFragmentTag)
         }
         binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
     }

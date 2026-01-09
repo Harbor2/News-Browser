@@ -22,27 +22,27 @@
             android:layout_gravity="center"
             android:paddingHorizontal="6dp">
 
-            <com.habit.app.ui.custom.TagTabItem
+            <com.habit.app.ui.custom.TagTabItem2
                 android:id="@+id/tab_public"
                 android:layout_width="0dp"
                 android:layout_height="32dp"
                 android:layout_weight="1"
-                app:ttiTitle="@string/text_public"
-                app:ttiSelect="true"
-                app:ttiCount="0"/>
+                app:ttiTitle2="@string/text_public"
+                app:ttiSelect2="true"
+                app:ttiCount2="0"/>
 
             <View
                 android:layout_width="4dp"
                 android:layout_height="1dp"/>
 
-            <com.habit.app.ui.custom.TagTabItem
+            <com.habit.app.ui.custom.TagTabItem2
                 android:id="@+id/tab_privacy"
                 android:layout_width="0dp"
                 android:layout_height="32dp"
                 android:layout_weight="1"
-                app:ttiTitle="@string/text_privacy"
-                app:ttiSelect="false"
-                app:ttiCount="0"/>
+                app:ttiTitle2="@string/text_privacy"
+                app:ttiSelect2="false"
+                app:ttiCount2="0"/>
         </LinearLayout>
     </FrameLayout>
 

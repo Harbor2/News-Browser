@@ -58,6 +58,12 @@
     <color name="tag_top_bg_color2">#33FFFFFF</color>
     <color name="create_folder_cancel_color">#F2F4F8</color>
     <color name="indication_color">#AFC8FF</color>
+    <color name="tab_count_border_color">#0051FF</color>
+    <color name="tab_count_border_color_20">#330051FF</color>
+    <color name="tab_type_select_color1">#0E0B1F</color>
+    <color name="tab_type_select_color2">#0E0B1F</color>
+    <color name="tab_type_unselect_color1">#B30E0B1F</color>
+    <color name="tab_type_unselect_color2">#B3FFFFFF</color>
 
     <color name="home_top_bg_start">#E3F1FF</color>
     <color name="home_top_bg_end">#FFFFFF</color>
