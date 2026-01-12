@@ -6,9 +6,9 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.R
 import com.habit.app.data.OPTION_ADD_TO_BOOKMARK
 import com.habit.app.data.OPTION_ADD_TO_HOME
@@ -97,28 +97,29 @@ class HistoryFragment() : BaseFragment<FragmentBHistoryBinding>() {
     }
 
     private fun initListener() {
+        binding.recList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                when(newState) {
+                    RecyclerView.SCROLL_STATE_DRAGGING -> {
+                        EMUtil.hideSoftKeyboard(binding.editInput, requireContext())
+                    }
+                }
+            }
+        })
         binding.editInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 // 内容为空则刷新当前目录
-                if (s.toString().trim().isEmpty()) {
+                val query = binding.editInput.text.toString().trim()
+                if (query.isEmpty()) {
                     updateHistoryList()
+                } else {
+                    updateSearchHistory(query)
                 }
             }
         })
-
-        binding.editInput.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                val query = binding.editInput.text.toString().trim()
-                if (query.isNotEmpty()) {
-                    updateSearchHistory(query)
-                }
-                true
-            } else {
-                false
-            }
-        }
     }
 
     /**

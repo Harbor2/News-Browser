@@ -15,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.R
 import com.habit.app.data.MAX_SNAP_COUNT
 import com.habit.app.data.OPTION_ADD_TO_HOME
@@ -42,7 +43,6 @@ import com.habit.app.ui.dialog.NewFolderDialog
 import com.habit.app.ui.home.BookmarkFolderSelectActivity
 import com.habit.app.ui.item.BookmarkFolderItem
 import com.habit.app.ui.item.BookmarkUrlItem
-import com.habit.app.viewmodel.MainActivityModel
 import com.habit.app.viewmodel.home.BHActivityModel
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
@@ -201,6 +201,16 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
     }
 
     private fun initListener() {
+        binding.recList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                when(newState) {
+                    RecyclerView.SCROLL_STATE_DRAGGING -> {
+                        EMUtil.hideSoftKeyboard(binding.editInput, requireContext())
+                    }
+                }
+            }
+        })
         binding.btnMove.setOnClickListener {
             val selectedDataList = getSelectItemData()
             Log.d(TAG, "move ${selectedDataList.size} 个元素")
@@ -217,23 +227,14 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 // 内容为空则刷新当前目录
-                if (s.toString().trim().isEmpty()) {
+                val query = binding.editInput.text.toString().trim()
+                if (query.isEmpty()) {
                     updateBookmarkItems(mCurrentFolder)
+                } else {
+                    updateSearchBookmark(query)
                 }
             }
         })
-
-        binding.editInput.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                val query = binding.editInput.text.toString().trim()
-                if (query.isNotEmpty()) {
-                    updateSearchBookmark(query)
-                }
-                true
-            } else {
-                false
-            }
-        }
     }
 
     /**
