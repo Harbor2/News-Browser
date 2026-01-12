@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -195,6 +194,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         mCurrentFolder = bhActivityModel.initBookmarkUrl?.let {
             DBManager.getDao().getBookMarkByUrl(url = it)?.folderId ?: -1
         } ?: -1
+        updateFolderNav()
         updateBookmarkItems(mCurrentFolder)
         // 查询所有书签
         mAllBookmarks = DBManager.getDao().getBookMarks()
@@ -235,6 +235,13 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
                 }
             }
         })
+    }
+
+    /**
+     * 更新文件夹导航
+     */
+    private fun updateFolderNav() {
+
     }
 
     /**
