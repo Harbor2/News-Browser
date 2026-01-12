@@ -10,6 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
@@ -242,7 +245,24 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
      * 更新文件夹导航
      */
     private fun updateFolderNav() {
-
+        var folderId = mCurrentFolder
+        binding.containerFolderNav.removeAllViews()
+        while (folderId != -1) {
+            val folderData = DBManager.getDao().getFolderById(folderId)
+            if (folderData == null) {
+                break
+            }
+            folderId = folderData.parentId
+            // 添加folder
+            val folderView = generateFolderPath(folderData.folderName, folderData.folderId)
+            val splitView = generateFolderSplit()
+            binding.containerFolderNav.addView(folderView, 0)
+            binding.containerFolderNav.addView(splitView, 0)
+        }
+        // 添加folder root
+        val folderView = generateFolderPath("root", -1)
+        binding.containerFolderNav.addView(folderView, 0)
+        binding.horFolderNav.fullScroll(View.FOCUS_RIGHT)
     }
 
     /**
@@ -458,6 +478,8 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
      * 刷新bookmark列表
      */
     private fun updateBookmarkItems(parentFolder: Int) {
+        // 跟新导航
+        updateFolderNav()
         // folder
         val folderList = DBManager.getDao().getSubFolder(parentFolder)
         // mark
@@ -567,6 +589,39 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         }
     }
 
+
+    private fun generateFolderPath(name: String, folderId: Int): AppCompatTextView {
+        return AppCompatTextView(requireContext()).apply {
+            text = name
+            textSize = 16f
+            setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_40))
+            typeface = ResourcesCompat.getFont(requireContext(), R.font.gotham_m)
+
+            setOnClickListener {
+                if (mCurrentFolder == folderId) return@setOnClickListener
+                mCurrentFolder = folderId
+                updateBookmarkItems(folderId)
+            }
+        }
+    }
+
+    private fun generateFolderSplit(): AppCompatTextView {
+        return AppCompatTextView(requireContext()).apply {
+            text = " -> "
+            textSize = 14f
+            setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_40))
+            typeface = ResourcesCompat.getFont(requireContext(), R.font.gotham_m)
+        }
+    }
+
+    private fun updateFolderNavThemeUi() {
+        binding.containerFolderNav.forEach { view ->
+            if (view is AppCompatTextView) {
+                view.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_40))
+            }
+        }
+    }
+
     private fun openWebUrl(data: Any) {
         if (data !is BookmarkData) {
             UtilHelper.showToast(requireContext(), getString(R.string.toast_failed))
@@ -608,6 +663,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
             mAdapter.updateItem(item, "update")
         }
         binding.cardView.setCardBackgroundColor(ThemeManager.getSkinColor(R.color.view_bg_color))
+        updateFolderNavThemeUi()
     }
 
     override fun onThemeChanged(theme: String) {

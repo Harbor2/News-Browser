@@ -38,6 +38,27 @@
             android:fontFamily="@font/gotham_r" />
     </FrameLayout>
 
+    <HorizontalScrollView
+        android:id="@+id/hor_folder_nav"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:layout_marginVertical="5dp"
+        android:layout_marginHorizontal="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/container_search"
+        app:layout_constraintBottom_toTopOf="@id/rec_list">
+
+        <LinearLayout
+            android:id="@+id/container_folder_nav"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical" />
+    </HorizontalScrollView>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rec_list"
         android:layout_width="match_parent"
@@ -45,7 +66,7 @@
         android:overScrollMode="never"
         android:scrollbars="none"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/container_search"
+        app:layout_constraintTop_toBottomOf="@id/hor_folder_nav"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
     <LinearLayout
