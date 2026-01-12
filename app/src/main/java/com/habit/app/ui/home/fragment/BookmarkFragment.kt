@@ -230,7 +230,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
     private fun processMenuOption(option: String, data: Any) {
         when (option) {
             OPTION_DELETE, OPTION_REMOVE -> {
-                deleteSelectItems(data)
+                showDeleteConfirmDialog(data)
             }
             OPTION_OPEN_IN_NEW_TAB -> {
                 openWebUrl(data)
@@ -518,12 +518,12 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         }
     }
 
-    fun showDeleteConfirmDialog() {
+    fun showDeleteConfirmDialog(data: Any? = null) {
         // 二次确认
         mDeleteDialog = DeleteConfirmDialog.tryShowDialog(requireActivity())?.apply {
             this.initData(
                 R.drawable.iv_dialog_delete_icon,
-                getString(R.string.text_delete_all_selected),
+                getString(if (data == null) R.string.text_delete_all_selected else R.string.text_delete_this_selected),
                 getString(R.string.text_cancel),
                 getString(R.string.text_delete))
             setOnDismissListener {
@@ -531,7 +531,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
             }
             this.mCallback = { result ->
                 if (result) {
-                    deleteSelectItems()
+                    deleteSelectItems(data)
                 }
             }
         }

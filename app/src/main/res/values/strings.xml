@@ -172,6 +172,7 @@
     <string name="text_add_to_bookmark">Add To Bookmark</string>
     <string name="text_delete_all_history_title">Do You Want To Delete All History?</string>
     <string name="text_delete_all_selected">Do You Want To Delete All Selected?</string>
+    <string name="text_delete_this_selected">Do You Want To Delete This Selected?</string>
     <string name="text_basic">Basic</string>
     <string name="text_browser">Browser</string>
     <string name="text_application">Application</string>
