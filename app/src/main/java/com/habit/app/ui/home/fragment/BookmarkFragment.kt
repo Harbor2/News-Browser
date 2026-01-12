@@ -96,6 +96,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
             UtilHelper.showToast(requireContext(), getString(R.string.toast_succeed))
             bhActivityModel.setEditObserver(false)
             binding.containerBottomOption.isVisible = false
+            binding.containerSearch.isVisible = true
             updateBookmarkItems(mCurrentFolder)
         }
 
@@ -353,6 +354,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         updateBookmarkItems(mCurrentFolder)
         bhActivityModel.setEditObserver(false)
         binding.containerBottomOption.isVisible = false
+        binding.containerSearch.isVisible = true
     }
 
     /**
@@ -376,7 +378,11 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
 
         if (!binding.containerBottomOption.isVisible) {
             binding.containerBottomOption.isVisible = true
+        }
+        if (!bhActivityModel.editObserver.value!!) {
             bhActivityModel.setEditObserver(true)
+        }
+        if (binding.containerSearch.isVisible) {
             binding.containerSearch.isVisible = false
         }
     }
@@ -421,7 +427,11 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         mAdapter.updateDataSet(mAdapter.currentItems)
         if (binding.containerBottomOption.isVisible) {
             binding.containerBottomOption.isVisible = false
+        }
+        if (bhActivityModel.editObserver.value!!) {
             bhActivityModel.setEditObserver(false)
+        }
+        if (!binding.containerSearch.isVisible) {
             binding.containerSearch.isVisible = true
         }
     }
