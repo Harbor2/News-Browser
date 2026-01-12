@@ -498,6 +498,11 @@ class MainController(
      * 创建webView快照
      */
     fun createWebViewSnapshot(callback: (WebViewData?) -> Unit) {
+        if (mCurWebView == null) {
+            Log.w(TAG, "createWebViewSnapshot: mCurWebView is null")
+            callback.invoke(null)
+            return
+        }
         // 首页
         activity.lifecycleScope.launch(Dispatchers.IO) {
             val coverBitmap = UtilHelper.getResizedBitmapFromView(binding.containerWeb)

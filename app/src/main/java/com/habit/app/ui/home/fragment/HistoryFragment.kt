@@ -1,15 +1,18 @@
 package com.habit.app.ui.home.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.habit.app.R
+import com.habit.app.data.MAX_SNAP_COUNT
 import com.habit.app.data.OPTION_ADD_TO_BOOKMARK
 import com.habit.app.data.OPTION_ADD_TO_HOME
 import com.habit.app.data.OPTION_ADD_TO_NAVI
@@ -21,17 +24,20 @@ import com.habit.app.databinding.FragmentBHistoryBinding
 import com.habit.app.event.HomeAccessUpdateEvent
 import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
+import com.habit.app.ui.MainActivity
 import com.habit.app.ui.base.BaseFragment
 import com.habit.app.ui.dialog.DeleteConfirmDialog
 import com.habit.app.ui.dialog.MenuPopupFloat
 import com.habit.app.ui.dialog.NavigationEditDialog
 import com.habit.app.ui.item.BookmarkHistoryItem
 import com.habit.app.ui.item.BookmarkHistoryTitleItem
+import com.habit.app.viewmodel.home.BHActivityModel
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import org.greenrobot.eventbus.EventBus
+import kotlin.getValue
 import kotlin.text.ifEmpty
 
 class HistoryFragment() : BaseFragment<FragmentBHistoryBinding>() {
@@ -42,10 +48,11 @@ class HistoryFragment() : BaseFragment<FragmentBHistoryBinding>() {
     private var mAllHistory: ArrayList<HistoryData> = ArrayList()
     private var mDeleteDialog: DeleteConfirmDialog? = null
     private var naviAddEditDialog: NavigationEditDialog? = null
+    private val bhActivityModel: BHActivityModel by activityViewModels<BHActivityModel>()
 
     private val historyCallback = object : BookmarkHistoryItem.HistoryCallback {
         override fun onHistoryClick(item: BookmarkHistoryItem) {
-
+            openWebUrl(item.data)
         }
 
         override fun onHistoryMenu(anchorView: View, item: BookmarkHistoryItem) {
@@ -140,6 +147,24 @@ class HistoryFragment() : BaseFragment<FragmentBHistoryBinding>() {
 
             }
         }
+    }
+
+    private fun openWebUrl(data: Any) {
+        if (data !is HistoryData) {
+            UtilHelper.showToast(requireContext(), getString(R.string.toast_failed))
+            return
+        }
+
+        if (DBManager.getDao().getWebSnapsCount(bhActivityModel.homeWebViewPrivacy) >= MAX_SNAP_COUNT) {
+            UtilHelper.showToast(requireContext(), getString(R.string.toast_snap_max_count))
+            return
+        }
+
+        val intent = Intent(requireActivity(), MainActivity::class.java).apply {
+            putExtra("post_url", data.url)
+        }
+        requireActivity().startActivity(intent)
+        requireActivity().finish()
     }
 
     fun processClearHistory() {
