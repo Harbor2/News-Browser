@@ -121,6 +121,12 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
             // 判断是否全选
             bhActivityModel.setBookmarkSelectAll(checkSelectAll())
         }
+
+        override fun onLongClick(item: BookmarkFolderItem) {
+            enterSelectMode(item.folderData)
+            // 判断是否全选
+            bhActivityModel.setBookmarkSelectAll(checkSelectAll())
+        }
     }
 
     private val urlItemCallback = object : BookmarkUrlItem.BookmarkCallback {
@@ -133,6 +139,12 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
         }
 
         override fun onBookmarkSelect(item: BookmarkUrlItem) {
+            // 判断是否全选
+            bhActivityModel.setBookmarkSelectAll(checkSelectAll())
+        }
+
+        override fun onLongClick(item: BookmarkUrlItem) {
+            enterSelectMode(item.bookmarkData)
             // 判断是否全选
             bhActivityModel.setBookmarkSelectAll(checkSelectAll())
         }

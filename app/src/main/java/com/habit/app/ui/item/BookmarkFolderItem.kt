@@ -48,6 +48,11 @@ class BookmarkFolderItem(
             )
             holder.binding.ivCheckbox.visibility = View.VISIBLE
         }
+        holder.frontView.setOnLongClickListener {
+            if (folderData.mSelect != null) return@setOnLongClickListener true
+            mCallback.onLongClick(this)
+            return@setOnLongClickListener true
+        }
 
         holder.binding.root.setOnClickListener {
             if (folderData.mSelect == null) {
@@ -87,6 +92,7 @@ class BookmarkFolderItem(
     }
 
     interface FolderCallback {
+        fun onLongClick(item: BookmarkFolderItem)
         fun onFolderSelect(item: BookmarkFolderItem)
         fun onFolderClick(item: BookmarkFolderItem)
         fun onFolderMenu(anchorView: View, item: BookmarkFolderItem)

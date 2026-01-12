@@ -58,7 +58,11 @@ class BookmarkUrlItem(
             )
             holder.binding.ivCheckbox.visibility = View.VISIBLE
         }
-
+        holder.frontView.setOnLongClickListener {
+            if (bookmarkData.mSelect != null) return@setOnLongClickListener true
+            mCallback.onLongClick(this)
+            return@setOnLongClickListener true
+        }
         holder.binding.root.setOnClickListener {
             if (bookmarkData.mSelect == null) {
                 mCallback.onBookmarkClick(this)
@@ -97,6 +101,7 @@ class BookmarkUrlItem(
     }
 
     interface BookmarkCallback {
+        fun onLongClick(item: BookmarkUrlItem)
         fun onBookmarkSelect(item: BookmarkUrlItem)
         fun onBookmarkClick(item: BookmarkUrlItem)
         fun onBookmarkMenu(anchorView: View, item: BookmarkUrlItem)
