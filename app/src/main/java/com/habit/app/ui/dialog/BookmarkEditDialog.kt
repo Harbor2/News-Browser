@@ -104,6 +104,7 @@ class BookmarkEditDialog(activity: Activity) : Dialog(activity) {
             val mNewDirectory = DBManager.getDao().getFolderById(parentFolderId)
             mNewDirectory?.let {
                 binding.tvFolderName.text = it.folderName
+                mNewDirectoryId = it.folderId
             }
         }
     }
@@ -180,7 +181,7 @@ class BookmarkEditDialog(activity: Activity) : Dialog(activity) {
         var shouldMove: Boolean = false
         if (mData.size == 1) {
             // 单文件
-            Log.d(TAG, "单文件更新")
+            Log.d(TAG, "单文件更新， 新目录id， $mNewDirectoryId， 当前目录id， $mCurrentFolder")
             val inputNameStr = binding.editName.text.toString().trim()
             val inputUrlStr = binding.editUrl.text.toString().trim()
             val firstData = mData.first()
