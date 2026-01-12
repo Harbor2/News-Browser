@@ -87,6 +87,7 @@ class NewsFragment() : BaseFragment<FragmentNewsBinding>() {
      * tab 选中回调
      */
     private val tabSelectListener: (String) -> Unit = { category ->
+        binding.btnMoveTop.isVisible = false
         curSelectTab = category
         val shouldRefreshNews = newsTabMap[category] ?: true
         binding.containerTabs.forEach { child ->
@@ -202,8 +203,13 @@ class NewsFragment() : BaseFragment<FragmentNewsBinding>() {
                     // 划到最底部且不是加载状态
                     loadMoreData()
                 }
+                val firstVisible = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                binding.btnMoveTop.visibility = if (firstVisible > 2) View.VISIBLE else View.GONE
             }
         })
+        binding.btnMoveTop.setOnClickListener {
+            binding.recList.smoothScrollToPosition(0)
+        }
     }
 
     /**
@@ -259,6 +265,7 @@ class NewsFragment() : BaseFragment<FragmentNewsBinding>() {
     }
 
     private fun updateUIConfig() {
+        binding.btnMoveTop.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_list_back_top))
         EMManager.from(binding.bgTop)
             .setGradientRealColor(
                 intArrayOf(

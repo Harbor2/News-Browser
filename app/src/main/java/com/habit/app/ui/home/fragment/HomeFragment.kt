@@ -184,6 +184,7 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
     }
 
     private fun updateUIConfig() {
+        binding.btnMoveTop.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_list_back_top))
         binding.btnNaviTrace.setImageResource(
             ThemeManager.getSkinImageResId(if (viewModel.privacyObserver.value!!) R.drawable.iv_search_trace else R.drawable.iv_search_untrace)
         )
@@ -223,6 +224,8 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
                     // 划到最底部且不是加载状态
                     loadMoreData()
                 }
+                val firstVisible = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                binding.btnMoveTop.visibility = if (firstVisible > 5) View.VISIBLE else View.GONE
             }
         })
         binding.btnNaviTrace.setOnClickListener {
@@ -231,6 +234,9 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
                 if (newMode) R.string.toast_private_mode_enable else R.string.toast_private_mode_disable)
             )
             viewModel.setPrivacyObserver(newMode)
+        }
+        binding.btnMoveTop.setOnClickListener {
+            binding.recList.smoothScrollToPosition(0)
         }
     }
 
