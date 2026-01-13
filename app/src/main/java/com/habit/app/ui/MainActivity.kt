@@ -377,9 +377,8 @@ class MainActivity : BaseActivity() {
             UtilHelper.jumpWifiSetting(this)
         }
         binding.ivSearchClose.setOnClickListener {
-            mController.mCurWebView?.clearMatches()
+            mController.exitWebContentSearch()
             EMUtil.hideSoftKeyboard(binding.editContentInput, this)
-            binding.containerContentSearch.isVisible = false
         }
         binding.ivSearchPre.setOnClickListener {
             mController.processWebContentSearchPreOrNext(false)
