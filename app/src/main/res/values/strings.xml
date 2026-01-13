@@ -40,6 +40,7 @@
     <string name="toast_private_mode_disable">Private mode disabled</string>
     <string name="toast_exit_edit_mode_first">Please exit edit mode first</string>
     <string name="toast_add_successfully">Add successfully</string>
+    <string name="toast_no_valid_qr_code_found">No valid QR code found</string>
 
     <string name="text_get_started_big">GET STARTED</string>
     <string name="text_home">Home</string>

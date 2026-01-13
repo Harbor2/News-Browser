@@ -44,7 +44,7 @@ class CameraScanActivity : BaseActivity() {
         override fun onScanLocalPicFailed() {
             scannerController.responseScanResult = true
             loadingObserve.value = false
-            UtilHelper.showToast(this@CameraScanActivity, getString(R.string.toast_failed))
+            UtilHelper.showToast(this@CameraScanActivity, getString(R.string.toast_no_valid_qr_code_found))
         }
     }
 
