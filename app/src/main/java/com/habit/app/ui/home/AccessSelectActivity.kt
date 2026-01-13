@@ -112,7 +112,7 @@ class AccessSelectActivity : BaseActivity() {
         if (existStatus) {
             selectedAccess.remove(tagData)
         } else {
-            selectedAccess.add(3, tagData)
+            selectedAccess.add(selectedAccess.size - 1, tagData)
         }
 
         // 处理选中状态

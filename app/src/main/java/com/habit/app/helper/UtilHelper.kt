@@ -295,7 +295,7 @@ object UtilHelper {
             return false
         }
 
-        selectedAccess.add(3, accessData)
+        selectedAccess.add(selectedAccess.size - 1, accessData)
 
         // 重新设置sortIndex
         selectedAccess.forEachIndexed { index, accessSingleData ->
