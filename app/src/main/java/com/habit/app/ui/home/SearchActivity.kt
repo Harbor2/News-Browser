@@ -31,6 +31,7 @@ import com.habit.app.helper.ThemeManager
 import com.habit.app.helper.UtilHelper
 import com.habit.app.ui.base.BaseActivity
 import com.habit.app.ui.custom.SearchThinkWordItem
+import com.habit.app.ui.dialog.DeleteConfirmDialog
 import com.habit.app.ui.dialog.MicReceiveDialog
 import com.habit.app.ui.dialog.SearchEngineDialog
 import com.habit.app.viewmodel.home.SearchActivityModel
@@ -43,10 +44,12 @@ import com.wyz.emlibrary.util.SoftKeyboardHelper
 import com.wyz.emlibrary.util.immersiveWindow
 import kotlinx.coroutines.launch
 import kotlin.getValue
+import androidx.core.view.isNotEmpty
 
 class SearchActivity : BaseActivity() {
     private lateinit var binding: ActivitySearchBinding
     private var micDialog: MicReceiveDialog? = null
+    private var historyClearDialog: DeleteConfirmDialog? = null
 
     /**
      * 麦克风权限
@@ -154,8 +157,10 @@ class SearchActivity : BaseActivity() {
             }
         }
         binding.ivDelete.setOnClickListener {
-            DBManager.getDao().clearSearchRecords()
-            viewModel.loadHistory()
+            if (binding.wrapLayout.isNotEmpty()) {
+                viewModel.thinkWordObserver
+                showClearHistoryDialog()
+            }
         }
     }
 
@@ -256,6 +261,27 @@ class SearchActivity : BaseActivity() {
             binding.bottomTool.layoutParams = this
         }
     }
+
+    private fun showClearHistoryDialog() {
+        historyClearDialog = DeleteConfirmDialog.tryShowDialog(this)?.apply {
+            this.initData(
+                R.drawable.iv_dialog_delete_icon,
+                getString(R.string.text_clear_history_history),
+                getString(R.string.text_cancel),
+                getString(R.string.text_delete)
+            )
+            setOnDismissListener {
+                historyClearDialog = null
+            }
+            this.mCallback = { result ->
+                if (result) {
+                    DBManager.getDao().clearSearchRecords()
+                    viewModel.loadHistory()
+                }
+            }
+        }
+    }
+
     private fun showEngineSelectDialog() {
         SearchEngineDialog.Companion.tryShowDialog(this)?.apply {
             this.mCallback = { engine->
@@ -336,6 +362,7 @@ class SearchActivity : BaseActivity() {
             (it as? SearchThinkWordItem)?.updateThemeUI()
         }
         micDialog?.updateThemeUI()
+        historyClearDialog?.updateThemeUI()
     }
 
     override fun onThemeChanged(theme: String) {
