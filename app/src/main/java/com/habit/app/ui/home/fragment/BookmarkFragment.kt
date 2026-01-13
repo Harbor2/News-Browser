@@ -138,6 +138,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
     private val urlItemCallback = object : BookmarkUrlItem.BookmarkCallback {
         override fun onBookmarkClick(item: BookmarkUrlItem) {
             // 打开webview
+            openWebUrl(item.bookmarkData)
         }
 
         override fun onBookmarkMenu(anchorView: View, item: BookmarkUrlItem) {
