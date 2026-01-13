@@ -1,15 +1,19 @@
 package com.habit.app.helper
 
 import android.Manifest
+import android.app.PendingIntent
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
+import android.graphics.drawable.Icon
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.media.MediaScannerConnection
@@ -46,6 +50,7 @@ import java.time.ZoneId
 import java.util.Calendar
 import kotlin.random.Random
 import androidx.core.net.toUri
+import com.habit.app.ui.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
@@ -564,6 +569,33 @@ object UtilHelper {
                     callback.invoke(false)
                 }
             }
+        }
+    }
+
+    /**
+     * 添加桌面快捷方式
+     */
+    fun addHomeScreen(context: Context, name: String, url: String) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
+
+        val shortcutManager = context.getSystemService(ShortcutManager::class.java)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            this.action = Intent.ACTION_VIEW
+            this.data = url.toUri()
+        }
+
+        val shortCut = ShortcutInfo.Builder(context, "url_${System.currentTimeMillis()}")
+            .setShortLabel(name.ifEmpty { url })
+            .setIcon(Icon.createWithResource(context, R.mipmap.ic_launcher_round))
+            .setIntent(intent)
+            .build()
+        if (shortcutManager.isRequestPinShortcutSupported) {
+            val pinnedShortcutCallbackIntent = shortcutManager.createShortcutResultIntent(shortCut)
+            val pendingIntent = PendingIntent.getBroadcast(context, 0, pinnedShortcutCallbackIntent,
+                PendingIntent.FLAG_IMMUTABLE)
+            shortcutManager.requestPinShortcut(shortCut, pendingIntent.intentSender)
+        } else {
+            showToast(context, context.getString(R.string.toast_failed))
         }
     }
 }

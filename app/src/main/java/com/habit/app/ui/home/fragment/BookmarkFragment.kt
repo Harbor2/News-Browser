@@ -2,6 +2,7 @@ package com.habit.app.ui.home.fragment
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -31,6 +32,7 @@ import com.habit.app.data.TAG
 import com.habit.app.data.db.DBManager
 import com.habit.app.data.model.BookmarkData
 import com.habit.app.data.model.FolderData
+import com.habit.app.data.model.HistoryData
 import com.habit.app.databinding.FragmentBookmarkBinding
 import com.habit.app.event.HomeAccessUpdateEvent
 import com.habit.app.helper.ThemeManager
@@ -51,6 +53,7 @@ import com.wyz.emlibrary.util.EMUtil
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import org.greenrobot.eventbus.EventBus
+import kotlin.collections.remove
 
 class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
 
@@ -283,7 +286,9 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
                 showNaviAddEditDialog(data)
             }
             OPTION_ADD_TO_HOME -> {
-
+                if (data is BookmarkData) {
+                    UtilHelper.addHomeScreen(requireContext(),data.name, data.url)
+                }
             }
             OPTION_SELECT -> {
                 enterSelectMode(data)
@@ -530,6 +535,9 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
                 OPTION_ADD_TO_HOME,
                 OPTION_SELECT
             )
+        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            menuList.remove(OPTION_ADD_TO_HOME)
         }
         MenuPopupFloat(requireActivity()).setData(payload).setCallback(popMenuCallback).show(anchorView, menuList)
     }

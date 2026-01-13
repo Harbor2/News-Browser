@@ -1,6 +1,7 @@
 package com.habit.app.ui.home.fragment
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -144,7 +145,9 @@ class HistoryFragment() : BaseFragment<FragmentBHistoryBinding>() {
                 showNaviAddEditDialog(data)
             }
             OPTION_ADD_TO_HOME -> {
-
+                if (data is HistoryData) {
+                    UtilHelper.addHomeScreen(requireContext(),data.name, data.url)
+                }
             }
         }
     }
@@ -266,6 +269,9 @@ class HistoryFragment() : BaseFragment<FragmentBHistoryBinding>() {
             OPTION_ADD_TO_NAVI,
             OPTION_ADD_TO_HOME
         )
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            menuList.remove(OPTION_ADD_TO_HOME)
+        }
         MenuPopupFloat(requireActivity()).setData(payload).setCallback(popMenuCallback).show(anchorView, menuList)
     }
 
