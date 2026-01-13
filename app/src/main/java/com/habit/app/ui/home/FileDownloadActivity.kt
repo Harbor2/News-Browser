@@ -294,7 +294,7 @@ class FileDownloadActivity : BaseActivity() {
                 fileModifyTime = dbFileData.downloadStamp
                 fileSize = dbFileData.downloadFileSize
                 fileType = UtilHelper.getFileTypeByName(file.name)
-                downloadProgress = (file.length() * 100 / dbFileData.downloadFileSize).toInt()
+                downloadProgress = if(dbFileData.downloadFileSize == 0L) 0 else (file.length() * 100 / dbFileData.downloadFileSize).toInt()
                 isPause = existTask.isPaused
 
                 dataList.add(this)

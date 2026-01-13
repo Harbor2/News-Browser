@@ -685,7 +685,7 @@ class MainController(
 
         mCurWebView?.setOnLongClickListener {
             val result = mCurWebView?.hitTestResult
-            if (result == null) return@setOnLongClickListener true
+            if (result == null) return@setOnLongClickListener false
             when (result.type) {
                 WebView.HitTestResult.IMAGE_TYPE,
                 WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE -> {
@@ -694,9 +694,10 @@ class MainController(
                     if (imageUrl.isNullOrEmpty()) return@setOnLongClickListener true
                     Log.d(TAG, "点击webView中的图片url：$imageUrl")
                     showImageMenuFloat(imageUrl)
+                    return@setOnLongClickListener true
                 }
             }
-            return@setOnLongClickListener true
+            return@setOnLongClickListener false
         }
     }
 
