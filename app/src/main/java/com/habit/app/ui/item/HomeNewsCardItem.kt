@@ -15,6 +15,7 @@ import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
 import kotlin.jvm.javaClass
+import androidx.core.graphics.drawable.toDrawable
 
 class HomeNewsCardItem(
     private val context: Context,
@@ -40,6 +41,7 @@ class HomeNewsCardItem(
             .setTextStr(EMUtil.formatDateFromTimestamp("dd-MM-yyyy HH:mm", newsData.pubTime))
         Glide.with(context)
             .load(newsData.thumbUrl)
+            .placeholder(ThemeManager.getSkinColor(R.color.dialog_top_line_color).toDrawable())
             .error(ThemeManager.getSkinImageResId(R.drawable.iv_news_default_cover))
             .into(holder.binding.ivIcon)
         holder.binding.lineView.setBackgroundColor(ThemeManager.getSkinColor(R.color.text_main_color_10))
