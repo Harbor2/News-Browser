@@ -571,7 +571,7 @@ class BookmarkFragment() : BaseFragment<FragmentBookmarkBinding>() {
             this.mCallback = { name ->
                 val result = UtilHelper.homeAddAccessItem(requireContext(), name, data.url, data.webIconPath)
                 if (result) {
-                    UtilHelper.showToast(requireContext(), getString(R.string.toast_succeed))
+                    UtilHelper.showToast(requireContext(), getString(R.string.toast_add_successfully))
                     EventBus.getDefault().post(HomeAccessUpdateEvent())
                 }
             }
