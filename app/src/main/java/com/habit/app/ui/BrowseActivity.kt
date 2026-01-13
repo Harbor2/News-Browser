@@ -37,14 +37,14 @@ class BrowseActivity : BaseActivity() {
         fun startPrivacyPolicy(context: Context) {
             val intent = Intent(context, BrowseActivity::class.java)
             intent.putExtra(EXTRA_KEY_TITLE, context.getString(R.string.privacy_policy))
-            intent.putExtra(EXTRA_KEY_URL, "https://sites.google.com/view/habitize/")
+            intent.putExtra(EXTRA_KEY_URL, "https://sites.google.com/view/tnbpri/home")
             context.startActivity(intent)
         }
 
         fun startTermOfService(context: Context) {
             val intent = Intent(context, BrowseActivity::class.java)
             intent.putExtra(EXTRA_KEY_TITLE, context.getString(R.string.terms_of_service))
-            intent.putExtra(EXTRA_KEY_URL, "https://sites.google.com/view/habitizeterms/")
+            intent.putExtra(EXTRA_KEY_URL, "https://sites.google.com/view/tnbter/home")
             context.startActivity(intent)
         }
     }

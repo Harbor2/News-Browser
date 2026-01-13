@@ -5,7 +5,7 @@ import android.content.Intent
 import android.net.Uri
 
 object FeedbackUtils {
-    private const val uriStr: String = "mailto:aleyvoncilyingbal@gmail.com"
+    private const val uriStr: String = "mailto:umairmustafa.umroo@gmail.com"
     private const val subject: String = "Feedback:"
     private const val message: String = ""
     fun feedback(context: Context) {
