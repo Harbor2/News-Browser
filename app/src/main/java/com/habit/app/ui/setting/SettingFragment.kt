@@ -1,5 +1,6 @@
 package com.habit.app.ui.setting
 
+import android.annotation.SuppressLint
 import android.app.role.RoleManager
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
@@ -92,10 +93,12 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initData() {
         val curEngine = KeyValueManager.getValueByKey(KeyValueManager.KEY_ENGINE_SELECT) ?: ENGINE_GOOGLE
         binding.itemSearchEnging.updateDesc(curEngine)
         binding.itemAddComponents.isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+        binding.tvVersion.text = "v${UtilHelper.getAppVersionName(requireContext())}"
     }
 
     private fun initListener() {
@@ -244,6 +247,8 @@ class SettingFragment() : BaseFragment<FragmentSettingBinding>() {
                 ),
                 Direction.TOP
             )
+        binding.ivAppName.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_setting_app_name))
+        binding.tvVersion.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_40))
         binding.tvBasic.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_40))
         binding.tvBrowser.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_40))
         binding.tvApplication.setTextColor(ThemeManager.getSkinColor(R.color.text_main_color_40))

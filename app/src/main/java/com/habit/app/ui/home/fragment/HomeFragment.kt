@@ -184,6 +184,7 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
     }
 
     private fun updateUIConfig() {
+        binding.ivNaviName.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_home_app_name))
         binding.btnMoveTop.setImageResource(ThemeManager.getSkinImageResId(R.drawable.iv_list_back_top))
         binding.btnNaviTrace.setImageResource(
             ThemeManager.getSkinImageResId(if (viewModel.privacyObserver.value!!) R.drawable.iv_search_trace else R.drawable.iv_search_untrace)

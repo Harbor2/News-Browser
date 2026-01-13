@@ -21,14 +21,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_navi_today"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_navi_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="HOME"
-            android:textSize="24sp"
-            android:textColor="@color/text_main_color"
-            android:fontFamily="@font/gotham_b"
+            android:src="@drawable/iv_home_app_name"
             android:layout_marginStart="20dp"
             android:layout_gravity="center_vertical"/>
 
