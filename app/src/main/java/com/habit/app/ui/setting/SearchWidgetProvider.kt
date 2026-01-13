@@ -43,9 +43,11 @@ class SearchWidgetProvider : AppWidgetProvider() {
         fun updateWidgetUi(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
             val views = RemoteViews(context.packageName, R.layout.layout_search_widget)
             views.setInt(R.id.widget_root, "setBackgroundResource", if (ThemeManager.isNightTheme()) R.drawable.t_night_widget_bg else R.drawable.widget_bg)
-            views.setImageViewResource(R.id.iv_search, ThemeManager.getSkinImageResId(R.drawable.iv_widget_search))
+            views.setInt(R.id.container_search, "setBackgroundResource",  if (ThemeManager.isNightTheme()) R.drawable.t_night_widget_search_container_bg else R.drawable.widget_search_container_bg)
             views.setImageViewResource(R.id.iv_news, ThemeManager.getSkinImageResId(R.drawable.iv_widget_news))
             views.setImageViewResource(R.id.iv_scan, ThemeManager.getSkinImageResId(R.drawable.iv_widget_scan))
+            views.setImageViewResource(R.id.iv_search_icon2, ThemeManager.getSkinImageResId(R.drawable.iv_widget_search_icon2))
+            views.setTextColor(R.id.tv_search_str, ThemeManager.getSkinColor(R.color.text_main_color_50))
 
             val homeIntent = Intent(context, MainActivity::class.java).apply {
                 putExtra(WIDGET_EXTRA, EXTRA_HOME)
