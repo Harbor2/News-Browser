@@ -1,7 +1,10 @@
 package com.habit.app.ui.home.controller
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.DownloadListener
@@ -12,6 +15,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -29,6 +33,9 @@ import com.habit.app.data.ENGINE_YAHOO
 import com.habit.app.data.ENGINE_YAHOO_URL
 import com.habit.app.data.ENGINE_YANDEX
 import com.habit.app.data.ENGINE_YANDEX_URL
+import com.habit.app.data.IMAGE_MENU_COPY_ADDRESS
+import com.habit.app.data.IMAGE_MENU_DOWNLOAD_IMAGE
+import com.habit.app.data.IMAGE_MENU_SHARE_IMAGE
 import com.habit.app.data.MAX_COUNT_DOWNLOAD_TASKS
 import com.habit.app.data.MAX_SNAP_COUNT
 import com.habit.app.data.TAG
@@ -37,18 +44,22 @@ import com.habit.app.data.USER_AGENT_PHONE
 import com.habit.app.data.WEBVIEW_DEFAULT_NAME
 import com.habit.app.data.assessUrlList
 import com.habit.app.data.db.DBManager
+import com.habit.app.data.model.DownloadFileData
 import com.habit.app.data.model.HistoryData
 import com.habit.app.data.model.WebViewData
 import com.habit.app.databinding.ActivityMainBinding
 import com.habit.app.event.HomeAccessUpdateEvent
 import com.habit.app.helper.DownloadManager
 import com.habit.app.helper.KeyValueManager
+import com.habit.app.helper.ShareUtils
 import com.habit.app.helper.UtilHelper
 import com.habit.app.helper.WebViewManager
 import com.habit.app.ui.MainActivity
 import com.habit.app.ui.custom.CustomWebView
 import com.habit.app.ui.dialog.DeleteConfirmDialog
 import com.habit.app.ui.dialog.FileDownloadDialog
+import com.habit.app.ui.dialog.ImageClickMenuFloat
+import com.habit.app.ui.dialog.LoadingDialog
 import com.habit.app.ui.dialog.NavigationEditDialog
 import com.habit.app.viewmodel.MainActivityModel
 import com.wyz.emlibrary.util.EMUtil
@@ -72,12 +83,24 @@ class MainController(
     var mCurWebView: WebView? = null
     var mCurWebSign: String = ""
 
+    /**
+     * webview点击位置
+     */
+    var lastTouchX = 0f
+    var lastTouchY = 0f
+
     private var webScrollCallback: ((Boolean) -> Unit) = { isUpScroll -> }
 
     private var mNaviEditDialog: NavigationEditDialog? = null
     private var mPreDownloadDialog: FileDownloadDialog? = null
     private var mDownloadFailedDialog: DeleteConfirmDialog? = null
+    private var loadingDialog: LoadingDialog? = null
 
+    /**
+     * android 9存储权限
+     */
+    private val writePermLauncher = activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
+    }
     /**
      * webView加载进度监听
      */
@@ -130,8 +153,10 @@ class MainController(
                 return
             }
 
-            UtilHelper.showToast(activity, "准备下载app")
-            showFileDownloadDialog(url, contentDisposition, mimeType, contentLength)
+            val fileName = UtilHelper.decodeUrlCode(URLUtil.guessFileName(url, contentDisposition, mimeType))
+            showFileDownloadDialog(fileName) {
+                beginDownloadTask(url, fileName, contentLength)
+            }
         }
     }
 
@@ -145,10 +170,18 @@ class MainController(
     /**
      * 下载完成回调
      */
-    private val completeCallback: (url: String, total: Long, fileName: String) -> Unit = {url: String, total: Long, fileName: String ->
+    private val completeCallback: (url: String, total: Long, fileName: String, filePath: String) -> Unit = {url: String, total: Long, fileName: String, filePath: String ->
         Log.d(TAG, "onCompleted 下载完成, fileName: $fileName, url: $url")
         UtilHelper.showToast(activity, activity.getString(R.string.text_download_completed, fileName))
         DBManager.getDao().deleteDownloadTaskData(fileName)
+
+        activity.lifecycleScope.launch(Dispatchers.IO) {
+            if (UtilHelper.getFileTypeByName(fileName) == DownloadFileData.TYPE_PIC) {
+                UtilHelper.saveBitmapToGallery(activity, File(filePath)) { result ->
+                    Log.d(TAG, "图片保存到相册结果: $result")
+                }
+            }
+        }
     }
 
     /**
@@ -157,6 +190,15 @@ class MainController(
     private var errorCallback: (url: String, fileName: String, filePath: String, msg: String) -> Unit = {url: String, fileName: String, filePath: String, msg: String ->
         Log.d(TAG, "onError 下载失败, fileName: $fileName, filePath: $filePath, msg: $msg")
         showFileErrorDialog(fileName, filePath)
+    }
+
+    /**
+     * 图片点击回调
+     */
+    private val imageMenuCallback = object : ImageClickMenuFloat.ImageMenuCallback {
+        override fun onOptionSelect(option: String, data: String) {
+            processImageMenuOption(option, data)
+        }
     }
 
     /**
@@ -302,6 +344,7 @@ class MainController(
             binding.containerWeb.removeAllViews()
             binding.containerWeb.addView(this, params)
         }
+        processWebViewLongClickListener()
         updateGoBackStatus()
     }
 
@@ -442,36 +485,125 @@ class MainController(
      */
 
     /**
+     * 图片下载float 菜单
+     */
+    private fun showImageMenuFloat(imageUrl: String) {
+        ImageClickMenuFloat(activity)
+            .setData(imageUrl)
+            .setCallback(imageMenuCallback)
+            .show(lastTouchX, lastTouchY)
+    }
+
+    /**
+     * image菜单menu
+     */
+    private fun processImageMenuOption(option: String, data: String) {
+        when(option) {
+            IMAGE_MENU_COPY_ADDRESS -> {
+                UtilHelper.copyToClipboard(activity, data)
+            }
+
+            IMAGE_MENU_DOWNLOAD_IMAGE -> {
+                if (!UtilHelper.checkWriteStoragePerm(activity)) {
+                    writePermLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    return
+                }
+                val fileName = "IMAGE_${System.currentTimeMillis()}.png"
+                showFileDownloadDialog(fileName) { ->
+                    if (UtilHelper.isNetImageUrl(data)) {
+                        beginDownloadTask(data, fileName, 0)
+                    } else {
+                        activity.lifecycleScope.launch(Dispatchers.IO) {
+                            val base64ImageFile = UtilHelper.decodeBase64Image(data, fileName)
+                            base64ImageFile?.let {
+                                UtilHelper.saveBitmapToGallery(activity, it) { result ->
+                                    UtilHelper.showToast(activity, activity.getString(if (result) R.string.toast_succeed else R.string.toast_failed))
+                                    Log.d(TAG, "base64图片保存到相册结果: $result")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            IMAGE_MENU_SHARE_IMAGE -> {
+                val fileName = "IMAGE_${System.currentTimeMillis()}.png"
+                loadingDialog = LoadingDialog.tryShowDialog(activity)?.apply {
+                    setOnDismissListener {
+                        loadingDialog = null
+                        DownloadManager.releaseDownloadTask(fileName)
+                    }
+                }
+                if (UtilHelper.isNetImageUrl(data)) {
+                    beginDownloadTask(
+                        data,
+                        fileName,
+                        0,
+                        false,
+                        null,
+                        completeCallback2 = { _, _, _, filePath ->
+                            loadingDialog?.dismiss()
+                            val imageFile = File(filePath)
+                            if (!imageFile.exists()) return@beginDownloadTask
+                            ShareUtils.shareSingleFile(activity, imageFile)
+                        },
+                        errorCallback2 = { _, _, _, _ ->
+                            UtilHelper.showToast(activity, activity.getString(R.string.toast_failed))
+                            loadingDialog?.dismiss()
+                        }
+                    )
+                } else {
+                    activity.lifecycleScope.launch(Dispatchers.IO) {
+                        val base64ImageFile = UtilHelper.decodeBase64Image(data, fileName)
+                        loadingDialog?.dismiss()
+                        base64ImageFile?.let {
+                            // 分享
+                            ShareUtils.shareSingleFile(activity, it)
+                        } ?: run {
+                            UtilHelper.showToast(activity, activity.getString(R.string.toast_failed))
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * 文件下载dialog
      */
-    private fun showFileDownloadDialog(
-        url: String,
-        contentDisposition: String?,
-        mimeType: String?,
-        contentLength: Long
-    ) {
-        val fileName = UtilHelper.decodeUrlCode(URLUtil.guessFileName(url, contentDisposition, mimeType))
+    private fun showFileDownloadDialog(fileName: String, downloadCallback: () -> Unit) {
         Log.d(TAG, "解析下载的文件名称：$fileName")
         mPreDownloadDialog = FileDownloadDialog.Companion.tryShowDialog(activity)?.apply {
             this.setData(fileName)
             this.mCallback = { beginDownload: Boolean ->
                 if (beginDownload) {
-                    val downloadDir = UtilHelper.getExternalFilesDownloadDir()
-                    if (!downloadDir.exists()) downloadDir.mkdirs()
-                    var destFile = File(downloadDir, fileName)
-                    val downloadDestFile = File(downloadDir, DOWNLOADING_NAME_PREFIX.plus(fileName))
-                    if (destFile.exists() || downloadDestFile.exists()) {
-                        destFile = File(downloadDir, "${System.currentTimeMillis()}_$fileName")
-                    }
-                    // 文件重命名为下载中状态
-                    val downloadFile = File(downloadDir, DOWNLOADING_NAME_PREFIX.plus(destFile.name))
-                    DownloadManager.createAndStartDownloadTask(url, downloadFile, contentLength, progressCallback, completeCallback, errorCallback)
+                    downloadCallback.invoke()
                 }
             }
             setOnDismissListener {
                 mPreDownloadDialog = null
             }
         }
+    }
+
+    private fun beginDownloadTask(url: String,
+                                  fileName: String,
+                                  contentLength: Long,
+                                  insertDB: Boolean = true,
+                                  progressCallback2: ((url: String, downloaded: Long, total: Long, percent: Int, fileName: String) -> Unit)? = null,
+                                  completeCallback2: ((url: String, total: Long, fileName: String, filePath: String) -> Unit)? = null,
+                                  errorCallback2: ((url: String, fileName: String, filePath: String, msg: String) -> Unit)? = null
+    ) {
+        val downloadDir = UtilHelper.getExternalFilesDownloadDir()
+        if (!downloadDir.exists()) downloadDir.mkdirs()
+        var destFile = File(downloadDir, fileName)
+        val downloadDestFile = File(downloadDir, DOWNLOADING_NAME_PREFIX.plus(fileName))
+        if (destFile.exists() || downloadDestFile.exists()) {
+            destFile = File(downloadDir, "${System.currentTimeMillis()}_$fileName")
+        }
+        // 文件重命名为下载中状态
+        val downloadFile = File(downloadDir, DOWNLOADING_NAME_PREFIX.plus(destFile.name))
+        DownloadManager.createAndStartDownloadTask(url, downloadFile, contentLength, insertDB,progressCallback2 ?: progressCallback, completeCallback2 ?: completeCallback, errorCallback2 ?: errorCallback)
     }
 
     private fun showFileErrorDialog(fileName: String, filePath: String) {
@@ -539,10 +671,40 @@ class MainController(
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    fun processWebViewLongClickListener() {
+        mCurWebView?.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                    lastTouchX = event.x
+                    lastTouchY = event.y
+                }
+            }
+            false
+        }
+
+        mCurWebView?.setOnLongClickListener {
+            val result = mCurWebView?.hitTestResult
+            if (result == null) return@setOnLongClickListener true
+            when (result.type) {
+                WebView.HitTestResult.IMAGE_TYPE,
+                WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE -> {
+                    // 长按图片，保存图片
+                    val imageUrl = result.extra
+                    if (imageUrl.isNullOrEmpty()) return@setOnLongClickListener true
+                    Log.d(TAG, "点击webView中的图片url：$imageUrl")
+                    showImageMenuFloat(imageUrl)
+                }
+            }
+            return@setOnLongClickListener true
+        }
+    }
+
     fun updateUIConfig() {
         mNaviEditDialog?.updateThemeUI()
         mPreDownloadDialog?.updateThemeUI()
         mDownloadFailedDialog?.updateThemeUI()
+        loadingDialog?.updateThemeUI()
     }
 
     /**

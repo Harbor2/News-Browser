@@ -27,7 +27,7 @@ class DownloadTask(
 
     // 使用 MutableList 存储多个监听器
     private val onProgressListeners = mutableListOf<(url: String, downloaded: Long, total: Long, percent: Int, fileName: String) -> Unit>()
-    private val onCompletedListeners = mutableListOf<(url: String, total: Long, fileName: String) -> Unit>()
+    private val onCompletedListeners = mutableListOf<(url: String, total: Long, fileName: String, filePath: String) -> Unit>()
     private val onErrorListeners = mutableListOf<(url: String, fileName: String, filePath: String, msg: String) -> Unit>()
     var taskReleaseCallback: (() -> Unit)? = null
 
@@ -133,7 +133,7 @@ class DownloadTask(
                             file
                         }
                         scope.launch {
-                            notifyCompleted(totalBytes, resultFile.name)
+                            notifyCompleted(totalBytes, resultFile.name, resultFile.path)
                         }
                         curDownloadedPercent = 100
                     }
@@ -173,7 +173,7 @@ class DownloadTask(
         onProgressListeners.add(listener)
     }
 
-    fun addOnCompletedListener(listener: (url: String, total: Long, fileName: String) -> Unit) {
+    fun addOnCompletedListener(listener: (url: String, total: Long, fileName: String, filePath: String) -> Unit) {
         onCompletedListeners.add(listener)
     }
 
@@ -186,7 +186,7 @@ class DownloadTask(
         onProgressListeners.remove(listener)
     }
 
-    fun removeOnCompletedListener(listener: (url: String, total: Long, filePath: String) -> Unit) {
+    fun removeOnCompletedListener(listener: (url: String, total: Long, fileName: String, filePath: String) -> Unit) {
         onCompletedListeners.remove(listener)
     }
 
@@ -206,10 +206,10 @@ class DownloadTask(
     }
 
     // 通知下载完成
-    private fun notifyCompleted(total: Long, fileName: String) {
+    private fun notifyCompleted(total: Long, fileName: String, filePath: String) {
         onCompletedListeners.forEach { listener ->
             try {
-                listener(url, total, fileName)
+                listener(url, total, fileName, filePath)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

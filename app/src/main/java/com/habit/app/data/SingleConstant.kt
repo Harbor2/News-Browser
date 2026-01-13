@@ -69,6 +69,13 @@ const val MENU_RENAME = "option_rename"
 const val MENU_SELECT = "option_select"
 
 /**
+ * 图片菜单 menu
+ */
+const val IMAGE_MENU_COPY_ADDRESS = "option_copy_address"
+const val IMAGE_MENU_DOWNLOAD_IMAGE = "option_download_image"
+const val IMAGE_MENU_SHARE_IMAGE = "option_share_image"
+
+/**
  * 最大同时下载任务数
  */
 const val MAX_COUNT_DOWNLOAD_TASKS = 5

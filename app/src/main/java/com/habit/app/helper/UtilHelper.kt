@@ -3,6 +3,7 @@ package com.habit.app.helper
 import android.Manifest
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,10 +12,14 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
+import android.media.MediaScannerConnection
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.view.Window
@@ -41,6 +46,10 @@ import java.time.ZoneId
 import java.util.Calendar
 import kotlin.random.Random
 import androidx.core.net.toUri
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 object UtilHelper {
 
@@ -439,6 +448,122 @@ object UtilHelper {
             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         } else {
             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        }
+    }
+
+    fun isNetImageUrl(url: String): Boolean {
+        return url.startsWith("http://") || url.startsWith("https://")
+    }
+
+    fun decodeBase64Image(base64Str: String, fileName: String): File? {
+        return try {
+            // 去掉 data:image/...;base64, 头
+            val pureBase64 = if (base64Str.startsWith("data:")) {
+                base64Str.substringAfter("base64,")
+            } else {
+                base64Str
+            }
+            val bytes = Base64.decode(pureBase64, Base64.DEFAULT)
+            val destFile = File(getExternalFilesDownloadDir(), fileName)
+            if (destFile.exists()) {
+                destFile.delete()
+            }
+            destFile.outputStream().use { it.write(bytes) }
+            destFile
+        } catch (e: Exception) {
+            Log.e(TAG, "保存 Base64 图片失败", e)
+            null
+        }
+    }
+
+    /**
+     * 保存图片到相册
+     */
+    suspend fun saveBitmapToGallery(context: Context, imageFile: File, callback: (Boolean) -> Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            saveBitmapToGalleryUpQ(context, imageFile, callback)
+        } else {
+            saveBitmapToGalleryUnderQ(context, imageFile, callback)
+        }
+    }
+
+    private suspend fun saveBitmapToGalleryUpQ(
+        context: Context,
+        imageFile: File,
+        callback: (Boolean) -> Unit
+    ) {
+        withContext(Dispatchers.IO) {
+            val mimeType = when (imageFile.extension.lowercase()) {
+                "jpg", "jpeg" -> "image/jpeg"
+                "png" -> "image/png"
+                "webp" -> "image/webp"
+                else -> "image/*"
+            }
+            val contentValues = ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, imageFile.name)
+                put(MediaStore.Images.Media.MIME_TYPE, mimeType)
+                put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                put(MediaStore.Images.Media.IS_PENDING, 1)
+            }
+
+            val resolver = context.contentResolver
+            val imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+            imageUri?.let { uri ->
+                try {
+                    FileInputStream(imageFile).use { input ->
+                        resolver.openOutputStream(uri)?.use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                    contentValues.clear()
+                    contentValues.put(MediaStore.Images.Media.IS_PENDING, 0) // 标记为已完成
+                    resolver.update(uri, contentValues, null, null)
+                    withContext(Dispatchers.Main) {
+                        callback.invoke(true)
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "保存图片失败: ${e.message}")
+                    resolver.delete(uri, null, null)
+                    withContext(Dispatchers.Main) {
+                        callback.invoke(false)
+                    }
+                }
+            } ?: run {
+                Log.e(TAG, "保存图片失败，无法获取 URI")
+                withContext(Dispatchers.Main) {
+                    callback.invoke(false)
+                }
+            }
+        }
+    }
+
+    private suspend fun saveBitmapToGalleryUnderQ(
+        context: Context,
+        imageFile: File,
+        callback: (Boolean) -> Unit
+    ) {
+        withContext(Dispatchers.IO) {
+            val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "browser")
+            if (!dir.exists()) dir.mkdirs()
+            val file = File(dir, imageFile.name)
+            try {
+                FileInputStream(imageFile).use { input ->
+                    FileOutputStream(file).use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                // 通知媒体库更新
+                MediaScannerConnection.scanFile(context, arrayOf(file.absolutePath), arrayOf("image/png"), null)
+                withContext(Dispatchers.Main) {
+                    callback.invoke(true)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "保存图片失败: ${e.message}")
+                withContext(Dispatchers.Main) {
+                    callback.invoke(false)
+                }
+            }
         }
     }
 }

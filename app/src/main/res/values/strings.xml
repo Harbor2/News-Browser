@@ -212,4 +212,7 @@
     <string name="text_sure">Sure</string>
     <string name="text_add_components_desc">Tap And Hold To Place Manually</string>
     <string name="text_4_1">4*1</string>
+    <string name="text_copy_image_address">Copy Image Address</string>
+    <string name="text_download_image">Download Image</string>
+    <string name="text_share_image">Share Image</string>
 </resources>

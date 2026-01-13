@@ -102,7 +102,7 @@ class FileDownloadActivity : BaseActivity() {
         updateDownloadInfo(percent, fileName)
     }
 
-    private val completeCallback: (String, Long, String) -> Unit = {url: String, total: Long, fileName: String ->
+    private val completeCallback: (String, Long, String, String) -> Unit = {url: String, total: Long, fileName: String, filePath: String ->
         Log.d(TAG, "DownloadActivity onCompleted 下载完成, fileName: $fileName")
         completeFileDownloading(fileName, total)
     }

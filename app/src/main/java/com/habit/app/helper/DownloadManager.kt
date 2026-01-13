@@ -26,10 +26,11 @@ object DownloadManager {
     fun createAndStartDownloadTask(url: String,
                                    destFile: File,
                                    totalSize: Long,
+                                   insertDB: Boolean = true,
                                    progressListener: (url: String, downloaded: Long, total: Long, percent: Int, fileName: String) -> Unit,
-                                   completeListener: (url: String, total: Long, fileName: String) -> Unit,
+                                   completeListener: (url: String, total: Long, fileName: String, filePath: String) -> Unit,
                                    errorListener: (url: String, fileName: String, filePath: String, msg: String) -> Unit
-                                   ) {
+    ) {
         val downloadTask = DownloadTask(client, url, destFile).apply {
             addOnProgressListener(progressListener)
             addOnCompletedListener(completeListener)
@@ -40,13 +41,15 @@ object DownloadManager {
             start()
         }
         // 数据库插入task数据
-        DBManager.getDao().insertDownloadTaskData(
-            DownloadTaskData(
-                downloadUrl = url,
-                downloadFileName = destFile.name,
-                downloadFileSize = totalSize
+        if (insertDB) {
+            DBManager.getDao().insertDownloadTaskData(
+                DownloadTaskData(
+                    downloadUrl = url,
+                    downloadFileName = destFile.name,
+                    downloadFileSize = totalSize
+                )
             )
-        )
+        }
         downloadTaskMap[destFile.name] = downloadTask
     }
 
