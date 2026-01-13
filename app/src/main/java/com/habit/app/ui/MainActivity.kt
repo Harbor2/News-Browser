@@ -120,6 +120,7 @@ class MainActivity : BaseActivity() {
 
     private val menuCallback = object : BrowserMenuDialog.BrowserMenuCallback {
         override fun onPrivateChanged(enter: Boolean) {
+            UtilHelper.showToast(this@MainActivity, getString(if (enter) R.string.toast_private_mode_enable else R.string.toast_private_mode_disable))
             viewModel.setPrivacyObserver(enter)
         }
         override fun onBookMarksClick() {
